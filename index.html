@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover"
+  >
+
+  <title>СМП Помощник</title>
+
+  <meta
+    name="description"
+    content="Офлайн-справочник и рабочие инструменты бригады скорой помощи"
+  >
+
+  <meta name="theme-color" content="#7A1F2B">
+
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- Режим установленного приложения и поддержка iOS -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="СМП">
+
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+</head>
+
+<body>
+  <header class="topbar">
+    <div>
+      <h1>СМП Помощник</h1>
+      <p id="status">Проверка сети...</p>
+    </div>
+
+    <div class="actions">
+      <button id="syncBtn" class="btn">Синхронизировать</button>
+      <button id="installBtn" class="btn hidden" hidden>Установить</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="card">
+      <h2>Протоколы</h2>
+
+      <input
+        id="search"
+        class="search"
+        type="search"
+        placeholder="Поиск протокола..."
+      >
+
+      <div id="protocolList" class="list"></div>
+    </section>
+
+    <section class="card">
+      <h2>Важно</h2>
+
+      <p class="muted">
+        Приложение является вспомогательным инструментом.
+        Окончательное решение принимает медицинский работник
+        согласно действующим приказам, протоколам и клиническим
+        рекомендациям вашей страны.
+      </p>
+    </section>
+  </main>
+
+  <div id="toast" class="toast" hidden></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
