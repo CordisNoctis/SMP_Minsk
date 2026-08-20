@@ -1,17 +1,52 @@
-const VERSION = "1.0.0";
+const VERSION = "1.25.0";
 const CACHE_NAME = `smp-pwa-${VERSION}`;
 
 const APP_SHELL = [
   "./",
   "./index.html",
-  "./styles.css",
-  "./app.js",
-  "./manifest.webmanifest"
+  "./css/styles.css",
+  "./css/base.css",
+  "./css/layout.css",
+  "./css/components.css",
+  "./css/schedule.css",
+  "./css/checklist.css",
+  "./js/version.js",
+  "./js/theme-init.js",
+  "./js/theme.js",
+  "./js/templates.js",
+  "./js/app.js",
+  "./js/modal.js",
+  "./js/back.js",
+  "./js/time-picker.js",
+  "./js/shift-schedule.js",
+  "./js/templates-admin.js",
+  "./js/calendar-export.js",
+  "./js/settings-backup.js",
+  "./js/medical-catalog.js",
+  "./js/equipment-data.js",
+  "./js/equipment-checklist.js",
+  "./js/used-items.js",
+  "./js/sw-register.js",
+  "./manifest.webmanifest",
+  "./pages/cheatsheets.html",
+  "./pages/settings.html",
+  "./pages/shift-schedule.html",
+  "./pages/templates.html",
+  "./pages/shift-checklist.html",
+  "./pages/equipment-checklist.html",
+  "./pages/used-items.html"
 ];
 
 const OPTIONAL_ASSETS = [
+  "./icons/apple-touch-icon.png",
+  "./icons/favicon.svg",
+  "./icons/favicon-16.png",
+  "./icons/favicon-32.png",
+  "./icons/favicon.ico",
   "./icons/icon-192.png",
-  "./icons/icon-512.png"
+  "./icons/icon-512.png",
+  "./icons/icon-maskable-192.png",
+  "./icons/icon-maskable-512.png"
 ];
 
 const DATA_ASSETS = [
@@ -63,7 +98,6 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // Версию не кэшируем жёстко, чтобы видеть обновления
   if (url.pathname.endsWith("/version.json")) {
     event.respondWith(
       fetch(request, { cache: "no-store" })
@@ -72,7 +106,6 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // Контент: сначала сеть, если нет сети — кэш
   if (url.pathname.includes("/data/")) {
     event.respondWith(
       fetch(request)
@@ -90,18 +123,22 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // Открытие приложения
   if (request.mode === "navigate") {
     event.respondWith(
-      caches.match("./index.html")
+      caches.match(request)
         .then((cached) => {
-          return cached || fetch(request);
+          if (cached) {
+            return cached;
+          }
+
+          return fetch(request).catch(() => {
+            return caches.match("./index.html");
+          });
         })
     );
     return;
   }
 
-  // Остальные файлы: сначала кэш, параллельно обновляем из сети
   event.respondWith(
     caches.match(request)
       .then((cached) => {
@@ -113,6 +150,7 @@ self.addEventListener("fetch", (event) => {
                 cache.put(request, copy);
               });
             }
+
             return response;
           })
           .catch(() => cached);

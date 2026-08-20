@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Табель оснащения — СМП Помощник</title>
+  <meta name="theme-color" content="#7A1F2B">
+
+  <script src="../js/theme-init.js"></script>
+  <link rel="stylesheet" href="../css/styles.css">
+
+  <link rel="icon" href="../icons/favicon.ico" sizes="any">
+  <link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="СМП">
+</head>
+
+<body>
+  <header class="page-header">
+    <button type="button" class="back-button" data-back data-back-fallback="shift-checklist.html" aria-label="Назад">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+    <h1 class="page-title-centered" id="brigadeTitle">Табель оснащения</h1>
+    <span class="header-spacer" aria-hidden="true"></span>
+  </header>
+
+  <main id="main" class="page equipment-page">
+    <section class="card">
+      <p class="equipment-hint">
+        1 нажатие — проверено (зелёный). Повторное — требуется пополнение (красный) с указанием количества.
+      </p>
+      <div id="equipmentList" class="equipment-list"></div>
+      <p id="equipmentEmpty" class="muted" hidden style="text-align:center; padding:16px 0;">
+        Перечень оснащения для этой бригады пока не заполнен.
+      </p>
+    </section>
+  </main>
+
+  <!-- Нижние кнопки -->
+  <div class="used-bottom-bar" style="grid-template-columns: 1fr 1fr;">
+    <button type="button" class="used-bottom-btn used-bottom-danger" id="resetCheckBtn">🔄 Сброс проверки</button>
+    <button type="button" class="used-bottom-btn" id="refillReportBtn">📋 Отчет по пополнению</button>
+  </div>
+
+  <!-- Модалка отчёта по пополнению -->
+  <div class="modal" id="refill-report-modal" hidden aria-hidden="true">
+    <div class="modal-backdrop" data-modal-close></div>
+    <section class="modal-panel" role="dialog" aria-modal="true">
+      <header class="modal-header">
+        <h2>Отчет по пополнению</h2>
+        <button type="button" class="modal-close" data-modal-close aria-label="Закрыть">×</button>
+      </header>
+      <div class="modal-body">
+        <div id="refillReportContent" class="refill-report-content"></div>
+        <p id="refillReportEmpty" class="muted" hidden style="text-align:center; padding:16px 0;">
+          Нет позиций, требующих пополнения.
+        </p>
+      </div>
+      <footer class="modal-footer">
+        <button type="button" class="btn-primary" data-modal-close>Закрыть</button>
+      </footer>
+    </section>
+  </div>
+
+  <script src="../js/theme.js"></script>
+  <script src="../js/modal.js"></script>
+  <script src="../js/back.js"></script>
+  <script src="../js/medical-catalog.js"></script>
+  <script src="../js/equipment-data.js"></script>
+  <script src="../js/equipment-checklist.js"></script>
+  <script src="../js/sw-register.js"></script>
+</body>
+</html>

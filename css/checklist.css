@@ -1,0 +1,900 @@
+/* =========================================
+   checklist.css — чек-лист смены,
+   табель оснащения, использованные средства
+   ========================================= */
+
+/* ===== Заголовки разделов ===== */
+
+.checklist-main-title {
+  text-align: center;
+  margin: 0 0 16px;
+  font-size: 1.2rem;
+}
+
+.checklist-section-title {
+  text-align: center;
+  margin: 0 0 16px;
+  font-size: 1.15rem;
+}
+
+/* ===== Чек-лист (общий) ===== */
+
+.checklist-items {
+  display: grid;
+  gap: 8px;
+}
+
+.checklist-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 12px 14px;
+
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+
+  cursor: pointer;
+
+  transition: background-color 0.15s ease;
+}
+
+.checklist-item.checked {
+  background: var(--menu-icon-bg);
+}
+
+.checklist-checkbox {
+  width: 22px;
+  height: 22px;
+  flex: 0 0 auto;
+  accent-color: var(--accent);
+}
+
+.checklist-item-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.checklist-item-qty {
+  flex: 0 0 auto;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+/* ===== Табель оснащения бригады ===== */
+
+.equipment-hint {
+  margin: 0 0 12px;
+  font-size: 0.85rem;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+.equipment-list {
+  display: grid;
+  gap: 8px;
+}
+
+.equipment-group-title {
+  margin: 18px 0 8px;
+  padding-bottom: 6px;
+  border-bottom: 2px solid var(--accent);
+  font-size: 0.98rem;
+  font-weight: 800;
+  color: var(--accent);
+}
+
+.equipment-group-title:first-child {
+  margin-top: 0;
+}
+
+.equipment-subgroup-title {
+  margin: 14px 0 10px;
+  padding: 0;
+
+  font-size: 0.88rem;
+  font-weight: 700;
+
+  text-align: center;
+
+  color: var(--text);
+  opacity: 0.85;
+}
+
+.equipment-subgroup-title:first-of-type {
+  margin-top: 12px;
+}
+
+.equipment-item-name {
+  flex: 1;
+  min-width: 0;
+
+  font-weight: 400;
+  line-height: 1.4;
+
+  /* Перенос слов */
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+
+.equipment-item-qty {
+  flex: 0 0 auto;
+
+  padding: 6px 14px;
+
+  border: 1px solid var(--border);
+  border-radius: 8px;
+
+  background: var(--input-bg);
+  color: var(--text);
+
+  font-weight: 700;
+  font-size: 0.88rem;
+  line-height: 1.4;
+  text-align: center;
+
+  /* Перенос слов (если количество многословное) */
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+
+  max-width: 55%;
+}
+
+/* Базовая карточка оснащения */
+.equipment-item {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.equipment-item-main {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 14px;
+  cursor: pointer;
+}
+
+/* Состояние: проверено (зелёный) */
+.equipment-item.status-checked {
+  background: rgba(46, 125, 50, 0.15);
+  border-color: #2e7d32;
+}
+.equipment-item.status-checked .equipment-item-name {
+  color: #2e7d32;
+}
+[data-theme="dark"] .equipment-item.status-checked {
+  background: rgba(102, 187, 106, 0.15);
+  border-color: #66bb6a;
+}
+[data-theme="dark"] .equipment-item.status-checked .equipment-item-name {
+  color: #a5d6a7;
+}
+
+/* Состояние: требуется пополнение (красный) */
+.equipment-item.status-refill {
+  background: rgba(198, 40, 40, 0.12);
+  border-color: #c62828;
+}
+.equipment-item.status-refill .equipment-item-name {
+  color: #c62828;
+}
+[data-theme="dark"] .equipment-item.status-refill {
+  background: rgba(239, 83, 80, 0.15);
+  border-color: #ef5350;
+}
+[data-theme="dark"] .equipment-item.status-refill .equipment-item-name {
+  color: #ef9a9a;
+}
+
+/* Блок «Пополнить» */
+.equipment-refill-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-top: 1px dashed var(--border);
+  background: rgba(198, 40, 40, 0.05);
+}
+
+.equipment-refill-label {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #c62828;
+}
+[data-theme="dark"] .equipment-refill-label {
+  color: #ef9a9a;
+}
+
+.equipment-refill-input {
+  flex: 1;
+  min-height: 42px;
+  padding: 0 10px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--input-bg);
+  color: var(--input-text);
+  font-size: 15px;
+}
+
+/* ===== Использованные средства: список записей ===== */
+
+.used-items-list {
+  display: grid;
+  gap: 10px;
+}
+
+.used-record-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.used-record-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.used-record-btn {
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 10px;
+  background: var(--menu-icon-bg);
+  color: var(--text);
+  cursor: pointer;
+  font-size: 0.95rem;
+  display: grid;
+  place-items: center;
+  transition: background-color 0.15s ease, transform 0.12s ease;
+}
+
+.used-record-btn:hover {
+  background: var(--accent);
+  color: #ffffff;
+}
+
+.used-record-btn:active {
+  transform: scale(0.92);
+}
+
+.used-record-del:hover {
+  background: #c62828;
+}
+
+.used-record-line {
+  font-size: 0.88rem;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.used-record-items {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px dashed var(--border);
+}
+
+/* ===== Использованные средства: кнопки внизу ===== */
+
+.used-items-page {
+  padding-bottom: 96px;
+}
+
+.used-bottom-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 50;
+
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+
+  padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
+
+  background: var(--card);
+  border-top: 1px solid var(--border);
+  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.used-bottom-btn {
+  min-height: 46px;
+  padding: 10px 8px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--menu-icon-bg);
+  color: var(--text);
+  font: inherit;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background-color 0.15s ease, transform 0.12s ease;
+}
+
+.used-bottom-btn:active {
+  transform: scale(0.97);
+}
+
+.used-bottom-danger {
+  border-color: rgba(198, 40, 40, 0.4);
+  color: #c62828;
+}
+[data-theme="dark"] .used-bottom-danger {
+  color: #ef9a9a;
+}
+
+@media (min-width: 600px) {
+  .used-bottom-bar {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* ===== Отчет ===== */
+
+.report-content {
+  display: grid;
+  gap: 12px;
+}
+
+.report-summary {
+  margin: 0;
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.report-items-title {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.report-items-list {
+  display: grid;
+  gap: 6px;
+}
+
+.report-item-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 10px;
+  background: var(--menu-icon-bg);
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+/* ===== Форма записи использованных средств ===== */
+
+.used-form-field {
+  display: grid;
+  gap: 6px;
+  font-weight: 650;
+}
+
+.used-items-block {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  background: var(--menu-icon-bg);
+  border-radius: 12px;
+}
+
+.used-items-block-label {
+  font-weight: 700;
+  font-size: 0.92rem;
+}
+
+.used-item-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 90px 36px;
+  gap: 6px;
+  align-items: center;
+}
+
+.used-item-qty {
+  min-height: 44px;
+  padding: 0 10px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--input-bg);
+  color: var(--input-text);
+  font-size: 15px;
+}
+
+.used-item-del {
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 10px;
+  background: rgba(198, 40, 40, 0.1);
+  color: #c62828;
+  cursor: pointer;
+  font-size: 0.9rem;
+  display: grid;
+  place-items: center;
+  transition: background-color 0.15s ease;
+}
+
+.used-item-del:hover {
+  background: #c62828;
+  color: #ffffff;
+}
+
+[data-theme="dark"] .used-item-del {
+  background: rgba(239, 83, 80, 0.15);
+  color: #ef9a9a;
+}
+
+[data-theme="dark"] .used-item-del:hover {
+  background: #ef5350;
+  color: #ffffff;
+}
+
+.used-add-row-btn {
+  justify-self: start;
+}
+
+/* ===== Адаптивность ===== */
+
+@media (max-width: 420px) {
+  .used-item-row {
+    grid-template-columns: minmax(0, 1fr) 70px 32px;
+  }
+
+  .equipment-item-main {
+    padding: 12px 10px;
+  }
+}
+
+/* ===== MD3: автокомплит средств ===== */
+
+.md3-autocomplete {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+}
+
+.md3-field {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.md3-field-input {
+  width: 100%;
+  min-height: 52px;
+
+  padding: 0 44px 0 16px;
+
+  border: 1px solid var(--border);
+  border-radius: 12px;
+
+  background: var(--input-bg);
+  color: var(--input-text);
+
+  font-size: 15px;
+
+  outline: none;
+
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.md3-field-input::placeholder {
+  color: var(--muted);
+  opacity: 0.7;
+}
+
+.md3-field-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+
+.md3-field-arrow {
+  position: absolute;
+  right: 12px;
+
+  display: flex;
+  align-items: center;
+
+  color: var(--muted);
+
+  pointer-events: none;
+
+  transition: transform 0.2s ease;
+}
+
+.md3-autocomplete.open .md3-field-arrow {
+  transform: rotate(180deg);
+}
+
+.md3-dropdown {
+  position: fixed;
+  z-index: 1000;
+
+  max-height: 240px;
+  overflow-y: auto;
+
+  padding: 6px;
+
+  background: var(--card);
+  border-radius: 12px;
+
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.18),
+    0 1px 4px rgba(0, 0, 0, 0.12);
+}
+
+.md3-dropdown-item {
+  padding: 12px 14px;
+
+  border-radius: 8px;
+
+  font-size: 0.92rem;
+
+  cursor: pointer;
+
+  transition: background-color 0.12s ease;
+}
+
+.md3-dropdown-item:hover {
+  background: var(--menu-icon-bg);
+}
+
+/* Поле количества в стиле MD3 */
+.md3-qty-input {
+  min-height: 52px;
+  padding: 0 12px;
+
+  border: 1px solid var(--border);
+  border-radius: 12px;
+
+  background: var(--input-bg);
+  color: var(--input-text);
+
+  font-size: 15px;
+
+  outline: none;
+
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.md3-qty-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+
+/* ===== MD3: карточки записей ===== */
+
+.used-record-card {
+  padding: 16px;
+
+  background: var(--card);
+  border: none;
+  border-radius: 16px;
+
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.08),
+    0 1px 2px rgba(0, 0, 0, 0.06);
+
+  transition: box-shadow 0.15s ease;
+}
+
+.used-record-card:hover {
+  box-shadow:
+    0 2px 6px rgba(0, 0, 0, 0.1),
+    0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="dark"] .used-record-card {
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.4),
+    0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Поля формы записи в стиле MD3 */
+.used-form-field input {
+  min-height: 52px;
+  padding: 0 16px;
+
+  border: 1px solid var(--border);
+  border-radius: 12px;
+
+  background: var(--input-bg);
+  color: var(--input-text);
+
+  font-size: 15px;
+
+  outline: none;
+
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.used-form-field input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+
+/* ===== Обводка номера карты вызова ===== */
+
+.used-record-title {
+  display: inline-block;
+  padding: 6px 12px;
+
+  border: 1px solid var(--border);
+  border-radius: 10px;
+
+  font-weight: 750;
+  font-size: 0.95rem;
+
+  background: var(--input-bg);
+}
+
+/* ===== Разделители между средствами ===== */
+
+.used-record-item-line {
+  padding: 8px 0;
+}
+
+.used-record-item-line + .used-record-item-line {
+  border-top: 1px solid var(--border);
+}
+
+/* ===== Обводка количества ===== */
+
+.used-record-item-qty {
+  flex: 0 0 auto;
+
+  padding: 4px 12px;
+
+  border: 1px solid var(--border);
+  border-radius: 8px;
+
+  background: var(--input-bg);
+  color: var(--text);
+
+  font-weight: 700;
+  font-size: 0.88rem;
+}
+
+/* ===== Список сохранённых смен ===== */
+
+.saved-shifts-list {
+  display: grid;
+  gap: 8px;
+}
+
+.saved-shift-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+
+  padding: 14px 16px;
+
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+
+  cursor: pointer;
+
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.saved-shift-item:hover {
+  background: var(--menu-icon-bg);
+  border-color: var(--border-accent);
+}
+
+.saved-shift-info {
+  flex: 1;
+  min-width: 0;
+  font-weight: 650;
+}
+
+/* ===== Просмотр смены ===== */
+
+.shift-view-content {
+  display: grid;
+  gap: 10px;
+}
+
+/* ===== Таблица отчёта (перенос слов, без горизонтальной прокрутки) ===== */
+
+.report-table-wrap {
+  max-width: 100%;
+
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.report-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: auto;
+}
+
+.report-table th,
+.report-table td {
+  padding: 12px 14px;
+
+  border-bottom: 1px solid var(--border);
+
+  text-align: center;
+
+  /* Разрешаем перенос слов на 2–3 строки */
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+
+  vertical-align: top;
+
+  font-size: 0.92rem;
+  line-height: 1.4;
+}
+
+.report-table th {
+  background: var(--menu-icon-bg);
+  font-weight: 750;
+}
+
+.report-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Названия средств в отчёте — по левому краю */
+.report-table tbody td:first-child {
+  text-align: left;
+}
+
+/* Колонка количества — прижата вправо, не переносится */
+.report-qty-cell {
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* Обводка количества в отчёте */
+.report-qty-badge {
+  display: inline-block;
+
+  padding: 4px 12px;
+
+  border: 1px solid var(--border);
+  border-radius: 8px;
+
+  background: var(--input-bg);
+  color: var(--text);
+
+  font-weight: 700;
+  font-size: 0.88rem;
+
+  white-space: nowrap;
+}
+
+@media (max-width: 600px) {
+  .report-table th,
+  .report-table td {
+    padding: 10px 10px;
+    font-size: 0.85rem;
+  }
+
+  .report-qty-badge {
+    padding: 3px 10px;
+    font-size: 0.82rem;
+  }
+}
+
+.saved-shift-del {
+  flex: 0 0 auto;
+
+  width: 38px;
+  height: 38px;
+
+  border: 0;
+  border-radius: 10px;
+
+  background: rgba(198, 40, 40, 0.1);
+  color: #c62828;
+
+  cursor: pointer;
+  font-size: 0.95rem;
+
+  display: grid;
+  place-items: center;
+
+  transition: background-color 0.15s ease, transform 0.12s ease;
+}
+
+.saved-shift-del:hover {
+  background: #c62828;
+  color: #ffffff;
+}
+
+.saved-shift-del:active {
+  transform: scale(0.92);
+}
+
+[data-theme="dark"] .saved-shift-del {
+  background: rgba(239, 83, 80, 0.15);
+  color: #ef9a9a;
+}
+
+[data-theme="dark"] .saved-shift-del:hover {
+  background: #ef5350;
+  color: #ffffff;
+}
+
+/* Страница оснащения — отступ снизу для кнопки */
+.equipment-page {
+  padding-bottom: 96px;
+}
+
+/* Отчёт по пополнению */
+.refill-report-content {
+  display: grid;
+  gap: 8px;
+}
+
+.refill-report-item {
+  padding: 12px 14px;
+
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+
+  display: grid;
+  gap: 6px;
+}
+
+.refill-report-name {
+  font-weight: 650;
+  font-size: 0.92rem;
+  line-height: 1.4;
+}
+
+.refill-report-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+
+  font-size: 0.88rem;
+}
+
+.refill-report-label {
+  color: var(--muted);
+}
+
+.refill-report-value {
+  padding: 3px 10px;
+
+  border: 1px solid var(--border);
+  border-radius: 8px;
+
+  background: var(--input-bg);
+  color: var(--text);
+
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.refill-report-empty-hint {
+  text-align: center;
+  color: var(--muted);
+  padding: 12px 0;
+  font-size: 0.9rem;
+}

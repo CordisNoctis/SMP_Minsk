@@ -12,64 +12,109 @@
 
   <meta
     name="description"
-    content="Офлайн-справочник и рабочие инструменты бригады скорой помощи"
+    content="Офлайн-помощник для сотрудников скорой медицинской помощи"
   >
 
   <meta name="theme-color" content="#7A1F2B">
 
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="stylesheet" href="styles.css">
 
-  <!-- Режим установленного приложения и поддержка iOS -->
+  <!-- Тема подключается до CSS, чтобы уменьшить мигание темы -->
+  <script src="js/theme-init.js"></script>
+  <script src="js/version.js"></script>
+
+  <link rel="stylesheet" href="css/styles.css">
+
+  <!-- Фавиконки вкладки -->
+<link rel="icon" href="icons/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16.png">
+<link rel="icon" type="image/svg+xml" href="icons/favicon.svg">
+
+  <!-- iOS -->
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="СМП">
-
-  <link rel="apple-touch-icon" href="icons/icon-192.png">
 </head>
 
 <body>
-  <header class="topbar">
-    <div>
-      <h1>СМП Помощник</h1>
-      <p id="status">Проверка сети...</p>
-    </div>
+  <a class="skip-link" href="#main">
+    Перейти к главному меню
+  </a>
 
-    <div class="actions">
-      <button id="syncBtn" class="btn">Синхронизировать</button>
-      <button id="installBtn" class="btn hidden" hidden>Установить</button>
+  <header class="app-header">
+    <div class="brand">
+      <img
+        class="brand-icon"
+        src="icons/icon-192.png"
+        alt="Иконка приложения"
+        width="56"
+        height="56"
+      >
+
+      <div class="brand-text">
+        <p id="greeting" class="greeting">Загрузка...</p>
+        <p id="currentDate" class="date">Дата загружается...</p>
+      </div>
+
+      <span id="appVersion" class="app-version">—</span>
     </div>
   </header>
 
-  <main>
-    <section class="card">
-      <h2>Протоколы</h2>
+  <main id="main" class="page">
+    <nav class="main-menu" aria-label="Главное меню">
 
-      <input
-        id="search"
-        class="search"
-        type="search"
-        placeholder="Поиск протокола..."
-      >
+      <a class="menu-card" href="#normative-base" data-page="normative-base">
+        <span class="menu-icon" aria-hidden="true">📚</span>
+        <span class="menu-title">Нормативная база</span>
+        <span class="menu-arrow" aria-hidden="true">›</span>
+      </a>
 
-      <div id="protocolList" class="list"></div>
-    </section>
+      <a class="menu-card" href="#calculators" data-page="calculators">
+        <span class="menu-icon" aria-hidden="true">🧮</span>
+        <span class="menu-title">Клинические калькуляторы и шкалы</span>
+        <span class="menu-arrow" aria-hidden="true">›</span>
+      </a>
 
-    <section class="card">
-      <h2>Важно</h2>
+      <a class="menu-card" href="pages/cheatsheets.html" data-page="cheatsheets">
+        <span class="menu-icon" aria-hidden="true">📋</span>
+        <span class="menu-title">Шпаргалки</span>
+        <span class="menu-arrow" aria-hidden="true">›</span>
+      </a>
 
-      <p class="muted">
-        Приложение является вспомогательным инструментом.
-        Окончательное решение принимает медицинский работник
-        согласно действующим приказам, протоколам и клиническим
-        рекомендациям вашей страны.
-      </p>
-    </section>
+      <a class="menu-card" href="pages/shift-checklist.html" data-page="shift-checklist">
+        <span class="menu-icon" aria-hidden="true">✅</span>
+        <span class="menu-title">Чек-лист смены</span>
+        <span class="menu-arrow" aria-hidden="true">›</span>
+      </a>
+
+      <a class="menu-card" href="pages/shift-schedule.html" data-page="shift-schedule">
+        <span class="menu-icon" aria-hidden="true">🗓️</span>
+        <span class="menu-title">График смен</span>
+        <span class="menu-arrow" aria-hidden="true">›</span>
+      </a>
+
+      <a class="menu-card" href="pages/settings.html" data-page="settings">
+        <span class="menu-icon" aria-hidden="true">⚙️</span>
+        <span class="menu-title">Настройки</span>
+        <span class="menu-arrow" aria-hidden="true">›</span>
+      </a>
+
+    </nav>
   </main>
 
-  <div id="toast" class="toast" hidden></div>
+  <footer class="app-footer">
+    <p class="footer-note">
+      Внимание: это неофициальное вспомогательное приложение для сотрудников СМП г. Минска.
+      Размещенная информация носит справочный характер и не заменяет действующие
+      нормативные документы или клинические протоколы.
+    </p>
+  </footer>
 
-  <script src="app.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/sw-register.js"></script>
 </body>
 </html>
