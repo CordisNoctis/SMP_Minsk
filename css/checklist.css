@@ -647,11 +647,47 @@
 /* ===== Разделители между средствами ===== */
 
 .used-record-item-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+
   padding: 8px 0;
+
+  font-size: 0.88rem;
 }
 
 .used-record-item-line + .used-record-item-line {
   border-top: 1px solid var(--border);
+}
+
+.used-record-item-name {
+  flex: 1;
+  min-width: 0;
+
+  /* Перенос слов для длинных названий */
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+
+/* ===== Обводка количества ===== */
+
+.used-record-item-qty {
+  flex: 0 0 auto;
+
+  padding: 4px 12px;
+
+  border: 1px solid var(--border);
+  border-radius: 8px;
+
+  background: var(--input-bg);
+  color: var(--text);
+
+  font-weight: 700;
+  font-size: 0.88rem;
+
+  text-align: center;
+  white-space: nowrap;
 }
 
 /* ===== Обводка количества ===== */
