@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content">
+
+  <title>Шпаргалки — СМП Помощник</title>
+
+  <meta name="theme-color" content="#7A1F2B">
+
+  <script src="../js/theme-init.js"></script>
+  <link rel="stylesheet" href="../css/styles.css">
+
+  <!-- Фавиконки вкладки -->
+  <link rel="icon" href="../icons/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="../icons/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../icons/favicon-16.png">
+  <link rel="icon" type="image/svg+xml" href="../icons/favicon.svg">
+
+  <link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="СМП">
+</head>
+
+<body>
+  <a class="skip-link" href="#main">Перейти к списку шпаргалок</a>
+
+  <header class="page-header">
+    <button type="button" class="back-button" data-back data-back-fallback="../index.html" aria-label="Назад">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+    <h1 class="page-title-centered">Шпаргалки</h1>
+    <span class="header-spacer" aria-hidden="true"></span>
+  </header>
+
+  <main id="main" class="page">
+    <nav class="list-grid" aria-label="Список шпаргалок">
+      <a class="submenu-link large" href="#ems-algorithms" data-page="ems-algorithms">Алгоритмы помощи на этапе СМП</a>
+      <a class="submenu-link large" href="#manipulations" data-page="manipulations">Показания и противопоказания для проведения манипуляций</a>
+      <a class="submenu-link large" href="#medications" data-page="medications">Инструкции лекарственных средств</a>
+      <a class="submenu-link large" href="#call-card-templates" data-page="call-card-templates">Примеры заполнения карт вызова</a>
+      <a class="submenu-link large" href="#local-status" data-page="local-status">Примеры локального статуса</a>
+      <a class="submenu-link large" href="#icd-10" data-page="icd-10">Коды МКБ-10</a>
+      <a class="submenu-link large" href="#ems-stations-minsk" data-page="ems-stations-minsk">Подстанции СМП г. Минска</a>
+      <a class="submenu-link large" href="#hospitals" data-page="hospitals">Стационары</a>
+    </nav>
+  </main>
+
+  <script src="../js/theme.js"></script>
+  <script src="../js/back.js"></script>
+  <script src="../js/sw-register.js"></script>
+</body>
+</html>

@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content">
+  <title>Шаблоны смен — СМП Помощник</title>
+  <meta name="theme-color" content="#7A1F2B">
+
+  <script src="../js/theme-init.js"></script>
+  <script src="../js/templates.js"></script>
+  <link rel="stylesheet" href="../css/styles.css">
+
+  <link rel="icon" href="../icons/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="../icons/favicon-32.png">
+  <link rel="icon" type="image/svg+xml" href="../icons/favicon.svg">
+  <link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="СМП">
+</head>
+
+<body>
+  <a class="skip-link" href="#main">Перейти к шаблонам</a>
+
+  <header class="page-header">
+    <button type="button" class="back-button" data-back data-back-fallback="settings.html" aria-label="Назад">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+    <h1 class="page-title-centered">Шаблоны смен</h1>
+    <span class="header-spacer" aria-hidden="true"></span>
+  </header>
+
+  <main id="main" class="page">
+    <section class="card">
+      <h2>Шаблоны смен</h2>
+      <p class="muted" style="margin: 0 0 12px;">
+        Создавайте, редактируйте и удаляйте шаблоны. Они доступны при нажатии
+        «Шаблон смены» в графике смен.
+      </p>
+
+      <button type="button" class="backup-btn backup-btn-export" id="createTemplateBtn" style="margin-bottom: 14px;">
+        <span aria-hidden="true">➕</span> Создать шаблон
+      </button>
+
+      <div id="templatesAdminList" class="templates-admin-list"></div>
+      <p id="templatesEmpty" class="muted" hidden style="text-align:center; padding: 16px 0;">
+        Шаблонов пока нет. Создайте первый шаблон.
+      </p>
+    </section>
+  </main>
+
+  <!-- Модалка создания/редактирования шаблона -->
+  <div class="modal" id="template-form-modal" hidden aria-hidden="true">
+    <div class="modal-backdrop" data-modal-close></div>
+    <section class="modal-panel schedule-modal-panel" role="dialog" aria-modal="true">
+      <header class="modal-header">
+        <h2 id="templateFormTitle">Новый шаблон</h2>
+        <button type="button" class="modal-close" data-modal-close aria-label="Закрыть">×</button>
+      </header>
+
+      <div class="modal-body">
+
+        <!-- Название -->
+        <label class="template-field">
+          <span>Название шаблона</span>
+          <input type="text" id="tplFormName" class="template-name-input" maxlength="30" placeholder="Например: День">
+        </label>
+
+        <!-- Смайлик -->
+        <div class="template-field">
+          <span>Смайлик смены</span>
+          <div class="template-emojis" id="tplFormEmojis"></div>
+        </div>
+
+        <!-- Время смены (барабаны) -->
+        <div class="schedule-section">
+          <p class="edit-time-heading">Время смены</p>
+
+          <div class="edit-time-row">
+            <div class="edit-time-block edit-time-card">
+              <div class="edit-time-label">Начало</div>
+              <div class="wheel-triple-row">
+                <div class="wheel-triple wheel-triple-vertical">
+                  <button type="button" class="wheel-adjacent" data-tplfield="startHour" data-direction="prev" aria-label="Уменьшить час">−</button>
+                  <div class="wheel-main" id="tplStartHourMain">08</div>
+                  <button type="button" class="wheel-adjacent" data-tplfield="startHour" data-direction="next" aria-label="Увеличить час">+</button>
+                </div>
+                <div class="wheel-triple wheel-triple-vertical">
+                  <button type="button" class="wheel-adjacent" data-tplfield="startMinute" data-direction="prev" aria-label="Уменьшить минуту">−</button>
+                  <div class="wheel-main" id="tplStartMinuteMain">00</div>
+                  <button type="button" class="wheel-adjacent" data-tplfield="startMinute" data-direction="next" aria-label="Увеличить минуту">+</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="edit-time-divider" aria-hidden="true">—</div>
+
+            <div class="edit-time-block edit-time-card">
+              <div class="edit-time-label">Конец</div>
+              <div class="wheel-triple-row">
+                <div class="wheel-triple wheel-triple-vertical">
+                  <button type="button" class="wheel-adjacent" data-tplfield="endHour" data-direction="prev" aria-label="Уменьшить час">−</button>
+                  <div class="wheel-main" id="tplEndHourMain">20</div>
+                  <button type="button" class="wheel-adjacent" data-tplfield="endHour" data-direction="next" aria-label="Увеличить час">+</button>
+                </div>
+                <div class="wheel-triple wheel-triple-vertical">
+                  <button type="button" class="wheel-adjacent" data-tplfield="endMinute" data-direction="prev" aria-label="Уменьшить минуту">−</button>
+                  <div class="wheel-main" id="tplEndMinuteMain">00</div>
+                  <button type="button" class="wheel-adjacent" data-tplfield="endMinute" data-direction="next" aria-label="Увеличить минуту">+</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <p class="time-hint" id="tplTimeHint">Заканчивается сегодня</p>
+        </div>
+
+        <!-- Цвет -->
+        <div class="template-field">
+          <span>Цвет шаблона</span>
+          <div class="template-colors" id="tplFormColors"></div>
+        </div>
+
+      </div>
+
+      <footer class="modal-footer schedule-modal-footer">
+        <button type="button" class="btn-secondary" data-modal-close>Отмена</button>
+        <button type="button" class="btn-primary" id="tplFormSaveBtn">Сохранить</button>
+      </footer>
+    </section>
+  </div>
+
+  <script src="../js/theme.js"></script>
+  <script src="../js/modal.js"></script>
+  <script src="../js/back.js"></script>
+  <script src="../js/templates.js"></script>
+  <script src="../js/templates-admin.js"></script>
+  <script src="../js/sw-register.js"></script>
+</body>
+</html>
