@@ -75,21 +75,58 @@
     var nameEl = document.createElement("div");
     nameEl.className = "equipment-item-name";
     
-    // Разделяем название на препарат и дозировку
-    var parts = splitItemName(item.name);
-    
-    // Название препарата (первая строка)
-    var nameLine = document.createElement("div");
-    nameLine.className = "equipment-item-name-main";
-    nameLine.textContent = parts.name;
-    nameEl.appendChild(nameLine);
-    
-    // Дозировка (вторая строка, меньшим шрифтом)
-    if (parts.details) {
-      var detailsLine = document.createElement("div");
-      detailsLine.className = "equipment-item-details";
-      detailsLine.textContent = parts.details;
-      nameEl.appendChild(detailsLine);
+    // Если у пункта есть варианты (parts), отображаем их с разделителями
+    if (item.parts && item.parts.length > 0) {
+      item.parts.forEach(function (part, partIndex) {
+        // Разделитель между вариантами (не перед первым)
+        if (partIndex > 0) {
+          var divider = document.createElement("div");
+          divider.className = "equipment-item-divider";
+          nameEl.appendChild(divider);
+          
+          var orLabel = document.createElement("div");
+          orLabel.className = "equipment-item-or";
+          orLabel.textContent = "или";
+          nameEl.appendChild(orLabel);
+        }
+        
+        // Название препарата/средства
+        var nameLine = document.createElement("div");
+        nameLine.className = "equipment-item-name-main";
+        nameLine.textContent = part.name;
+        nameEl.appendChild(nameLine);
+        
+        // Дозировка (меньшим шрифтом)
+        if (part.details) {
+          var detailsLine = document.createElement("div");
+          detailsLine.className = "equipment-item-details";
+          detailsLine.textContent = part.details;
+          nameEl.appendChild(detailsLine);
+        }
+        
+        // Количество для варианта (если задано)
+        if (part.qty) {
+          var partQty = document.createElement("div");
+          partQty.className = "equipment-item-part-qty";
+          partQty.textContent = part.qty;
+          nameEl.appendChild(partQty);
+        }
+      });
+    } else {
+      // Простой пункт: разделяем по первой цифре
+      var parts = splitItemName(item.name);
+      
+      var nameLine = document.createElement("div");
+      nameLine.className = "equipment-item-name-main";
+      nameLine.textContent = parts.name;
+      nameEl.appendChild(nameLine);
+      
+      if (parts.details) {
+        var detailsLine = document.createElement("div");
+        detailsLine.className = "equipment-item-details";
+        detailsLine.textContent = parts.details;
+        nameEl.appendChild(detailsLine);
+      }
     }
 
     var qtyEl = document.createElement("div");

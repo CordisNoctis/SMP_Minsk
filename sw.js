@@ -1,4 +1,4 @@
-const VERSION = "1.32.2";
+const VERSION = "1.33.0";
 const CACHE_NAME = `smp-pwa-${VERSION}`;
 
 const APP_SHELL = [

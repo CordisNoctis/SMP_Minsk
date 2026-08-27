@@ -164,6 +164,20 @@
     });
   }
 
+    // Разделение названия для выпадающего списка
+  function splitItemNameForDropdown(name) {
+    var match = name.match(/\d/);
+    if (!match) return { name: name, details: "" };
+    
+    var index = match.index;
+    var itemName = name.substring(0, index).trim();
+    var itemDetails = name.substring(index).trim();
+    
+    if (!itemName) return { name: name, details: "" };
+    
+    return { name: itemName, details: itemDetails };
+  }
+
   // ===== Форма записи =====
 
   function addItemRow(name, qty, shouldFocus) {
@@ -250,7 +264,21 @@
       matches.forEach(function (item) {
         var opt = document.createElement("div");
         opt.className = "md3-dropdown-item";
-        opt.textContent = item.name;
+        
+        // Разделяем название на препарат и дозировку
+        var nameParts = splitItemNameForDropdown(item.name);
+        
+        var optName = document.createElement("div");
+        optName.className = "dropdown-item-name";
+        optName.textContent = nameParts.name;
+        opt.appendChild(optName);
+        
+        if (nameParts.details) {
+          var optDetails = document.createElement("div");
+          optDetails.className = "dropdown-item-details";
+          optDetails.textContent = nameParts.details;
+          opt.appendChild(optDetails);
+        }
         opt.addEventListener("touchstart", function (e) {
           e.preventDefault();
           var selectedName = item.name;
