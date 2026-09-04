@@ -779,13 +779,7 @@
     var overtimeSection = document.getElementById("overtimeSection");
     if (overtimeSection) overtimeSection.hidden = !isEditingExistingShift;
 
-    var otherEventsSection = document.getElementById("otherEventsSection");
-    if (otherEventsSection) otherEventsSection.hidden = isEditingExistingShift;
-
-    var otherEventsPanel = document.getElementById("otherEventsPanel");
-    var otherEventsBtn = document.getElementById("otherEventsBtn");
-    if (otherEventsPanel) otherEventsPanel.hidden = true;
-    if (otherEventsBtn) otherEventsBtn.classList.remove("open");
+    // Блок «Другие события» удалён из формы — очищаем ссылки
 
     updateTemplateSelectButton();
     updateEditUI();
@@ -920,17 +914,6 @@
       editState.endsNextDay = (sT === eT) || (eT <= sT);
     }
 
-    var hint = document.getElementById("timeHint");
-    if (hint) {
-      if (editState.endsNextDay) {
-        hint.textContent = "Заканчивается завтра";
-        hint.classList.add("time-hint-nextday");
-      } else {
-        hint.textContent = "Заканчивается сегодня";
-        hint.classList.remove("time-hint-nextday");
-      }
-    }
-
     var otBlock = document.getElementById("overtimeBlock");
     var otBtn = document.getElementById("toggleOvertimeBtn");
     if (otBlock) otBlock.hidden = !editState.overtimeActive;
@@ -947,16 +930,28 @@
     var removeOtBtn = document.getElementById("removeOvertimeBtn");
     if (removeOtBtn) removeOtBtn.hidden = !editState.overtimeActive;
 
-    var summary = document.getElementById("shiftSummary");
-    if (summary) {
+    var heading = document.getElementById("editTimeHeading");
+    if (heading) {
       var duration = computeShiftDuration(
         editState.startHour, editState.startMinute,
         editState.endHour, editState.endMinute,
         editState.endsNextDay
       );
-      summary.textContent = duration === 0
-        ? "Время начала и конца совпадают."
-        : "Длительность смены: " + formatDuration(duration);
+      if (duration === 0) {
+        heading.textContent = "Время смены";
+      } else {
+        var h = Math.floor(duration / 60);
+        var m = duration % 60;
+        var durationText = "";
+        if (h > 0 && m > 0) {
+          durationText = h + " ч " + m + " мин";
+        } else if (h > 0) {
+          durationText = h + " ч";
+        } else {
+          durationText = m + " мин";
+        }
+        heading.textContent = "Время смены (длительность: " + durationText + ")";
+      }
     }
   }
 
@@ -1479,7 +1474,15 @@
     }, { passive: true });
   }
 
+  var lastTouchTime = 0;
+  var monthSwipesAttached = false;
+  var wheelMouseAttached = false;
+  var wheelSwipeAttached = false;
+
   function attachMonthSwipes() {
+    if (monthSwipesAttached) return;
+    monthSwipesAttached = true;
+
     var grid = document.getElementById("calendarGrid");
     attachSwipe(
       grid,
@@ -1502,6 +1505,9 @@
   }
 
   function attachWheelMouse() {
+    if (wheelMouseAttached) return;
+    wheelMouseAttached = true;
+
     var wheels = document.querySelectorAll("#dayEditMode .wheel-triple");
 
     wheels.forEach(function (wheel) {
@@ -1514,11 +1520,15 @@
       wheel.addEventListener("wheel", function (e) {
         e.preventDefault();
 
+        // Игнорируем wheel, если недавно был touch (touchpad ноутбука)
+        if (Date.now() - lastTouchTime < 300) return;
+
         var now = Date.now();
-        if (now - lastChange < 120) return;
+        if (now - lastChange < 200) return;
         lastChange = now;
 
-        var direction = e.deltaY < 0 ? "next" : "prev";
+        // Нормализуем deltaY: -1 (вверх = next), +1 (вниз = prev)
+        var direction = Math.sign(e.deltaY) < 0 ? "next" : "prev";
 
         mainEl.classList.remove("wheel-anim-up", "wheel-anim-down");
         void mainEl.offsetWidth;
@@ -1538,6 +1548,9 @@
   }
 
   function attachWheelSwipe() {
+    if (wheelSwipeAttached) return;
+    wheelSwipeAttached = true;
+
     var wheels = document.querySelectorAll("#dayEditMode .wheel-triple");
     var STEP_PX = 40;
 
@@ -1561,6 +1574,7 @@
 
       wheel.addEventListener("touchmove", function (e) {
         if (!isDragging || e.touches.length !== 1) return;
+        e.preventDefault(); // Блокируем скролл страницы
 
         var currentY = e.touches[0].clientY;
         var dy = currentY - lastY;
@@ -1574,20 +1588,22 @@
         mainEl.style.transform = "translateY(" + visualOffset + "px)";
         mainEl.style.opacity = String(1 - Math.abs(visualOffset) / (STEP_PX * 2.5));
 
+        // Обрабатываем ТОЛЬКО ОДИН шаг за touchmove
         if (accum <= -STEP_PX) {
           adjustTripleField(field, "next");
-          accum += STEP_PX;
+          accum = 0;
           vibrate(5);
         } else if (accum >= STEP_PX) {
           adjustTripleField(field, "prev");
-          accum -= STEP_PX;
+          accum = 0;
           vibrate(5);
         }
-      }, { passive: true });
+      }, { passive: false });
 
       wheel.addEventListener("touchend", function () {
         if (!isDragging) return;
         isDragging = false;
+        lastTouchTime = Date.now();
 
         mainEl.style.transition = "transform 0.15s ease, opacity 0.15s ease";
         mainEl.style.transform = "translateY(0)";
@@ -1695,48 +1711,6 @@
         editState.otHours = 0;
         editState.otMinutes = 0;
         updateEditUI();
-      });
-    }
-
-    var otherEventsBtn = document.getElementById("otherEventsBtn");
-    var otherEventsPanel = document.getElementById("otherEventsPanel");
-    if (otherEventsBtn && otherEventsPanel) {
-      otherEventsBtn.addEventListener("click", function () {
-        vibrate(8);
-        var isHidden = otherEventsPanel.hidden;
-        otherEventsPanel.hidden = !isHidden;
-        otherEventsBtn.classList.toggle("open", isHidden);
-      });
-    }
-
-    // Сброс цвета смены
-    var resetEventColorBtn = document.getElementById("resetEventColorBtn");
-    if (resetEventColorBtn) {
-      resetEventColorBtn.addEventListener("click", function () {
-        vibrate(8);
-        editState.colorId = null;
-        renderShiftColorPicker();
-      });
-    }
-
-    // Сброс цвета других событий
-    var resetOtherEventColorBtn = document.getElementById("resetOtherEventColorBtn");
-    if (resetOtherEventColorBtn) {
-      resetOtherEventColorBtn.addEventListener("click", function () {
-        vibrate(8);
-        otherEventsState.activeColorId = null;
-        renderOtherEventColorPicker();
-      });
-    }
-
-    // Сброс цвета массового добавления
-    var resetBulkEventColorBtn = document.getElementById("resetBulkEventColorBtn");
-    if (resetBulkEventColorBtn) {
-      resetBulkEventColorBtn.addEventListener("click", function () {
-        vibrate(8);
-        bulkState.activeColorId = null;
-        renderBulkColorPicker();
-        renderBulkCalendar();
       });
     }
 

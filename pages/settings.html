@@ -9,6 +9,19 @@
   <script src="../js/theme-init.js"></script>
   <script src="../js/version.js"></script>
   <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/changelog.css">
+    <style>
+    .custom-days-input {
+      width: 100%;
+      min-height: 48px;
+      padding: 0 12px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--input-bg);
+      color: var(--input-text);
+      font-size: 16px;
+    }
+  </style>
 
   <link rel="icon" href="../icons/favicon.ico" sizes="any">
   <link rel="icon" type="image/png" sizes="32x32" href="../icons/favicon-32.png">
@@ -50,12 +63,12 @@
           </span>
           <span class="menu-arrow" aria-hidden="true">›</span>
         </button>
-
-        <button type="button" class="settings-action" data-modal-open="minutes-display-modal">
-          <span class="menu-icon" aria-hidden="true">🕐</span>
+        
+        <button type="button" class="settings-action" data-modal-open="changelog-modal">
+          <span class="menu-icon" aria-hidden="true">🔄</span>
           <span class="settings-action-text">
-            <span class="settings-action-title">Отображение минут</span>
-            <span class="settings-action-sub" id="minutesDisplaySummary">Прятать только 00 минуты</span>
+            <span class="settings-action-title">История обновлений</span>
+            <span class="settings-action-sub">Что нового и менялось в приложении</span>
           </span>
           <span class="menu-arrow" aria-hidden="true">›</span>
         </button>
@@ -67,6 +80,15 @@
     <section class="card">
       <h2>Календарь</h2>
       <div class="settings-list">
+
+        <button type="button" class="settings-action" data-modal-open="minutes-display-modal">
+          <span class="menu-icon" aria-hidden="true">🕐</span>
+          <span class="settings-action-text">
+            <span class="settings-action-title">Отображение минут</span>
+            <span class="settings-action-sub" id="minutesDisplaySummary">Прятать только 00 минуты</span>
+          </span>
+          <span class="menu-arrow" aria-hidden="true">›</span>
+        </button>
 
         <a class="settings-action" href="templates.html">
           <span class="menu-icon" aria-hidden="true">🕒</span>
@@ -175,7 +197,7 @@
         <button type="button" class="modal-close" data-modal-close aria-label="Закрыть">×</button>
       </header>
       <div class="modal-body">
-        <p class="muted">Как показывать минуты в ячейках календаря графика смен.</p>
+        <p class="muted" style="margin: 0 0 10px;">Как показывать минуты в ячейках календаря графика смен.</p>
         <div class="settings-form" id="minutesDisplayForm">
           <label class="setting-row"><input type="radio" name="minutes-display" value="hide-all"><span>Прятать все минуты</span></label>
           <label class="setting-row"><input type="radio" name="minutes-display" value="hide-zero"><span>Прятать только 00 минуты</span></label>
@@ -194,21 +216,38 @@
         <button type="button" class="modal-close" data-modal-close aria-label="Закрыть">×</button>
       </header>
       <div class="modal-body">
-        <p class="muted">Сколько дней показывать в блоке «Ближайшие смены» на графике.</p>
+        <p class="muted" style="margin: 0 0 10px;">Сколько дней показывать в блоке «Ближайшие смены» на графике.</p>
         <div class="settings-form" id="upcomingDaysForm">
           <label class="setting-row"><input type="radio" name="upcoming-days" value="0"><span>Отключить</span></label>
           <label class="setting-row"><input type="radio" name="upcoming-days" value="1"><span>1 день</span></label>
           <label class="setting-row"><input type="radio" name="upcoming-days" value="2"><span>2 дня</span></label>
           <label class="setting-row"><input type="radio" name="upcoming-days" value="3"><span>3 дня</span></label>
-          <label class="setting-row"><input type="radio" name="upcoming-days" value="4"><span>4 дня</span></label>
-          <label class="setting-row"><input type="radio" name="upcoming-days" value="5"><span>5 дней</span></label>
-          <label class="setting-row"><input type="radio" name="upcoming-days" value="6"><span>6 дней</span></label>
-          <label class="setting-row"><input type="radio" name="upcoming-days" value="7"><span>7 дней</span></label>
-          <label class="setting-row"><input type="radio" name="upcoming-days" value="8"><span>8 дней</span></label>
-          <label class="setting-row"><input type="radio" name="upcoming-days" value="9"><span>9 дней</span></label>
-          <label class="setting-row"><input type="radio" name="upcoming-days" value="10"><span>10 дней</span></label>
+          <label class="setting-row"><input type="radio" name="upcoming-days" value="custom"><span>Свой вариант (ограничить до 10 дней)</span></label>
+          <div class="setting-sub" id="customDaysWrap" hidden>
+            <div class="time-field">
+              <span class="time-field-label">Количество дней (от 1 до 10)</span>
+              <input type="number" id="customDaysInput" class="custom-days-input" min="1" max="10" step="1" inputmode="numeric">
+            </div>
+          </div>
         </div>
       </div>
+    </section>
+  </div>
+
+    <!-- ===== МОДАЛКА ИСТОРИИ ОБНОВЛЕНИЙ ===== -->
+  <div class="modal" id="changelog-modal" hidden aria-hidden="true">
+    <div class="modal-backdrop" data-modal-close></div>
+    <section class="modal-panel" role="dialog" aria-modal="true">
+      <header class="modal-header">
+        <h2>🔄 История обновлений</h2>
+        <button type="button" class="modal-close" data-modal-close aria-label="Закрыть">×</button>
+      </header>
+      <div class="modal-body">
+        <div id="changelogContent"></div>
+      </div>
+      <footer class="modal-footer update-notice-footer">
+        <button type="button" class="btn-primary" data-modal-close>Закрыть</button>
+      </footer>
     </section>
   </div>
 
@@ -217,16 +256,22 @@
   <script src="../js/back.js"></script>
   <script src="../js/time-picker.js"></script>
   <script src="../js/settings-backup.js"></script>
+  <script src="../js/changelog.js"></script>
+  <script src="../js/update-notice.js"></script>
   <script src="../js/sw-register.js"></script>
 
   <!-- Существующие inline-скрипты для upcoming-days и minutes-display -->
-  <script>
+    <script>
   (function () {
     "use strict";
     var KEY = "smp-upcoming-days";
     function getVal() {
-      try { var v = parseInt(localStorage.getItem(KEY), 10); if (isNaN(v) || v < 0) return 3; return v; }
-      catch (e) { return 3; }
+      try {
+        var v = parseInt(localStorage.getItem(KEY), 10);
+        if (isNaN(v) || v < 0) return 3;
+        if (v > 10) return 10;
+        return v;
+      } catch (e) { return 3; }
     }
     function setVal(v) { try { localStorage.setItem(KEY, String(v)); } catch (e) {} }
     function daysWord(n) {
@@ -245,14 +290,60 @@
     function init() {
       updateSummary();
       var radios = document.querySelectorAll('input[name="upcoming-days"]');
+      var customWrap = document.getElementById("customDaysWrap");
+      var customInput = document.getElementById("customDaysInput");
       var current = getVal();
+
+      function syncCustom() {
+        var isCustom = false;
+        radios.forEach(function (radio) {
+          if (radio.value === "custom" && radio.checked) isCustom = true;
+        });
+        if (customWrap) customWrap.hidden = !isCustom;
+      }
+
       radios.forEach(function (radio) {
-        if (parseInt(radio.value, 10) === current) radio.checked = true;
+        if (radio.value === "custom") {
+          if (current > 3) radio.checked = true;
+        } else {
+          if (parseInt(radio.value, 10) === current) radio.checked = true;
+        }
         radio.addEventListener("change", function () {
-          setVal(parseInt(this.value, 10));
+          if (this.value === "custom") {
+            var v = parseInt(customInput.value, 10);
+            if (isNaN(v) || v < 1) v = 4;
+            if (v > 10) v = 10;
+            customInput.value = v;
+            setVal(v);
+          } else {
+            setVal(parseInt(this.value, 10));
+          }
+          syncCustom();
           updateSummary();
         });
       });
+
+      if (customInput) {
+        if (current > 3) customInput.value = current;
+        customInput.addEventListener("input", function () {
+          var v = parseInt(this.value, 10);
+          if (isNaN(v)) return;
+          if (v < 1) v = 1;
+          if (v > 10) v = 10;
+          setVal(v);
+          updateSummary();
+        });
+        customInput.addEventListener("blur", function () {
+          var v = parseInt(this.value, 10);
+          if (isNaN(v) || v < 1) v = 4;
+          if (v > 10) v = 10;
+          this.value = v;
+          setVal(v);
+          updateSummary();
+        });
+      }
+
+      syncCustom();
     }
     if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
     else init();

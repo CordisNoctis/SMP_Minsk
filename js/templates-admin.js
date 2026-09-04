@@ -4,12 +4,6 @@
   var TMPL = window.SMP.templates;
   var editingId = null;
   var selectedColorId = "maroon";
-  var selectedEmoji = "🚑";
-
-  var SHIFT_EMOJIS = [
-    "☀️", "🌙", "🕐", "🚑", "💊", "🩺", "⏰", "🌅", "🌃", "📅",
-    "🏥", "💉", "🌡️", "❤️", "🟢", "🟡", "🔴", "📋", "🛏️", "🩹"
-  ];
 
   var formState = {
     startHour: 8,
@@ -74,14 +68,30 @@
     var eT = formState.endHour * 60 + formState.endMinute;
     formState.endsNextDay = (sT === eT) || (eT <= sT);
 
-    var hint = document.getElementById("tplTimeHint");
-    if (hint) {
-      if (formState.endsNextDay) {
-        hint.textContent = "Заканчивается завтра";
-        hint.classList.add("time-hint-nextday");
+    // Вычисляем длительность
+    var duration = 0;
+    if (formState.endsNextDay) {
+      duration = 1440 - sT + eT;
+    } else if (eT > sT) {
+      duration = eT - sT;
+    }
+
+    var heading = document.getElementById("tplTimeHeading");
+    if (heading) {
+      if (duration === 0) {
+        heading.textContent = "Время смены";
       } else {
-        hint.textContent = "Заканчивается сегодня";
-        hint.classList.remove("time-hint-nextday");
+        var h = Math.floor(duration / 60);
+        var m = duration % 60;
+        var durationText = "";
+        if (h > 0 && m > 0) {
+          durationText = h + " ч " + m + " мин";
+        } else if (h > 0) {
+          durationText = h + " ч";
+        } else {
+          durationText = m + " мин";
+        }
+        heading.textContent = "Время смены (длительность: " + durationText + ")";
       }
     }
   }
@@ -120,27 +130,6 @@
     });
   }
 
-  // ===== Выбор смайлика =====
-
-  function renderEmojiPicker() {
-    var container = document.getElementById("tplFormEmojis");
-    if (!container) return;
-    container.innerHTML = "";
-
-    SHIFT_EMOJIS.forEach(function (emoji) {
-      var btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = "template-emoji-btn" + (emoji === selectedEmoji ? " selected" : "");
-      btn.textContent = emoji;
-      btn.addEventListener("click", function () {
-        vibrate(8);
-        selectedEmoji = emoji;
-        renderEmojiPicker();
-      });
-      container.appendChild(btn);
-    });
-  }
-
   // ===== Список шаблонов =====
 
   function renderList() {
@@ -158,16 +147,11 @@
 
     templates.forEach(function (tpl) {
       var color = TMPL.getColor(tpl.colorId);
-      var emoji = tpl.emoji || "🚑";
 
       var row = document.createElement("div");
       row.className = "template-edit-row";
       row.style.background = color.bg;
       row.style.color = color.text;
-
-      var emojiEl = document.createElement("span");
-      emojiEl.className = "template-edit-emoji";
-      emojiEl.textContent = emoji;
 
       var info = document.createElement("div");
       info.className = "template-edit-info";
@@ -188,29 +172,26 @@
       var actions = document.createElement("div");
       actions.className = "template-edit-actions";
 
-      var editBtn = document.createElement("button");
-      editBtn.type = "button";
-      editBtn.className = "template-edit-btn";
-      editBtn.textContent = "✎";
-      editBtn.setAttribute("aria-label", "Редактировать");
-      editBtn.addEventListener("click", function () {
-        vibrate(10);
-        openForm(tpl);
-      });
-      actions.appendChild(editBtn);
-
+      // Кнопка удаления — в стиле кнопки закрытия модалок
       var delBtn = document.createElement("button");
       delBtn.type = "button";
-      delBtn.className = "template-edit-delete";
+      delBtn.className = "template-delete-btn";
       delBtn.textContent = "🗑";
       delBtn.setAttribute("aria-label", "Удалить");
-      delBtn.addEventListener("click", function () {
+      delBtn.addEventListener("click", function (e) {
+        e.stopPropagation(); // не открывать редактирование
         vibrate(15);
         deleteTemplate(tpl.id);
       });
       actions.appendChild(delBtn);
 
-      row.appendChild(emojiEl);
+      // Клик по строке — редактирование шаблона
+      row.style.cursor = "pointer";
+      row.addEventListener("click", function () {
+        vibrate(10);
+        openForm(tpl);
+      });
+
       row.appendChild(info);
       row.appendChild(actions);
       container.appendChild(row);
@@ -235,7 +216,6 @@
       formState.endMinute = tpl.endMinute;
       formState.endsNextDay = !!tpl.endsNextDay;
       selectedColorId = tpl.colorId;
-      selectedEmoji = tpl.emoji || "🚑";
     } else {
       nameInput.value = "";
       formState.startHour = 8;
@@ -244,12 +224,10 @@
       formState.endMinute = 0;
       formState.endsNextDay = false;
       selectedColorId = "maroon";
-      selectedEmoji = "🚑";
     }
 
     updateFormUI();
     renderColorsPicker();
-    renderEmojiPicker();
 
     var modal = document.getElementById("template-form-modal");
     if (modal) {
@@ -281,7 +259,6 @@
 
     var data = {
       name: name,
-      emoji: selectedEmoji,
       colorId: selectedColorId,
       startHour: formState.startHour,
       startMinute: formState.startMinute,
@@ -297,7 +274,6 @@
       for (var i = 0; i < templates.length; i++) {
         if (templates[i].id === editingId) {
           templates[i].name = data.name;
-          templates[i].emoji = data.emoji;
           templates[i].colorId = data.colorId;
           templates[i].startHour = data.startHour;
           templates[i].startMinute = data.startMinute;
@@ -332,6 +308,122 @@
     TMPL.save(newTemplates);
     renderList();
     showToast("🗑️ Шаблон удалён");
+  }
+
+  // ===== Прокрутка времени: колесико мыши и свайп =====
+
+  var tplLastTouchTime = 0;
+  var tplWheelMouseAttached = false;
+  var tplWheelSwipeAttached = false;
+
+  function attachTplWheelMouse() {
+    if (tplWheelMouseAttached) return;
+    tplWheelMouseAttached = true;
+
+    var wheels = document.querySelectorAll("#template-form-modal .wheel-triple");
+    wheels.forEach(function (wheel) {
+      var adjBtn = wheel.querySelector("[data-tplfield]");
+      if (!adjBtn) return;
+      var field = adjBtn.getAttribute("data-tplfield");
+      var mainEl = wheel.querySelector(".wheel-main");
+      if (!mainEl) return;
+
+      var lastChange = 0;
+
+      wheel.addEventListener("wheel", function (e) {
+        e.preventDefault();
+
+        // Игнорируем wheel сразу после свайпа (тачпад ноутбука)
+        if (Date.now() - tplLastTouchTime < 300) return;
+
+        var now = Date.now();
+        if (now - lastChange < 200) return;
+        lastChange = now;
+
+        var direction = e.deltaY < 0 ? "next" : "prev";
+
+        mainEl.classList.remove("wheel-anim-up", "wheel-anim-down");
+        void mainEl.offsetWidth;
+        var animClass = direction === "next" ? "wheel-anim-up" : "wheel-anim-down";
+        mainEl.classList.add(animClass);
+
+        setTimeout(function () { adjustTplField(field, direction); }, 100);
+        setTimeout(function () { mainEl.classList.remove(animClass); }, 260);
+      }, { passive: false });
+    });
+  }
+
+  function attachTplWheelSwipe() {
+    if (tplWheelSwipeAttached) return;
+    tplWheelSwipeAttached = true;
+
+    var STEP_PX = 40;
+    var wheels = document.querySelectorAll("#template-form-modal .wheel-triple");
+    wheels.forEach(function (wheel) {
+      var adjBtn = wheel.querySelector("[data-tplfield]");
+      if (!adjBtn) return;
+      var field = adjBtn.getAttribute("data-tplfield");
+      var mainEl = wheel.querySelector(".wheel-main");
+      if (!mainEl) return;
+
+      var lastY = 0;
+      var accum = 0;
+      var isDragging = false;
+
+      wheel.addEventListener("touchstart", function (e) {
+        if (e.touches.length !== 1) return;
+        lastY = e.touches[0].clientY;
+        accum = 0;
+        isDragging = true;
+        mainEl.style.transition = "";
+      }, { passive: true });
+
+      wheel.addEventListener("touchmove", function (e) {
+        if (!isDragging || e.touches.length !== 1) return;
+        e.preventDefault();
+
+        var currentY = e.touches[0].clientY;
+        var dy = currentY - lastY;
+        lastY = currentY;
+        accum += dy;
+
+        var visualOffset = accum;
+        if (visualOffset > STEP_PX) visualOffset = STEP_PX;
+        if (visualOffset < -STEP_PX) visualOffset = -STEP_PX;
+
+        mainEl.style.transform = "translateY(" + visualOffset + "px)";
+        mainEl.style.opacity = String(1 - Math.abs(visualOffset) / (STEP_PX * 2.5));
+
+        if (accum <= -STEP_PX) {
+          adjustTplField(field, "next");
+          accum = 0;
+          vibrate(5);
+        } else if (accum >= STEP_PX) {
+          adjustTplField(field, "prev");
+          accum = 0;
+          vibrate(5);
+        }
+      }, { passive: false });
+
+      wheel.addEventListener("touchend", function () {
+        if (!isDragging) return;
+        isDragging = false;
+        tplLastTouchTime = Date.now();
+
+        mainEl.style.transition = "transform 0.15s ease, opacity 0.15s ease";
+        mainEl.style.transform = "translateY(0)";
+        mainEl.style.opacity = "1";
+
+        setTimeout(function () { mainEl.style.transition = ""; }, 160);
+      }, { passive: true });
+
+      wheel.addEventListener("touchcancel", function () {
+        isDragging = false;
+        mainEl.style.transform = "";
+        mainEl.style.opacity = "";
+        mainEl.style.transition = "";
+      }, { passive: true });
+    });
   }
 
   // ===== Привязки =====
@@ -370,6 +462,8 @@
   function init() {
     renderList();
     bindUI();
+    attachTplWheelMouse();
+    attachTplWheelSwipe();
   }
 
   if (document.readyState === "loading") {

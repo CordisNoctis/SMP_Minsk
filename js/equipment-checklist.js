@@ -6,6 +6,37 @@
 
   var brigade = (window.EQUIPMENT_DATA && window.EQUIPMENT_DATA[brigadeId]) || null;
   var STORAGE_KEY = "smp-equipment-state-" + brigadeId + "-v1";
+    var CHOICE_KEY = "smp-equipment-choice-" + brigadeId + "-v1";
+  var expandedItems = {}; // какие пункты развёрнуты (по имени)
+  var choiceState = {};   // выбранные варианты (по имени → массив индексов)
+
+  function loadChoiceState() {
+    try {
+      var raw = localStorage.getItem(CHOICE_KEY);
+      return raw ? JSON.parse(raw) : {};
+    } catch (e) { return {}; }
+  }
+
+  function saveChoiceState() {
+    try {
+      localStorage.setItem(CHOICE_KEY, JSON.stringify(choiceState));
+    } catch (e) {}
+  }
+
+  // Получить выбранные индексы для пункта
+  function getSelectedIndexes(item) {
+    // Пункты, которые всегда показывают все формы (парацетамол)
+    if (item && item.alwaysShow && item.parts) {
+      return item.parts.map(function (_, i) { return i; });
+    }
+    var saved = choiceState[item.name];
+    // Если пользователь ещё не делал выбора — по умолчанию первый
+    if (!saved) return [0];
+    // Возвращаем выбор пользователя (включая пустой массив)
+    return saved;
+  }
+    // Доступ к данным форматирования пунктов
+  var ITEM_PARTS_INFO = (window.EQUIPMENT_DATA && window.EQUIPMENT_DATA.ITEM_PARTS) || {};
 
   var GROUP_ORDER = ["drugs", "devices", "other", "vehicle"];
   var GROUP_TITLES = {
@@ -75,44 +106,130 @@
     var nameEl = document.createElement("div");
     nameEl.className = "equipment-item-name";
     
-    // Если у пункта есть варианты (parts), отображаем их с разделителями
+    var expandBtn = null;
+    
+    // Если у пункта есть варианты (parts), отображаем сворачиваемый список
     if (item.parts && item.parts.length > 0) {
-      item.parts.forEach(function (part, partIndex) {
-        // Разделитель между вариантами (не перед первым)
-        if (partIndex > 0) {
-          var divider = document.createElement("div");
-          divider.className = "equipment-item-divider";
-          nameEl.appendChild(divider);
+      var isExpanded = !!expandedItems[item.name];
+      var selectedIdx = getSelectedIndexes(item);
+      
+      // Для alwaysShow (парацетамол) — всегда показываем все варианты
+      if (item.alwaysShow) {
+        isExpanded = true;
+      }
+      
+      // Определяем, какие варианты показывать
+      var visibleIdx = isExpanded 
+        ? item.parts.map(function (_, i) { return i; })  // все
+        : selectedIdx;                                    // только выбранные
+      
+      visibleIdx.forEach(function (partIndex, posInList) {
+        var part = item.parts[partIndex];
+        
+        // Перед вторым и последующими видимыми вариантами: строка "или" (скрыта, если hideOr)
+        if (posInList > 0 && !item.hideOr) {
+          var orRow = document.createElement("div");
+          orRow.className = "equipment-item-or-row";
           
-          var orLabel = document.createElement("div");
-          orLabel.className = "equipment-item-or";
-          orLabel.textContent = "или";
-          nameEl.appendChild(orLabel);
+          var orText = document.createElement("span");
+          orText.className = "equipment-item-or-text";
+          orText.textContent = "или";
+          orRow.appendChild(orText);
+          
+          var lineRight = document.createElement("span");
+          lineRight.className = "equipment-item-or-line";
+          orRow.appendChild(lineRight);
+          
+          nameEl.appendChild(orRow);
         }
         
-        // Название препарата/средства
+        // Контейнер варианта
+        var variantRow = document.createElement("div");
+        variantRow.className = "equipment-variant-row";
+        
+      // Чекбокс выбора варианта — только в развёрнутом виде
+      if (isExpanded && !item.alwaysShow) {
+          var checkbox = document.createElement("input");
+          checkbox.type = "checkbox";
+          checkbox.className = "equipment-variant-check";
+          checkbox.checked = selectedIdx.indexOf(partIndex) !== -1;
+          checkbox.setAttribute("data-variant-index", partIndex);
+          
+          // Используем change вместо click, чтобы не срабатывал обработчик клика по mainRow
+          checkbox.addEventListener("change", function (e) {
+            e.stopPropagation();
+            toggleVariantChoice(item, partIndex);
+          });
+          
+          // Останавливаем всплытие клика
+          checkbox.addEventListener("click", function (e) {
+            e.stopPropagation();
+          });
+          
+          variantRow.appendChild(checkbox);
+        }
+        
+        var variantLeft = document.createElement("div");
+        variantLeft.className = "equipment-variant-left";
+        
         var nameLine = document.createElement("div");
         nameLine.className = "equipment-item-name-main";
         nameLine.textContent = part.name;
-        nameEl.appendChild(nameLine);
+        variantLeft.appendChild(nameLine);
         
-        // Дозировка (меньшим шрифтом)
         if (part.details) {
           var detailsLine = document.createElement("div");
           detailsLine.className = "equipment-item-details";
           detailsLine.textContent = part.details;
-          nameEl.appendChild(detailsLine);
+          variantLeft.appendChild(detailsLine);
         }
         
-        // Количество для варианта (если задано)
-        if (part.qty) {
+        variantRow.appendChild(variantLeft);
+        
+        // Количество варианта (с поддержкой двух строк)
+        if (part.qty || part.qtyMain) {
           var partQty = document.createElement("div");
           partQty.className = "equipment-item-part-qty";
-          partQty.textContent = part.qty;
-          nameEl.appendChild(partQty);
+          
+          if (part.qtyMain) {
+            var qtyMainEl = document.createElement("div");
+            qtyMainEl.className = "equipment-qty-main";
+            qtyMainEl.textContent = part.qtyMain;
+            partQty.appendChild(qtyMainEl);
+            
+            if (part.qtyNote) {
+              var partNoteLines = Array.isArray(part.qtyNote) ? part.qtyNote : [part.qtyNote];
+              partNoteLines.forEach(function (noteLine) {
+                var qtyNoteEl = document.createElement("div");
+                qtyNoteEl.className = "equipment-qty-note";
+                qtyNoteEl.textContent = noteLine;
+                partQty.appendChild(qtyNoteEl);
+              });
+            }
+          } else {
+            partQty.textContent = part.qty;
+          }
+          
+          variantRow.appendChild(partQty);
         }
+        
+        nameEl.appendChild(variantRow);
       });
-    } else {
+      
+      // Кнопка разворачивания — только если форм больше одной и не alwaysShow
+      if (item.parts.length > 1 && !item.alwaysShow) {
+        expandBtn = document.createElement("button");
+        expandBtn.type = "button";
+        expandBtn.className = "equipment-expand-btn";
+        expandBtn.textContent = isExpanded ? "▲ Свернуть" : "▼ Показать все формы";
+        expandBtn.addEventListener("click", function (e) {
+          e.stopPropagation();
+          expandedItems[item.name] = !expandedItems[item.name];
+          render();
+        });
+      }
+    }
+    else {
       // Простой пункт: разделяем по первой цифре
       var parts = splitItemName(item.name);
       
@@ -129,12 +246,52 @@
       }
     }
 
-    var qtyEl = document.createElement("div");
-    qtyEl.className = "equipment-item-qty";
-    qtyEl.textContent = item.qty || "";
+    // Проверяем, есть ли у вариантов собственные количества (qty или qtyMain)
+    var hasVariantQty = item.parts && item.parts.some(function (p) { return p.qty || p.qtyMain; });
+    
+    // Создаём элемент количества только если нет вариантов с собственными количествами
+    var qtyEl = null;
+    if (!hasVariantQty) {
+      qtyEl = document.createElement("div");
+      qtyEl.className = "equipment-item-qty";
+      
+      var qtyInfo = (item.qtyMain || item.qtyNote || item.qtyLines) ? {
+        qtyMain: item.qtyMain,
+        qtyNote: item.qtyNote,
+        qtyLines: item.qtyLines
+      } : null;
+      
+      // Если заданы строки количества одинаковым шрифтом (например, "1 детский" / "1 взрослый")
+      if (qtyInfo && qtyInfo.qtyLines && qtyInfo.qtyLines.length > 0) {
+        qtyInfo.qtyLines.forEach(function (line) {
+          var lineEl = document.createElement("div");
+          lineEl.className = "equipment-qty-line";
+          lineEl.textContent = line;
+          qtyEl.appendChild(lineEl);
+        });
+      }
+      // Если заданы основное количество + примечание (примечание меньшим шрифтом)
+      else if (qtyInfo && qtyInfo.qtyMain) {
+        var qtyMainEl = document.createElement("div");
+        qtyMainEl.className = "equipment-qty-main";
+        qtyMainEl.textContent = qtyInfo.qtyMain;
+        qtyEl.appendChild(qtyMainEl);
+        
+        if (qtyInfo.qtyNote) {
+          var noteLines = Array.isArray(qtyInfo.qtyNote) ? qtyInfo.qtyNote : [qtyInfo.qtyNote];
+          noteLines.forEach(function (noteLine) {
+            var qtyNoteEl = document.createElement("div");
+            qtyNoteEl.className = "equipment-qty-note";
+            qtyNoteEl.textContent = noteLine;
+            qtyEl.appendChild(qtyNoteEl);
+          });
+        }
+      } else {
+        qtyEl.textContent = item.qty || "";
+      }
+    }
 
     mainRow.appendChild(nameEl);
-    mainRow.appendChild(qtyEl);
 
     mainRow.addEventListener("click", function () {
       var st = loadState();
@@ -146,37 +303,114 @@
       render();
     });
 
+    // Количество внутрь mainRow (справа), чтобы правый край совпадал
+    if (qtyEl) {
+      mainRow.appendChild(qtyEl);
+    }
+    
+    // Добавляем основную строку
     card.appendChild(mainRow);
+    
+    // Добавляем кнопку разворачивания (если есть)
+    if (expandBtn) {
+      card.appendChild(expandBtn);
+    }
 
     if (itemState.status === 2) {
-      var refillRow = document.createElement("div");
-      refillRow.className = "equipment-refill-row";
+      var selectedIdx = getSelectedIndexes(item);
+      var hasVariants = item.parts && item.parts.length > 1 && selectedIdx.length > 0;
+      
+      if (hasVariants) {
+        // Для каждого выбранного варианта — своя строка "Пополнить"
+        var refillMap = itemState.refillQtyMap || {};
+        
+        selectedIdx.forEach(function (variantIndex) {
+          var part = item.parts[variantIndex];
+          
+          var refillRow = document.createElement("div");
+          refillRow.className = "equipment-refill-row";
+          
+          var label = document.createElement("span");
+          label.className = "equipment-refill-label";
+          label.textContent = "Пополнить: " + part.name + (part.details ? " " + part.details : "");
+          
+          var input = document.createElement("input");
+          input.type = "text";
+          input.className = "equipment-refill-input";
+          input.placeholder = "Кол-во";
+          input.value = refillMap[variantIndex] || "";
+          input.inputMode = "numeric";
+          
+          input.addEventListener("click", function (e) { e.stopPropagation(); });
+          input.addEventListener("input", function () {
+            var st = loadState();
+            if (!st[item.name]) st[item.name] = { status: 2, refillQtyMap: {} };
+            if (!st[item.name].refillQtyMap) st[item.name].refillQtyMap = {};
+            st[item.name].refillQtyMap[variantIndex] = input.value;
+            saveState(st);
+          });
+          
+          refillRow.appendChild(label);
+          refillRow.appendChild(input);
+          card.appendChild(refillRow);
+        });
+      } else {
+        // Обычная одна строка "Пополнить"
+        var refillRow = document.createElement("div");
+        refillRow.className = "equipment-refill-row";
 
-      var label = document.createElement("span");
-      label.className = "equipment-refill-label";
-      label.textContent = "Пополнить:";
+        var label = document.createElement("span");
+        label.className = "equipment-refill-label";
+        label.textContent = "Пополнить:";
 
-      var input = document.createElement("input");
-      input.type = "text";
-      input.className = "equipment-refill-input";
-      input.placeholder = "Кол-во";
-      input.value = itemState.refillQty || "";
-      input.inputMode = "numeric";
+        var input = document.createElement("input");
+        input.type = "text";
+        input.className = "equipment-refill-input";
+        input.placeholder = "Кол-во";
+        input.value = itemState.refillQty || "";
+        input.inputMode = "numeric";
 
-      input.addEventListener("click", function (e) { e.stopPropagation(); });
-      input.addEventListener("input", function () {
-        var st = loadState();
-        if (!st[item.name]) st[item.name] = { status: 2, refillQty: "" };
-        st[item.name].refillQty = input.value;
-        saveState(st);
-      });
+        input.addEventListener("click", function (e) { e.stopPropagation(); });
+        input.addEventListener("input", function () {
+          var st = loadState();
+          if (!st[item.name]) st[item.name] = { status: 2, refillQty: "" };
+          st[item.name].refillQty = input.value;
+          saveState(st);
+        });
 
-      refillRow.appendChild(label);
-      refillRow.appendChild(input);
-      card.appendChild(refillRow);
+        refillRow.appendChild(label);
+        refillRow.appendChild(input);
+        card.appendChild(refillRow);
+      }
     }
 
     listEl.appendChild(card);
+  }
+
+  function toggleVariantChoice(item, partIndex) {
+    var saved = choiceState[item.name];
+    var newSelection;
+    
+    if (!saved) {
+      // Первый клик пользователя — выбираем только этот вариант
+      newSelection = [partIndex];
+    } else {
+      // Переключаем (добавляем/снимаем), даже если это последний
+      newSelection = saved.slice();
+      var idx = newSelection.indexOf(partIndex);
+      
+      if (idx !== -1) {
+        newSelection.splice(idx, 1); // Снимаем (разрешаем пустой выбор)
+      } else {
+        newSelection.push(partIndex);
+      }
+      
+      newSelection.sort(function (a, b) { return a - b; });
+    }
+    
+    choiceState[item.name] = newSelection;
+    saveChoiceState();
+    render();
   }
 
   function render() {
@@ -268,11 +502,26 @@
     brigade.items.forEach(function (item) {
       var itemState = state[item.name];
       if (itemState && itemState.status === 2) {
-        refillItems.push({
-          name: item.name,
-          norm: item.qty || "",
-          refill: itemState.refillQty || ""
-        });
+        var selectedIdx = getSelectedIndexes(item);
+        var hasVariants = item.parts && item.parts.length > 1 && itemState.refillQtyMap;
+        
+        if (hasVariants) {
+          // Для пунктов с вариантами: каждая выбранная форма отдельно
+          selectedIdx.forEach(function (variantIndex) {
+            var part = item.parts[variantIndex];
+            refillItems.push({
+              name: part.name + (part.details ? " " + part.details : ""),
+              norm: part.qty || part.qtyMain || item.qty || "",
+              refill: (itemState.refillQtyMap && itemState.refillQtyMap[variantIndex]) || ""
+            });
+          });
+        } else {
+          refillItems.push({
+            name: item.name,
+            norm: item.qty || "",
+            refill: itemState.refillQty || ""
+          });
+        }
       }
     });
 
@@ -367,6 +616,7 @@
   }
 
   function init() {
+    choiceState = loadChoiceState();
     render();
     bindUI();
   }

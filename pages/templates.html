@@ -9,6 +9,7 @@
   <script src="../js/theme-init.js"></script>
   <script src="../js/templates.js"></script>
   <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/schedule.css">
 
   <link rel="icon" href="../icons/favicon.ico" sizes="any">
   <link rel="icon" type="image/png" sizes="32x32" href="../icons/favicon-32.png">
@@ -63,21 +64,14 @@
 
       <div class="modal-body">
 
-        <!-- Название -->
-        <label class="template-field">
-          <span>Название шаблона</span>
-          <input type="text" id="tplFormName" class="template-name-input" maxlength="30" placeholder="Например: День">
-        </label>
-
-        <!-- Смайлик -->
-        <div class="template-field">
-          <span>Смайлик смены</span>
-          <div class="template-emojis" id="tplFormEmojis"></div>
+        <!-- Название шаблона -->
+        <div class="schedule-section">
+          <input type="text" id="tplFormName" class="event-name-input" maxlength="30" placeholder="Название шаблона">
         </div>
 
-        <!-- Время смены (барабаны) -->
+        <!-- Время смены (барабаны — как в графике смен) -->
         <div class="schedule-section">
-          <p class="edit-time-heading">Время смены</p>
+          <p class="edit-time-heading" id="tplTimeHeading">Время смены</p>
 
           <div class="edit-time-row">
             <div class="edit-time-block edit-time-card">
@@ -114,19 +108,17 @@
               </div>
             </div>
           </div>
-
-          <p class="time-hint" id="tplTimeHint">Заканчивается сегодня</p>
         </div>
 
-        <!-- Цвет -->
-        <div class="template-field">
-          <span>Цвет шаблона</span>
-          <div class="template-colors" id="tplFormColors"></div>
+        <!-- Цвет шаблона (палитра как в графике смен) -->
+        <div class="schedule-section event-color-section">
+          <div class="schedule-section-title">Цвет шаблона</div>
+          <div class="event-colors" id="tplFormColors"></div>
         </div>
 
       </div>
 
-      <footer class="modal-footer schedule-modal-footer">
+      <footer class="modal-footer template-modal-footer">
         <button type="button" class="btn-secondary" data-modal-close>Отмена</button>
         <button type="button" class="btn-primary" id="tplFormSaveBtn">Сохранить</button>
       </footer>

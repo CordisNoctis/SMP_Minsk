@@ -17,6 +17,7 @@
   <script src="js/version.js"></script>
 
   <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/changelog.css">
 
   <!-- Фавиконки вкладки -->
   <link rel="icon" href="icons/favicon.ico" sizes="any">
@@ -42,7 +43,8 @@
         <p id="greeting" class="greeting">Загрузка...</p>
         <p id="currentDate" class="date">Дата загружается...</p>
       </div>
-      <span id="appVersion" class="app-version">—</span>
+      <button type="button" class="header-alert-btn" data-modal-open="about-modal" aria-label="Важная информация о приложении">!</button>
+      <span id="appVersion" class="app-version" hidden>—</span>
     </div>
   </header>
 
@@ -87,15 +89,66 @@
   </main>
 
   <footer class="app-footer">
-    <p class="footer-note">
-      Внимание: это неофициальное вспомогательное приложение для сотрудников СМП г. Минска.
-      Размещенная информация носит справочный характер и не заменяет действующие
-      нормативные документы или клинические протоколы.
-    </p>
+    <button type="button" class="footer-bar" data-modal-open="changelog-modal" aria-label="История обновлений">
+      <span class="footer-bar-icon" aria-hidden="true">🔄</span>
+      <span class="footer-bar-title">История обновлений</span>
+      <span class="footer-bar-right">Версия: <span id="footerVersion">—</span></span>
+    </button>
   </footer>
 
+    <!-- ===== МОДАЛКА ИСТОРИИ ОБНОВЛЕНИЙ ===== -->
+  <div class="modal" id="changelog-modal" hidden aria-hidden="true">
+    <div class="modal-backdrop" data-modal-close></div>
+    <section class="modal-panel" role="dialog" aria-modal="true">
+      <header class="modal-header">
+        <h2>🔄 История обновлений</h2>
+        <button type="button" class="modal-close" data-modal-close aria-label="Закрыть">×</button>
+      </header>
+      <div class="modal-body">
+        <div id="changelogContent"></div>
+      </div>
+      <footer class="modal-footer update-notice-footer">
+        <button type="button" class="btn-primary" data-modal-close>Закрыть</button>
+      </footer>
+    </section>
+  </div>
+
+    <!-- ===== МОДАЛКА «О ПРИЛОЖЕНИИ» ===== -->
+  <div class="modal" id="about-modal" hidden aria-hidden="true">
+    <div class="modal-backdrop" data-modal-close></div>
+    <section class="modal-panel" role="dialog" aria-modal="true">
+      <header class="modal-header">
+        <h2>О приложении</h2>
+        <button type="button" class="modal-close" data-modal-close aria-label="Закрыть">×</button>
+      </header>
+      <div class="modal-body about-modal-body">
+        <p>Приложение является неофициальным инструментом и создано для удобства медицинских работников сотрудников СМП г. Минска.</p>
+        <p>В первую очередь следует руководствоваться официальными приказами, постановлениями и клиническими протоколами Министерства здравоохранения Республики Беларусь. Данные в приложении носят справочный характер. Разработчик не несёт ответственности за возможные последствия использования информации из приложения в клинической практике.</p>
+
+        <h3 class="about-subtitle">Обратная связь</h3>
+        <p>Заметили ошибку? Хотите предложить улучшение или новый раздел? Пишите, не стесняйтесь:</p>
+        <div class="about-contacts">
+          <a class="about-contact-link" href="https://t.me/telega" target="_blank" rel="noopener">
+            <span class="about-contact-label">Телеграм</span>
+            <span class="about-contact-value">@telega</span>
+          </a>
+        </div>
+
+        <h3 class="about-subtitle">Поддержать проект</h3>
+        <p>Если приложение полезно — Вы можете поддержать его развитие:</p>
+        <a class="about-support-btn" href="#" target="_blank" rel="noopener">Поддержать проект</a>
+      </div>
+      <footer class="modal-footer update-notice-footer">
+        <button type="button" class="btn-primary" data-modal-close>Закрыть</button>
+      </footer>
+    </section>
+  </div>
+
   <script src="js/theme.js"></script>
+  <script src="js/modal.js"></script>
   <script src="js/app.js"></script>
+  <script src="js/changelog.js"></script>
+  <script src="js/update-notice.js"></script>
   <script src="js/sw-register.js"></script>
 </body>
 </html>

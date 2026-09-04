@@ -76,13 +76,20 @@
   gap: 8px;
 }
 
+/* Заголовок группы — более отчётливый */
 .equipment-group-title {
-  margin: 18px 0 8px;
-  padding-bottom: 6px;
-  border-bottom: 2px solid var(--accent);
-  font-size: 0.98rem;
+  margin: 18px 0 10px;
+  padding: 8px 12px;
+
+  font-size: 1.05rem;
   font-weight: 800;
-  color: var(--accent);
+  letter-spacing: 0.01em;
+
+  color: var(--text);
+
+  background: var(--menu-icon-bg);
+  border-left: 4px solid var(--accent);
+  border-radius: 8px;
 }
 
 .equipment-group-title:first-child {
@@ -110,6 +117,10 @@
   flex: 1;
   min-width: 0;
 
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+
   font-weight: 400;
   line-height: 1.4;
 
@@ -119,32 +130,11 @@
   word-wrap: break-word;
 }
 
-.equipment-item-qty {
-  flex: 0 0 auto;
-
-  padding: 6px 14px;
-
-  border: 1px solid var(--border);
-  border-radius: 8px;
-
-  background: var(--input-bg);
-  color: var(--text);
-
-  font-weight: 700;
-  font-size: 0.88rem;
-  line-height: 1.4;
-  text-align: center;
-
-  /* Перенос слов (если количество многословное) */
-  white-space: normal;
-  overflow-wrap: break-word;
-  word-wrap: break-word;
-
-  max-width: 55%;
-}
-
-/* Базовая карточка оснащения */
+/* Базовая карточка оснащения — одна колонка */
 .equipment-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: 12px;
@@ -152,13 +142,32 @@
   transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
+/* Основная строка: название слева + количество справа */
 .equipment-item-main {
+  grid-column: 1;
+  grid-row: 1;
+
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 10px;
+
   padding: 14px;
   cursor: pointer;
+}
+
+/* Кнопка — на всю ширину карточки, во втором ряду */
+.equipment-item > .equipment-expand-btn {
+  grid-column: 1;
+  grid-row: 2;
+  display: block;
+  width: auto;
+  margin: 0 14px 14px !important;
+}
+
+/* Строка "Пополнить" — на всю ширину */
+.equipment-item > .equipment-refill-row {
+  grid-column: 1;
 }
 
 /* Состояние: проверено (зелёный) */
@@ -690,23 +699,6 @@
   white-space: nowrap;
 }
 
-/* ===== Обводка количества ===== */
-
-.used-record-item-qty {
-  flex: 0 0 auto;
-
-  padding: 4px 12px;
-
-  border: 1px solid var(--border);
-  border-radius: 8px;
-
-  background: var(--input-bg);
-  color: var(--text);
-
-  font-weight: 700;
-  font-size: 0.88rem;
-}
-
 /* ===== Список сохранённых смен ===== */
 
 .saved-shifts-list {
@@ -1087,11 +1079,12 @@
     font-size: 0.88rem;
   }
 
-  .equipment-item-qty {
+  /* Количество в карточке оснащения — Grid-позиционирование сохраняется */
+  .equipment-item > .equipment-item-qty {
     padding: 4px 10px;
     font-size: 0.82rem;
     border-radius: 6px;
-    max-width: 50%;
+    margin-right: 10px;
   }
 
   .equipment-refill-row {
@@ -1273,34 +1266,6 @@
   }
 }
 
-/* Очень маленькие экраны */
-@media (max-width: 380px) {
-
-  .checklist-page {
-    padding-left: 4px;
-    padding-right: 4px;
-  }
-
-  .checklist-page .card {
-    padding: 10px 6px;
-    border-radius: 10px;
-  }
-
-  .checklist-page .settings-action {
-    padding: 10px 8px;
-  }
-
-  .checklist-page .settings-action-title {
-    font-size: 0.9rem;
-  }
-
-  .checklist-page .menu-icon {
-    width: 36px;
-    height: 36px;
-    font-size: 1.1rem;
-  }
-}
-
 /* =========================================
    ПЕРЕЧЕНЬ СРЕДСТВ ДО КРАЁВ ЭКРАНА
    (использованные средства, малые экраны)
@@ -1411,9 +1376,8 @@
   /* Заголовки групп с отступом слева */
   main.equipment-page .equipment-group-title {
     margin: 12px 12px 8px !important;
-    padding-bottom: 4px !important;
+    padding: 6px 10px !important;
     font-size: 0.95rem !important;
-    border-bottom: 2px solid var(--accent) !important;
   }
 
   /* Подзаголовки лекарственных форм */
@@ -1478,13 +1442,6 @@
    СТРУКТУРИРОВАННЫЕ НАЗВАНИЯ ПУНКТОВ ТАБЕЛЯ
    ========================================= */
 
-/* Контейнер названия с частями */
-.equipment-item-name {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-
 /* Название препарата (первая строка) */
 .equipment-item-name-main {
   font-weight: 600;
@@ -1537,38 +1494,59 @@
    ВАРИАНТЫ ПУНКТОВ С РАЗДЕЛИТЕЛЯМИ
    ========================================= */
 
-/* Разделитель между вариантами (центрированный, ~60% ширины) */
-.equipment-item-divider {
-  width: 60%;
-  margin: 8px auto;
-  border-top: 1px solid var(--border);
+/* Строка "или ——" между вариантами, по левому краю, компактные отступы */
+.equipment-item-or-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 4px 0;
+  justify-content: flex-start;
 }
 
-/* Слово "или" между вариантами */
-.equipment-item-or {
+/* Линии слева и справа от "или" — жирнее */
+.equipment-item-or-line {
+  flex: 1;
+  height: 2px;
+  background: var(--border-accent, var(--border));
+}
+
+/* Слово "или" по центру */
+.equipment-item-or-text {
   font-style: italic;
   font-size: 0.78rem;
   color: var(--accent);
-  text-align: center;
-  margin-bottom: 6px;
   opacity: 0.85;
+  letter-spacing: 0.02em;
+  flex: 0 0 auto;
 }
 
-/* Количество для варианта (справа) */
+/* Количество для варианта (справа напротив названия, в обводке) */
 .equipment-item-part-qty {
-  font-size: 0.78rem;
-  color: var(--muted);
-  text-align: right;
-  margin-top: 2px;
+  flex: 0 0 auto;
+
+  padding: 4px 12px;
+
+  border: 1px solid var(--border);
+  border-radius: 8px;
+
+  background: var(--input-bg);
+  color: var(--text);
+
+  font-weight: 700;
+  font-size: 0.82rem;
+  text-align: center;
+  white-space: nowrap;
 }
 
 /* =========================================
    ВЫПАДАЮЩИЙ СПИСОК СРЕДСТВ: ДВЕ СТРОКИ
    ========================================= */
 
+/* Двухстрочное отображение пунктов в выпадающем списке */
 .md3-dropdown-item {
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
   gap: 2px;
 }
 
@@ -1582,4 +1560,161 @@
   font-size: 0.78rem;
   color: var(--muted);
   line-height: 1.25;
+}
+
+/* =========================================
+   КОЛИЧЕСТВО: ЕДИНЫЙ СТИЛЬ (С ОБВОДКОЙ)
+   ========================================= */
+
+/* Контейнер количества — всегда с обводкой */
+.equipment-item-qty {
+  flex: 0 0 auto;
+
+  padding: 4px 12px;
+
+  border: 1px solid var(--border);
+  border-radius: 8px;
+
+  background: var(--input-bg);
+  color: var(--text);
+
+  font-weight: 700;
+  font-size: 0.82rem;
+  text-align: center;
+  white-space: nowrap;
+
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Если количество однострочное — центрируем */
+.equipment-item-qty:not(:has(.equipment-qty-note)) {
+  white-space: nowrap;
+}
+
+/* Основная строка количества */
+.equipment-qty-main {
+  font-weight: 700;
+  font-size: 0.82rem;
+  white-space: nowrap;
+  line-height: 1.2;
+}
+
+/* Примечание к количеству (вторая строка, меньшим шрифтом, без переносов) */
+.equipment-qty-note {
+  font-size: 0.68rem;
+  color: var(--muted);
+  font-weight: 400;
+  line-height: 1.2;
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* Строки количества одинаковым шрифтом (например, "1 детский" / "1 взрослый") */
+.equipment-qty-line {
+  font-weight: 700;
+  font-size: 0.82rem;
+  line-height: 1.25;
+  white-space: nowrap;
+}
+
+/* =========================================
+   КОНТЕЙНЕР ВАРИАНТА: КОЛИЧЕСТВО ПО ЦЕНТРУ
+   ========================================= */
+
+/* Контейнер варианта: левая часть + количество справа по центру */
+.equipment-variant-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+/* Левая часть варианта: название + дозировка */
+.equipment-variant-left {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* =========================================
+   СВОРАЧИВАНИЕ ВАРИАНТОВ
+   ========================================= */
+
+/* Кнопка разворачивания/сворачивания — акцентный стиль */
+.equipment-expand-btn {
+  padding: 8px 14px;
+
+  border: 0;
+  border-radius: 10px;
+
+  background: var(--accent);
+  color: #ffffff;
+
+  font-size: 0.82rem;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition: filter 0.15s ease, transform 0.12s ease;
+}
+
+.equipment-expand-btn:hover {
+  filter: brightness(1.08);
+}
+
+.equipment-expand-btn:active {
+  transform: scale(0.97);
+}
+
+/* Чекбокс выбора варианта в развёрнутом виде */
+.equipment-variant-check {
+  flex: 0 0 auto;
+  width: 20px;
+  height: 20px;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+/* =========================================
+   ПУСТЫЕ СОСТОЯНИЯ: КОМПАКТНО
+   ========================================= */
+
+#usedRecordsEmpty,
+#equipmentEmpty {
+  padding: 12px 14px;
+  margin: 4px 0;
+
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+/* ===== Кнопки в футере модального окна: по краям, одинаковый размер ===== */
+.modal-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 20px;
+}
+
+.modal-footer .btn-primary,
+.modal-footer .btn-secondary,
+.modal-footer .btn-danger-ghost {
+  flex: 1;
+  max-width: calc(50% - 6px);
+}
+
+/* Адаптивность для очень маленьких экранов */
+@media (max-width: 380px) {
+  .modal-footer {
+    padding: 12px 16px;
+    gap: 8px;
+  }
 }

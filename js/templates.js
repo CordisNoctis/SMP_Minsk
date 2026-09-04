@@ -23,29 +23,16 @@
   ];
 
 var DEFAULT_TEMPLATES = [
-  { id: "day",   name: "День",  emoji: "☀️", colorId: "maroon", startHour: 8,  startMinute: 0, endHour: 20, endMinute: 0, endsNextDay: false, builtin: true },
-  { id: "night", name: "Ночь",  emoji: "🌙", colorId: "blue",   startHour: 20, startMinute: 0, endHour: 8,  endMinute: 0, endsNextDay: true,  builtin: true },
-  { id: "daily", name: "Сутки", emoji: "🕐", colorId: "green",  startHour: 8,  startMinute: 0, endHour: 8,  endMinute: 0, endsNextDay: true,  builtin: true }
+  { id: "day",   name: "День",  colorId: "maroon", startHour: 8,  startMinute: 0, endHour: 20, endMinute: 0, endsNextDay: false, builtin: true },
+  { id: "night", name: "Ночь",  colorId: "blue",   startHour: 20, startMinute: 0, endHour: 8,  endMinute: 0, endsNextDay: true,  builtin: true },
+  { id: "daily", name: "Сутки", colorId: "green",  startHour: 8,  startMinute: 0, endHour: 8,  endMinute: 0, endsNextDay: true,  builtin: true }
 ];
 
 function load() {
   try {
     var raw = localStorage.getItem(TEMPLATES_KEY);
     if (!raw) return DEFAULT_TEMPLATES.slice();
-    
-    var parsed = JSON.parse(raw);
-    
-    // Миграция: добавляем поле emoji для существующих шаблонов
-    parsed.forEach(function(tpl) {
-      if (!tpl.emoji) {
-        if (tpl.id === 'day') tpl.emoji = '☀️';
-        else if (tpl.id === 'night') tpl.emoji = '🌙';
-        else if (tpl.id === 'daily') tpl.emoji = '🕐';
-        else tpl.emoji = '🚑';
-      }
-    });
-    
-    return parsed;
+    return JSON.parse(raw);
   } catch (e) {
     return DEFAULT_TEMPLATES.slice();
   }

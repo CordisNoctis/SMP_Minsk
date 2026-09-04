@@ -66,6 +66,9 @@
           </svg>
           <span>Добавить смены</span>
         </button>
+        <button type="button" class="action-btn action-btn-vacation" data-quick-type="vacation">🏖️ Отпуск</button>
+        <button type="button" class="action-btn action-btn-sick" data-quick-type="sick">📄 Листок нетрудоспособности</button>
+        <button type="button" class="action-btn action-btn-courses" data-quick-type="courses">🎓 Курсы</button>
         <button type="button" class="action-btn action-btn-secondary" id="exportBtn">📥 График в изображение (png)</button>
       </div>
     </section>
@@ -127,7 +130,7 @@
             </svg>
           </button>
           <h2 id="dayEditTitle">Новая смена</h2>
-          <span class="header-spacer" aria-hidden="true"></span>
+          <button type="button" class="modal-close" data-modal-close aria-label="Закрыть">×</button>
         </header>
 
         <div class="modal-body">
@@ -152,14 +155,11 @@
           <div class="schedule-section event-color-section">
             <div class="schedule-section-title">Цвет события</div>
             <div class="event-colors" id="eventColorPicker"></div>
-            <button type="button" class="schedule-toggle-btn event-color-reset" id="resetEventColorBtn">
-              Сбросить на цвет по умолчанию
-            </button>
           </div>
 
           <!-- Время смены -->
           <div class="schedule-section">
-            <p class="edit-time-heading">Время смены</p>
+            <p class="edit-time-heading" id="editTimeHeading">Время смены</p>
 
             <div class="edit-time-row">
               <div class="edit-time-block edit-time-card">
@@ -196,9 +196,6 @@
                 </div>
               </div>
             </div>
-
-            <p class="time-hint" id="timeHint">Заканчивается сегодня</p>
-            <p class="schedule-shift-summary" id="shiftSummary">—</p>
           </div>
 
           <!-- Переработка -->
@@ -219,28 +216,6 @@
               </div>
             </div>
             <button type="button" class="btn-danger-ghost overtime-remove-btn" id="removeOvertimeBtn" hidden>Удалить переработку</button>
-          </div>
-
-          <!-- Другие события -->
-          <div class="schedule-section" id="otherEventsSection">
-            <button type="button" class="other-events-btn" id="otherEventsBtn">
-              <span>Другие события</span>
-              <span class="other-events-arrow" aria-hidden="true">›</span>
-            </button>
-            <div class="other-events-panel" id="otherEventsPanel" hidden>
-              <button type="button" class="schedule-type-btn schedule-type-vacation" data-quick-type="vacation">Отпуск</button>
-              <button type="button" class="schedule-type-btn schedule-type-sick" data-quick-type="sick">Листок нетрудоспособности</button>
-              <button type="button" class="schedule-type-btn schedule-type-courses" data-quick-type="courses">Курсы</button>
-
-              <!-- Цвет для других событий -->
-              <div class="schedule-section other-event-color-section">
-                <div class="schedule-section-title">Цвет события</div>
-                <div class="event-colors" id="otherEventColorPicker"></div>
-                <button type="button" class="schedule-toggle-btn event-color-reset" id="resetOtherEventColorBtn">
-                  Сбросить на цвет по умолчанию
-                </button>
-              </div>
-            </div>
           </div>
         </div>
 
@@ -289,9 +264,6 @@
         <div class="schedule-section event-color-section" id="bulkColorSection">
           <div class="schedule-section-title">Цвет события</div>
           <div class="event-colors" id="bulkEventColorPicker"></div>
-          <button type="button" class="schedule-toggle-btn event-color-reset" id="resetBulkEventColorBtn">
-            Сбросить на цвет по умолчанию
-          </button>
         </div>
 
         <div class="bulk-calendar-wrap">

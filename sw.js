@@ -1,4 +1,4 @@
-const VERSION = "1.33.0";
+const VERSION = "1.11.3";
 const CACHE_NAME = `smp-pwa-${VERSION}`;
 
 const APP_SHELL = [
@@ -34,15 +34,22 @@ const APP_SHELL = [
   "./pages/templates.html",
   "./pages/shift-checklist.html",
   "./pages/equipment-checklist.html",
-  "./pages/used-items.html"
+  "./pages/used-items.html",
+  "./css/medical-picker.css",
+  "./js/medical-picker.js",
+  "./js/medical-items.js",
+  "./js/medical-tables.js",
+  "./js/changelog.js",
+  "./js/update-notice.js",
+  "./css/changelog.css",
 ];
 
 const OPTIONAL_ASSETS = [
   "./icons/apple-touch-icon.png",
   "./icons/favicon.svg",
+  "./icons/favicon.ico",
   "./icons/favicon-16.png",
   "./icons/favicon-32.png",
-  "./icons/favicon.ico",
   "./icons/icon-192.png",
   "./icons/icon-512.png",
   "./icons/icon-maskable-192.png",
@@ -85,6 +92,13 @@ self.addEventListener("activate", (event) => {
   );
 });
 
+// Приём команды "обновить все клиенты" от страницы
+self.addEventListener("message", (event) => {
+  if (event.data === "SKIP_WAITING") {
+    self.skipWaiting();
+  }
+});
+
 self.addEventListener("fetch", (event) => {
   const request = event.request;
 
@@ -125,16 +139,19 @@ self.addEventListener("fetch", (event) => {
 
   if (request.mode === "navigate") {
     event.respondWith(
-      caches.match(request)
-        .then((cached) => {
-          if (cached) {
-            return cached;
+      fetch(request)
+        .then((response) => {
+          if (response.ok) {
+            const copy = response.clone();
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(request, copy);
+            });
           }
-
-          return fetch(request).catch(() => {
-            return caches.match("./index.html");
-          });
+          return response;
         })
+        .catch(() => caches.match(request).then((cached) => {
+          return cached || caches.match("./index.html");
+        }))
     );
     return;
   }

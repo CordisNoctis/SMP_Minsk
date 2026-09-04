@@ -180,7 +180,7 @@
 
   // ===== Форма записи =====
 
-  function addItemRow(name, qty, shouldFocus) {
+  function addItemRow(name, qty, shouldFocus, openPicker) {
     var container = document.getElementById("recItemsRows");
     if (!container) return;
 
@@ -216,140 +216,44 @@
     autocomplete.appendChild(field);
     autocomplete.appendChild(dropdown);
 
-    var scrollParent = input.closest(".modal-body") || window;
+    // ===== МОДАЛЬНОЕ ОКНО ВЫБОРА СРЕДСТВА (все устройства) =====
+    input.readOnly = true;
+    input.style.cursor = "pointer";
 
-    function positionDropdown() {
-      var rect = input.getBoundingClientRect();
-      dropdown.style.top = (rect.bottom + 4) + "px";
-      dropdown.style.left = rect.left + "px";
-      dropdown.style.width = rect.width + "px";
-    }
+    function openPickerForRow() {
+      window.MedicalPicker.open({ catalog: window.MEDICAL_CATALOG || [] })
+        .then(function (result) {
+          if (!result) return;
 
-    function onScroll() {
-      if (!dropdown.hidden) positionDropdown();
-    }
+          var selectedName = result.name;
 
-    function closeDropdown() {
-      dropdown.hidden = true;
-      autocomplete.classList.remove("open");
-      if (scrollParent) scrollParent.removeEventListener("scroll", onScroll);
-    }
-
-      function renderDropdown(filter) {
-      dropdown.innerHTML = "";
-      var catalog = window.MEDICAL_CATALOG || [];
-      var q = (filter || "").toLowerCase().trim();
-      var matches = [];
-      var seen = {};
-
-      for (var i = 0; i < catalog.length; i++) {
-        var name = catalog[i].name;
-        var normKey = name.toLowerCase().trim();
-
-        // Пропускаем дубликаты
-        if (seen[normKey]) continue;
-
-        if (!q || normKey.indexOf(q) !== -1) {
-          seen[normKey] = true;
-          matches.push(catalog[i]);
-        }
-        if (matches.length >= 30) break;
-      }
-
-      if (matches.length === 0) {
-        closeDropdown();
-        return;
-      }
-
-      matches.forEach(function (item) {
-        var opt = document.createElement("div");
-        opt.className = "md3-dropdown-item";
-        
-        // Разделяем название на препарат и дозировку
-        var nameParts = splitItemNameForDropdown(item.name);
-        
-        var optName = document.createElement("div");
-        optName.className = "dropdown-item-name";
-        optName.textContent = nameParts.name;
-        opt.appendChild(optName);
-        
-        if (nameParts.details) {
-          var optDetails = document.createElement("div");
-          optDetails.className = "dropdown-item-details";
-          optDetails.textContent = nameParts.details;
-          opt.appendChild(optDetails);
-        }
-        opt.addEventListener("touchstart", function (e) {
-          e.preventDefault();
-          var selectedName = item.name;
-
+          // Проверка на дубликат
           var existingRows = document.querySelectorAll("#recItemsRows .used-item-row");
-          var duplicateRow = null;
           for (var k = 0; k < existingRows.length; k++) {
             var inp = existingRows[k].querySelector(".used-item-name");
             if (inp && inp !== input &&
                 inp.value.trim().toLowerCase() === selectedName.toLowerCase()) {
-              duplicateRow = existingRows[k];
-              break;
+              showToast("⚠️ Данное средство уже вносилось в эту карту");
+              var dupQty = existingRows[k].querySelector(".used-item-qty");
+              if (dupQty) dupQty.focus();
+              return;
             }
           }
 
-          if (duplicateRow) {
-            showToast("⚠️ Данное средство уже вносилось в эту карту");
-            closeDropdown();
-            var dupQty = duplicateRow.querySelector(".used-item-qty");
-            if (dupQty) dupQty.focus();
-            return;
-          }
-
           input.value = selectedName;
-          closeDropdown();
-          var qty = row.querySelector(".used-item-qty");
-          if (qty) qty.focus();
-        }, { passive: false });
-        opt.addEventListener("mousedown", function (e) {
-          e.preventDefault();
-          var selectedName = item.name;
-
-          // Проверяем, есть ли уже такое средство в текущей записи
-          var existingRows = document.querySelectorAll("#recItemsRows .used-item-row");
-          var duplicateRow = null;
-
-          for (var k = 0; k < existingRows.length; k++) {
-            var inp = existingRows[k].querySelector(".used-item-name");
-            if (inp && inp !== input &&
-                inp.value.trim().toLowerCase() === selectedName.toLowerCase()) {
-              duplicateRow = existingRows[k];
-              break;
-            }
-          }
-
-          if (duplicateRow) {
-            showToast("⚠️ Данное средство уже вносилось в эту карту");
-            closeDropdown();
-            var dupQty = duplicateRow.querySelector(".used-item-qty");
-            if (dupQty) dupQty.focus();
-            return;
-          }
-
-          input.value = selectedName;
-          closeDropdown();
           var qty = row.querySelector(".used-item-qty");
           if (qty) qty.focus();
         });
-        dropdown.appendChild(opt);
-      });
-
-      positionDropdown();
-      dropdown.hidden = false;
-      autocomplete.classList.add("open");
-      if (scrollParent) scrollParent.addEventListener("scroll", onScroll, { passive: true });
     }
 
-    input.addEventListener("input", function () { renderDropdown(input.value); });
-    input.addEventListener("focus", function () { renderDropdown(input.value); });
-    input.addEventListener("blur", function () { setTimeout(closeDropdown, 150); });
+    field.addEventListener("click", function (e) {
+      e.preventDefault();
+      openPickerForRow();
+    });
 
+    // Скрываем стрелку — всё поле открывает окно выбора
+    arrow.style.display = "none";
+    dropdown.remove();
     // Количество — только цифры
     var qtyInput = document.createElement("input");
     qtyInput.type = "text";
@@ -373,6 +277,11 @@
     // Автофокус на новое поле
     if (shouldFocus) {
       setTimeout(function () { input.focus(); }, 50);
+    }
+
+    // Сразу открыть окно выбора, если запрошено
+    if (openPicker) {
+      setTimeout(function () { openPickerForRow(); }, 80);
     }
   }
 
@@ -649,7 +558,7 @@
 
     var addRowBtn = document.getElementById("addRecItemRowBtn");
     if (addRowBtn) addRowBtn.addEventListener("click", function () {
-      addItemRow("", "", true); // true = автофокус
+      addItemRow("", "", false, true); // true = сразу открыть окно выбора
     });
 
     var saveRecBtn = document.getElementById("saveRecordBtn");

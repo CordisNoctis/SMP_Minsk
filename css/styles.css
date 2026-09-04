@@ -9,3 +9,266 @@
 @import "components.css";
 @import "schedule.css";
 @import "checklist.css";
+
+/* ===== Дисклеймер: одно поле с полоской и восклицательным знаком ===== */
+
+.footer-note-wrap {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 16px 14px;
+
+  border-radius: 12px;
+  background: var(--menu-icon-bg);
+}
+
+/* Большой восклицательный знак в кружке — основной стиль */
+.footer-note-icon {
+  flex: 0 0 auto;
+
+  width: 56px;
+  height: 56px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 50%;
+
+  background: var(--accent);
+  color: #ffffff;
+
+  font-size: 1.8rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+/* ===== Кнопка «ВАЖНАЯ ИНФОРМАЦИЯ» — в правом верхнем углу ===== */
+
+.footer-note-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+
+  padding: 8px 12px;
+
+  background: var(--accent);
+  color: #ffffff;
+
+  border-radius: 999px;
+
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  line-height: 1;
+}
+
+/* ===== Нижний блок — кликабельный ===== */
+
+.footer-note-wrap[role="button"] {
+  cursor: pointer;
+  transition: transform 0.12s ease;
+}
+
+.footer-note-wrap[role="button"]:active {
+  transform: scale(0.99);
+}
+
+/* ===== Модалка «О приложении» ===== */
+
+.about-modal-body p {
+  margin: 0 0 12px;
+  text-align: justify;
+  line-height: 1.5;
+}
+
+.about-subtitle {
+  margin: 16px 0 8px;
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--accent);
+}
+
+.about-contacts {
+  margin-bottom: 12px;
+  display: grid;
+  gap: 6px;
+}
+
+.about-contact-link {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+
+  padding: 12px 14px;
+
+  background: var(--menu-icon-bg);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+
+  text-decoration: none;
+  color: var(--text);
+
+  transition: border-color 0.15s ease, filter 0.15s ease;
+}
+
+.about-contact-link:hover {
+  border-color: var(--accent);
+  filter: brightness(1.02);
+}
+
+.about-contact-label {
+  font-weight: 650;
+  color: var(--muted);
+}
+
+.about-contact-value {
+  font-weight: 750;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+
+.about-support-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  width: 100%;
+  min-height: 48px;
+  padding: 12px 18px;
+
+  background: var(--accent);
+  color: #ffffff;
+
+  border-radius: 12px;
+  border: 0;
+
+  font-weight: 750;
+  font-size: 0.95rem;
+
+  text-decoration: none;
+
+  transition: filter 0.15s ease, transform 0.12s ease;
+}
+
+.about-support-btn:hover {
+  filter: brightness(1.08);
+}
+
+.about-support-btn:active {
+  transform: scale(0.98);
+}
+
+/* ===== «!» в шапке (на месте версии) ===== */
+
+.header-alert-btn {
+  margin-left: auto;
+  flex: 0 0 auto;
+
+  width: 48px;
+  height: 48px;
+
+  border: 0;
+  border-radius: 50%;
+
+  background: #ffffff;
+  color: var(--accent);
+
+  font-size: 1.5rem;
+  font-weight: 900;
+  line-height: 1;
+
+  display: grid;
+  place-items: center;
+
+  cursor: pointer;
+
+  transition: transform 0.12s ease, filter 0.15s ease;
+}
+
+.header-alert-btn:active {
+  transform: scale(0.94);
+}
+
+/* ===== Нижняя кнопка в стилистике карточек главного меню ===== */
+
+.app-footer {
+  padding: 0 16px calc(12px + env(safe-area-inset-bottom));
+  margin-top: 14px;
+}
+
+.footer-bar {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  padding: 14px 16px;
+
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+
+  background: var(--card);
+  box-shadow: var(--shadow);
+
+  color: var(--text);
+
+  font: inherit;
+  text-align: left;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.12s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.footer-bar:hover {
+  border-color: var(--border-accent);
+}
+
+.footer-bar:active {
+  transform: scale(0.98);
+}
+
+/* Иконка в квадратике — как у пунктов меню */
+.footer-bar-icon {
+  flex: 0 0 auto;
+
+  width: 48px;
+  height: 48px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 14px;
+
+  background: var(--menu-icon-bg);
+
+  font-size: 1.4rem;
+}
+
+/* Заголовок — как у пунктов меню */
+.footer-bar-title {
+  flex: 1;
+  min-width: 0;
+
+  font-weight: 800;
+  font-size: 1.05rem;
+}
+
+/* Версия справа — на месте стрелки » */
+.footer-bar-right {
+  flex: 0 0 auto;
+
+  font-size: 0.8rem;
+  font-weight: 650;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
