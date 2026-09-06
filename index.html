@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content">
+
+  <title>СМП Помощник</title>
+
+  <meta name="description" content="Офлайн-помощник для сотрудников скорой медицинской помощи">
+
+  <meta name="theme-color" content="#7A1F2B">
+
+  <link rel="manifest" href="manifest.webmanifest">
+
+  <!-- Тема подключается до CSS, чтобы уменьшить мигание темы -->
+  <script src="js/theme-init.js"></script>
+  <script src="js/version.js"></script>
+
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/changelog.css">
+
+  <!-- Фавиконки вкладки -->
+  <link rel="icon" href="icons/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16.png">
+  <link rel="icon" type="image/svg+xml" href="icons/favicon.svg">
+
+  <!-- iOS -->
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="СМП">
+</head>
+
+<body>
+  <a class="skip-link" href="#main">Перейти к главному меню</a>
+
+  <header class="app-header">
+    <div class="brand">
+      <img class="brand-icon" src="icons/icon-192.png" alt="Иконка приложения" width="56" height="56">
+      <div class="brand-text">
+        <p id="greeting" class="greeting">Загрузка...</p>
+        <p id="currentDate" class="date">Дата загружается...</p>
+      </div>
+      <button type="button" class="header-alert-btn" data-modal-open="about-modal" aria-label="Важная информация о приложении">!</button>
+      <span id="appVersion" class="app-version" hidden>—</span>
+    </div>
+  </header>
+
+  <main id="main" class="page">
+    <nav class="main-menu" aria-label="Главное меню">
+      <a class="menu-card" href="#normative-base" data-page="normative-base">
+        <span class="menu-icon" aria-hidden="true">📚</span>
+        <span class="menu-title">Нормативная база</span>
+        <span class="menu-arrow" aria-hidden="true">›</span>
+      </a>
+
+      <a class="menu-card" href="#calculators" data-page="calculators">
+        <span class="menu-icon" aria-hidden="true">🧮</span>
+        <span class="menu-title">Клинические калькуляторы и шкалы</span>
+        <span class="menu-arrow" aria-hidden="true">›</span>
+      </a>
+
+      <a class="menu-card" href="pages/cheatsheets.html" data-page="cheatsheets">
+        <span class="menu-icon" aria-hidden="true">📋</span>
+        <span class="menu-title">Шпаргалки</span>
+        <span class="menu-arrow" aria-hidden="true">›</span>
+      </a>
+
+      <a class="menu-card" href="pages/shift-checklist.html" data-page="shift-checklist">
+        <span class="menu-icon" aria-hidden="true">✅</span>
+        <span class="menu-title">Чек-лист смены</span>
+        <span class="menu-arrow" aria-hidden="true">›</span>
+      </a>
+
+      <a class="menu-card" href="pages/shift-schedule.html" data-page="shift-schedule">
+        <span class="menu-icon" aria-hidden="true">🗓️</span>
+        <span class="menu-title">График смен</span>
+        <span class="menu-arrow" aria-hidden="true">›</span>
+      </a>
+
+      <a class="menu-card" href="pages/settings.html" data-page="settings">
+        <span class="menu-icon" aria-hidden="true">⚙️</span>
+        <span class="menu-title">Настройки</span>
+        <span class="menu-arrow" aria-hidden="true">›</span>
+      </a>
+    </nav>
+  </main>
+
+  <footer class="app-footer">
+    <button type="button" class="footer-bar" data-modal-open="changelog-modal" aria-label="История обновлений">
+      <span class="menu-icon" aria-hidden="true">🔄</span>
+      <span class="menu-title">История обновлений</span>
+      <span class="footer-bar-right">Версия: <span id="footerVersion">—</span></span>
+    </button>
+  </footer>
+
+    <!-- ===== МОДАЛКА ИСТОРИИ ОБНОВЛЕНИЙ ===== -->
+  <div class="modal" id="changelog-modal" hidden aria-hidden="true">
+    <div class="modal-backdrop" data-modal-close></div>
+    <section class="modal-panel" role="dialog" aria-modal="true">
+      <header class="modal-header">
+        <h2>🔄 История обновлений</h2>
+        <button type="button" class="modal-close" data-modal-close aria-label="Закрыть">×</button>
+      </header>
+      <div class="modal-body">
+        <div id="changelogContent"></div>
+      </div>
+      <footer class="modal-footer update-notice-footer">
+        <button type="button" class="btn-primary" data-modal-close>Закрыть</button>
+      </footer>
+    </section>
+  </div>
+
+    <!-- ===== МОДАЛКА «О ПРИЛОЖЕНИИ» ===== -->
+  <div class="modal" id="about-modal" hidden aria-hidden="true">
+    <div class="modal-backdrop" data-modal-close></div>
+    <section class="modal-panel" role="dialog" aria-modal="true">
+      <header class="modal-header">
+        <h2>О приложении</h2>
+        <button type="button" class="modal-close" data-modal-close aria-label="Закрыть">×</button>
+      </header>
+      <div class="modal-body about-modal-body">
+        <p>Приложение является неофициальным инструментом и создано для удобства медицинских работников сотрудников СМП г. Минска.</p>
+        <p>В первую очередь следует руководствоваться официальными приказами, постановлениями и клиническими протоколами Министерства здравоохранения Республики Беларусь. Данные в приложении носят справочный характер. Разработчик не несёт ответственности за возможные последствия использования информации из приложения в клинической практике.</p>
+
+        <h3 class="about-subtitle">Обратная связь</h3>
+        <p>Заметили ошибку? Хотите предложить улучшение или новый раздел? Пишите, не стесняйтесь:</p>
+        <div class="about-contacts">
+          <a class="about-contact-link" href="https://t.me/telega" target="_blank" rel="noopener">
+            <span class="about-contact-label">Телеграм</span>
+            <span class="about-contact-value">@telega</span>
+          </a>
+        </div>
+
+        <h3 class="about-subtitle">Поддержать проект</h3>
+        <p>Если приложение полезно — Вы можете поддержать его развитие:</p>
+        <a class="about-support-btn" href="#" target="_blank" rel="noopener">Поддержать проект</a>
+      </div>
+      <footer class="modal-footer update-notice-footer">
+        <button type="button" class="btn-primary" data-modal-close>Закрыть</button>
+      </footer>
+    </section>
+  </div>
+
+  <script src="js/theme.js"></script>
+  <script src="js/modal.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/changelog.js"></script>
+  <script src="js/update-notice.js"></script>
+  <script src="js/sw-register.js"></script>
+</body>
+</html>
