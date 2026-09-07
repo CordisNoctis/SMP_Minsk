@@ -243,18 +243,22 @@
   function makeTimeLine(h, m) {
     var mode = getMinutesDisplayMode();
     var showMinutes = mode === "show-all" || (mode === "hide-zero" && m !== 0);
+
     var line = document.createElement("span");
     line.className = "cc-time-line";
+
     var hour = document.createElement("span");
     hour.className = "cc-hour";
     hour.textContent = pad(h, 2);
     line.appendChild(hour);
+
     if (showMinutes) {
       var min = document.createElement("span");
       min.className = "cc-min";
       min.textContent = pad(m, 2);
       line.appendChild(min);
     }
+
     return line;
   }
 
@@ -1824,6 +1828,9 @@
     if (existing) existing.remove();
     var toast = document.createElement("div");
     toast.className = "toast";
+    toast.setAttribute("role", "alert");
+    toast.setAttribute("aria-live", "assertive");
+    toast.setAttribute("aria-atomic", "true");
     toast.textContent = message;
     document.body.appendChild(toast);
     requestAnimationFrame(function () { toast.hidden = false; });

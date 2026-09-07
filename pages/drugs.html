@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content">
+  <title>Инструкции лекарственных средств — СМП Помощник</title>
+  <meta name="theme-color" content="#7A1F2B">
+
+  <script src="../js/theme-init.js"></script>
+  <script src="../js/version.js"></script>
+  <link rel="stylesheet" href="../css/styles.css">
+
+  <link rel="icon" href="../icons/favicon.ico" sizes="any">
+  <link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+</head>
+
+<body>
+  <header class="page-header">
+    <button type="button" class="back-button" data-back data-back-fallback="cheatsheets.html" aria-label="Назад">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+    <h1 class="page-title-centered drugs-page-title">Инструкции лекарственных средств</h1>
+    <span class="header-spacer" aria-hidden="true"></span>
+  </header>
+
+  <main class="page">
+    <!-- Поиск -->
+    <div class="drugs-search-wrap">
+      <input
+        type="search"
+        id="drugsSearch"
+        class="drugs-search"
+        placeholder="Поиск препарата..."
+        autocomplete="off"
+        autocapitalize="off"
+        spellcheck="false"
+      >
+    </div>
+
+    <nav id="drugsList" class="list-grid" aria-label="Список препаратов"></nav>
+    <p id="drugsEmpty" class="muted" style="text-align:center; padding:20px 0;" hidden>
+      По запросу ничего не найдено
+    </p>
+  </main>
+
+  <script src="../js/theme.js"></script>
+  <script src="../js/back.js"></script>
+  <script src="../js/drugs-data.js"></script>
+  <script>
+    (function () {
+      "use strict";
+
+      var listEl = document.getElementById("drugsList");
+      var emptyEl = document.getElementById("drugsEmpty");
+      var searchEl = document.getElementById("drugsSearch");
+      if (!listEl) return;
+
+      var drugs = (window.SMP && window.SMP.drugs && window.SMP.drugs.list) || {};
+      var allIds = Object.keys(drugs).sort(function (a, b) {
+        return (drugs[a].title || "").localeCompare(drugs[b].title || "", "ru", { sensitivity: "base" });
+      });
+
+      // Сохраняем список элементов для быстрого скрытия/показа
+      var items = [];
+
+      allIds.forEach(function (id) {
+        var drug = drugs[id];
+        var a = document.createElement("a");
+        a.className = "submenu-link large";
+        a.href = "drug.html?id=" + encodeURIComponent(id);
+        a.textContent = drug.title || id;
+        a.dataset.searchText = (drug.title || "").toLowerCase();
+        listEl.appendChild(a);
+        items.push(a);
+      });
+
+      function applyFilter(q) {
+        q = (q || "").trim().toLowerCase();
+        var visibleCount = 0;
+        items.forEach(function (a) {
+          var match = !q || a.dataset.searchText.indexOf(q) !== -1;
+          a.style.display = match ? "" : "none";
+          if (match) visibleCount++;
+        });
+        if (emptyEl) emptyEl.hidden = visibleCount > 0;
+      }
+
+      if (searchEl) {
+        searchEl.addEventListener("input", function () { applyFilter(this.value); });
+        // Очистка по крестику
+        searchEl.addEventListener("search", function () { applyFilter(this.value); });
+      }
+
+      // Первоначальное состояние (на случай, если браузер вставил предыдущее значение)
+      applyFilter(searchEl ? searchEl.value : "");
+    })();
+  </script>
+  <script src="../js/sw-register.js"></script>
+</body>
+</html>

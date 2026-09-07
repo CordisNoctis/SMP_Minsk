@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content">
-    <title>Табель оснащения — СМП Помощник</title>
+  <title>Табель оснащения — СМП Помощник</title>
   <meta name="theme-color" content="#7A1F2B">
 
   <script src="../js/theme-init.js"></script>
@@ -33,9 +33,22 @@
       <p class="equipment-hint">
         1 нажатие — проверено (зелёный). Повторное — требуется пополнение (красный) с указанием количества.
       </p>
+
+      <!-- Поиск по табелю -->
+      <div class="equipment-search-wrap">
+        <input type="search" id="equipmentSearch" class="equipment-search" placeholder="Поиск по названию..." autocomplete="off" aria-label="Поиск по табелю оснащения">
+      </div>
+
+      <!-- Индикатор прогресса -->
+      <div class="equipment-progress" id="equipmentProgress" hidden>
+        <div class="equipment-progress-bar">
+          <div class="equipment-progress-fill" id="equipmentProgressFill"></div>
+        </div>
+        <div class="equipment-progress-text" id="equipmentProgressText"></div>
+      </div>
+
       <div id="equipmentList" class="equipment-list"></div>
-      <p id="equipmentEmpty" class="muted" hidden style="text-align:center; padding:16px 0;">
-        Перечень оснащения для этой бригады пока не заполнен.
+      <p id="equipmentEmpty" class="muted" hidden style="text-align:center; padding: 4px 0; margin: 0;">        Перечень оснащения для этой бригады пока не заполнен.
       </p>
     </section>
   </main>
@@ -56,8 +69,7 @@
       </header>
       <div class="modal-body">
         <div id="refillReportContent" class="refill-report-content"></div>
-        <p id="refillReportEmpty" class="muted" hidden style="text-align:center; padding:16px 0;">
-          Нет позиций, требующих пополнения.
+        <p id="refillReportEmpty" class="muted" hidden style="text-align:center; padding: 4px 0; margin: 0;">          Нет позиций, требующих пополнения.
         </p>
       </div>
       <footer class="modal-footer">
@@ -69,7 +81,6 @@
   <script src="../js/theme.js"></script>
   <script src="../js/modal.js"></script>
   <script src="../js/back.js"></script>
-  <script src="../js/medical-catalog.js"></script>
   <script src="../js/medical-items.js"></script>
   <script src="../js/medical-tables.js"></script>
   <script src="../js/equipment-data.js"></script>

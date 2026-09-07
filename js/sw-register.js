@@ -11,6 +11,9 @@
     if (old) old.remove();
     var t = document.createElement("div");
     t.className = "toast";
+    t.setAttribute("role", "alert");
+    t.setAttribute("aria-live", "assertive");
+    t.setAttribute("aria-atomic", "true");
     t.textContent = msg;
     document.body.appendChild(t);
     requestAnimationFrame(function () { t.hidden = false; });
@@ -50,10 +53,8 @@
 
           newWorker.addEventListener("statechange", function () {
             if (newWorker.state === "installed" && navigator.serviceWorker.controller) {
-              // Активируем новую версию через 3 секунды
-              setTimeout(function () {
-                newWorker.postMessage("SKIP_WAITING");
-              }, 3000);
+              // Показываем баннер вместо автоматического обновления
+              showUpdateBanner(newWorker);
             }
           });
         });
@@ -62,6 +63,21 @@
         console.error("SW registration failed:", err);
       });
   });
+
+  // ===== Показ баннера обновления =====
+  function showUpdateBanner(newWorker) {
+    var banner = document.getElementById("pwaUpdateBanner");
+    var btn = document.getElementById("pwaUpdateBtn");
+    if (!banner || !btn) return;
+
+    banner.hidden = false;
+
+    btn.addEventListener("click", function () {
+      try { sessionStorage.setItem("smp-sw-updated", "1"); } catch (e) {}
+      newWorker.postMessage("SKIP_WAITING");
+      banner.hidden = true;
+    });
+  }
 
   // ===== Перезагрузка при активации нового SW =====
   // Не перезагружаем при самом первом запуске (когда SW ещё не было)
@@ -75,7 +91,6 @@
     }
     if (refreshing) return;
     refreshing = true;
-    try { sessionStorage.setItem("smp-sw-updated", "1"); } catch (e) {}
     window.location.reload();
   });
 })();

@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content">
+  <title>Препарат — СМП Помощник</title>
+  <meta name="theme-color" content="#7A1F2B">
+
+  <script src="../js/theme-init.js"></script>
+  <script src="../js/version.js"></script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/cheatsheet.css">
+
+  <link rel="icon" href="../icons/favicon.ico" sizes="any">
+  <link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+</head>
+
+<body>
+  <header class="page-header">
+    <button type="button" class="back-button" data-back data-back-fallback="drugs.html" aria-label="Назад">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+    <h1 class="page-title-centered" id="drugTitle">Препарат</h1>
+    <span class="header-spacer" aria-hidden="true"></span>
+  </header>
+
+  <main class="page">
+    <!-- Переключатель инструкций -->
+    <div class="drug-tabs" id="drugTabs" hidden>
+      <button type="button" class="drug-tab active" id="tabSpec">Специалисту</button>
+      <button type="button" class="drug-tab" id="tabPat">Пациенту</button>
+    </div>
+
+    <!-- Блок для специалиста -->
+    <div class="drug-content" id="specContent"></div>
+
+    <!-- Блок для пациента -->
+    <div class="drug-content" id="patContent" hidden></div>
+  </main>
+
+  <script src="../js/theme.js"></script>
+  <script src="../js/back.js"></script>
+  <script src="../js/markdown.js"></script>
+  <script src="../js/drugs-data.js"></script>
+  <script src="../js/cheatsheet.js"></script>
+  <script src="../js/sw-register.js"></script>
+</body>
+</html>

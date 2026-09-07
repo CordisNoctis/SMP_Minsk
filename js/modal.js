@@ -132,4 +132,11 @@
       }
     }
   });
+
+  // Экспорт функций для использования в других скриптах
+  window.SMP = window.SMP || {};
+  window.SMP.modal = {
+    open: openModal,
+    close: closeModal
+  };
 })();

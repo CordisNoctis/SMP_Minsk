@@ -25,7 +25,6 @@ const APP_SHELL = [
   "./js/templates-admin.js",
   "./js/calendar-export.js",
   "./js/settings-backup.js",
-  "./js/medical-catalog.js",
   "./js/equipment-data.js",
   "./js/equipment-checklist.js",
   "./js/used-items.js",
@@ -45,6 +44,12 @@ const APP_SHELL = [
   "./js/changelog.js",
   "./js/update-notice.js",
   "./css/changelog.css",
+  "./css/cheatsheet.css",
+  "./js/markdown.js",
+  "./js/cheatsheet.js",
+  "./pages/drug.html",
+  "./pages/drugs.html",
+  "./js/drugs-data.js"
 ];
 
 const OPTIONAL_ASSETS = [

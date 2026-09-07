@@ -36,6 +36,15 @@
 <body>
   <a class="skip-link" href="#main">Перейти к главному меню</a>
 
+    <!-- Баннер обновления PWA -->
+  <div class="pwa-update-banner" id="pwaUpdateBanner" hidden role="alert" aria-live="polite">
+    <div class="pwa-update-banner-content">
+      <span class="pwa-update-banner-icon" aria-hidden="true">🆕</span>
+      <span class="pwa-update-banner-text">Доступна новая версия приложения</span>
+      <button type="button" class="pwa-update-banner-btn" id="pwaUpdateBtn">Обновить</button>
+    </div>
+  </div>
+
   <header class="app-header">
     <div class="brand">
       <img class="brand-icon" src="icons/icon-192.png" alt="Иконка приложения" width="56" height="56">

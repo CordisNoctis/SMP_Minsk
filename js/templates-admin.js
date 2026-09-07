@@ -28,6 +28,9 @@
     if (old) old.remove();
     var t = document.createElement("div");
     t.className = "toast";
+    t.setAttribute("role", "alert");
+    t.setAttribute("aria-live", "assertive");
+    t.setAttribute("aria-atomic", "true");
     t.textContent = msg;
     document.body.appendChild(t);
     requestAnimationFrame(function () { t.hidden = false; });
@@ -50,7 +53,7 @@
     var prevVal = (value - cfg.step + cfg.modulus) % cfg.modulus;
     var nextVal = (value + cfg.step) % cfg.modulus;
 
-    if (mainEl) mainEl.textContent = pad(value, cfg.padLength);
+    if (mainEl) mainEl.value = pad(value, cfg.padLength);
 
     var prevBtn = document.querySelector('[data-tplfield="' + field + '"][data-direction="prev"]');
     var nextBtn = document.querySelector('[data-tplfield="' + field + '"][data-direction="next"]');
@@ -107,6 +110,25 @@
     formState[field] = newVal;
     updateFormUI();
   }
+
+    // ===== Ввод времени с клавиатуры =====
+
+  function onTplTimeTyping(inputEl) {
+    var raw = inputEl.value.replace(/[^0-9]/g, "");
+    if (raw.length > 2) raw = raw.slice(0, 2);
+    if (inputEl.value !== raw) inputEl.value = raw;
+  }
+
+  function commitTplTimeField(field, inputEl) {
+    var cfg = getFieldConfig(field);
+    var raw = inputEl.value.replace(/[^0-9]/g, "");
+    var val = parseInt(raw, 10);
+    if (isNaN(val)) val = 0;
+    if (val > cfg.modulus - 1) val = cfg.modulus - 1;
+    formState[field] = val;
+    updateFormUI();
+  }
+
 
   // ===== Палитра цветов =====
 
@@ -297,9 +319,23 @@
   }
 
   function deleteTemplate(id) {
+    var templates = TMPL.load();
+    var tpl = null;
+
+    for (var i = 0; i < templates.length; i++) {
+      if (templates[i].id === id) {
+        tpl = templates[i];
+        break;
+      }
+    }
+
+    if (tpl && tpl.builtin) {
+      showToast("⚠️ Стандартный шаблон нельзя удалить");
+      return;
+    }
+
     if (!confirm("Удалить этот шаблон?")) return;
 
-    var templates = TMPL.load();
     var newTemplates = [];
     for (var i = 0; i < templates.length; i++) {
       if (templates[i].id !== id) newTemplates.push(templates[i]);
@@ -325,7 +361,7 @@
       var adjBtn = wheel.querySelector("[data-tplfield]");
       if (!adjBtn) return;
       var field = adjBtn.getAttribute("data-tplfield");
-      var mainEl = wheel.querySelector(".wheel-main");
+      var mainEl = wheel.querySelector(".wheel-main-input, .wheel-main");
       if (!mainEl) return;
 
       var lastChange = 0;
@@ -363,7 +399,7 @@
       var adjBtn = wheel.querySelector("[data-tplfield]");
       if (!adjBtn) return;
       var field = adjBtn.getAttribute("data-tplfield");
-      var mainEl = wheel.querySelector(".wheel-main");
+      var mainEl = wheel.querySelector(".wheel-main-input, .wheel-main");
       if (!mainEl) return;
 
       var lastY = 0;
@@ -449,6 +485,20 @@
         adjustTplField(field, dir);
       }
     });
+
+        // Ввод времени с клавиатуры
+    var tplTimeFields = ["startHour", "startMinute", "endHour", "endMinute"];
+    tplTimeFields.forEach(function (field) {
+      var cap = field.charAt(0).toUpperCase() + field.slice(1);
+      var inputEl = document.getElementById("tpl" + cap + "Main");
+      if (!inputEl) return;
+      inputEl.addEventListener("input", function () { onTplTimeTyping(inputEl); });
+      inputEl.addEventListener("blur", function () { commitTplTimeField(field, inputEl); });
+      inputEl.addEventListener("keydown", function (e) {
+        if (e.key === "Enter") { e.preventDefault(); inputEl.blur(); }
+      });
+    });
+
 
     // Закрытие модалки
     document.addEventListener("click", function (e) {

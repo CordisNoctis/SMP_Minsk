@@ -1718,3 +1718,75 @@
     gap: 8px;
   }
 }
+
+/* ===== Поиск по табелю ===== */
+.equipment-search-wrap {
+  margin-bottom: 12px;
+}
+
+.equipment-search {
+  width: 100%;
+  min-height: 48px;
+  padding: 10px 14px;
+
+  background: var(--input-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: var(--input-text);
+
+  font: inherit;
+  font-size: 1rem;
+  outline: none;
+
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.equipment-search:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(122, 31, 43, 0.15);
+}
+
+[data-theme="dark"] .equipment-search:focus {
+  box-shadow: 0 0 0 3px rgba(122, 31, 43, 0.35);
+}
+
+/* ===== Индикатор прогресса ===== */
+.equipment-progress {
+  margin-bottom: 14px;
+}
+
+.equipment-progress-bar {
+  width: 100%;
+  height: 8px;
+
+  background: var(--menu-icon-bg);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.equipment-progress-fill {
+  height: 100%;
+  width: 0%;
+
+  background: var(--accent);
+  border-radius: 999px;
+
+  transition: width 0.3s ease;
+}
+
+.equipment-progress-text {
+  margin-top: 6px;
+
+  font-size: 0.82rem;
+  font-weight: 650;
+  color: var(--muted);
+}
+
+.equipment-progress-text .progress-refill {
+  color: #c62828;
+  font-weight: 750;
+}
+
+[data-theme="dark"] .equipment-progress-text .progress-refill {
+  color: #ef9a9a;
+}

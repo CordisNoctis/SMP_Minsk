@@ -40,28 +40,13 @@
     if (old) old.remove();
     var t = document.createElement("div");
     t.className = "toast";
+    t.setAttribute("role", "alert");
+    t.setAttribute("aria-live", "assertive");
+    t.setAttribute("aria-atomic", "true");
     t.textContent = msg;
     document.body.appendChild(t);
     requestAnimationFrame(function () { t.hidden = false; });
     setTimeout(function () { if (t.parentNode) t.remove(); }, 3000);
-  }
-
-  function openModal(id) {
-    var m = document.getElementById(id);
-    if (m) {
-      m.hidden = false;
-      m.setAttribute("aria-hidden", "false");
-      document.body.classList.add("modal-open");
-    }
-  }
-
-  function closeModal(id) {
-    var m = document.getElementById(id);
-    if (m) {
-      m.hidden = true;
-      m.setAttribute("aria-hidden", "true");
-    }
-    document.body.classList.remove("modal-open");
   }
 
   // Только цифры в поле
@@ -319,8 +304,10 @@
       addItemRow("", "");
     }
 
-    openModal("record-form-modal");
-  }
+    var modal = document.getElementById("record-form-modal");
+    if (modal && window.SMP && window.SMP.modal) {
+      window.SMP.modal.open(modal);
+    }  }
 
   function saveRecord() {
     var cardNumber = document.getElementById("recCardNumber").value.trim();
@@ -346,8 +333,10 @@
     else records.push(record);
 
     saveRecords(records);
-    closeModal("record-form-modal");
-    renderRecords();
+    var modal = document.getElementById("record-form-modal");
+    if (modal && window.SMP && window.SMP.modal) {
+      window.SMP.modal.close(modal);
+    }    renderRecords();
     showToast("✅ Запись сохранена");
   }
 
@@ -415,7 +404,10 @@
 
       // Клик по строке (не по кнопке) открывает просмотр
       item.addEventListener("click", function () {
-        closeModal("shifts-list-modal");
+        var listModal = document.getElementById("shifts-list-modal");
+        if (listModal && window.SMP && window.SMP.modal) {
+          window.SMP.modal.close(listModal);
+        }
         openShiftView(shift.id);
       });
 
@@ -448,7 +440,10 @@
       content.appendChild(buildRecordCard(rec, null, false));
     });
 
-    openModal("shift-view-modal");
+    var modal = document.getElementById("shift-view-modal");
+    if (modal && window.SMP && window.SMP.modal) {
+      window.SMP.modal.open(modal);
+    }
   }
 
   function deleteSavedShift() {
@@ -460,7 +455,10 @@
     saveSavedShifts(shifts);
 
     viewingShiftId = null;
-    closeModal("shift-view-modal");
+    var modal = document.getElementById("shift-view-modal");
+    if (modal && window.SMP && window.SMP.modal) {
+      window.SMP.modal.close(modal);
+    }
     renderSavedShiftsList();
     showToast("🗑️ Смена удалена");
   }
@@ -522,7 +520,10 @@
     table.appendChild(tbody);
 
     wrap.appendChild(table);
-    openModal("report-modal");
+    var modal = document.getElementById("report-modal");
+    if (modal && window.SMP && window.SMP.modal) {
+      window.SMP.modal.open(modal);
+    }
   }
 
   function reportExportPng() {
@@ -577,7 +578,10 @@
     var loadShiftBtn = document.getElementById("loadShiftBtn");
     if (loadShiftBtn) loadShiftBtn.addEventListener("click", function () {
       renderSavedShiftsList();
-      openModal("shifts-list-modal");
+      var modal = document.getElementById("shifts-list-modal");
+    if (modal && window.SMP && window.SMP.modal) {
+      window.SMP.modal.open(modal);
+    }
     });
 
     var deleteShiftBtn = document.getElementById("deleteShiftBtn");
@@ -598,11 +602,11 @@
       if (e.target.matches(".modal-backdrop")) {
         var modal = e.target.closest(".modal");
         if (modal) {
-          modal.hidden = true;
-          modal.setAttribute("aria-hidden", "true");
           if (modal.id === "record-form-modal") editingIndex = null;
           if (modal.id === "shift-view-modal") viewingShiftId = null;
-          document.body.classList.remove("modal-open");
+          if (window.SMP && window.SMP.modal) {
+            window.SMP.modal.close(modal);
+          }
         }
       }
     });

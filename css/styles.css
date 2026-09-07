@@ -230,7 +230,9 @@
 }
 
 .footer-bar:hover {
+  transform: translateY(-1px);
   border-color: var(--border-accent);
+  box-shadow: var(--shadow-hover);
 }
 
 .footer-bar:active {
@@ -255,4 +257,144 @@
   font-weight: 650;
   color: var(--muted);
   font-variant-numeric: tabular-nums;
+}
+
+/* ===== Страница «Инструкции лекарственных средств» ===== */
+
+/* Длинный заголовок в шапке — переносится и уменьшится, если не влезет */
+.drugs-page-title {
+  font-size: 1.15rem;
+  line-height: 1.2;
+  text-align: center;
+  white-space: normal;
+  word-break: break-word;
+}
+
+@media (max-width: 360px) {
+  .drugs-page-title {
+    font-size: 1rem;
+  }
+}
+
+/* Обёртка поиска */
+.drugs-search-wrap {
+  margin-bottom: 12px;
+}
+
+.drugs-search {
+  width: 100%;
+  min-height: 48px;
+  padding: 10px 14px;
+
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: var(--text);
+
+  font: inherit;
+  font-size: 1rem;
+  outline: none;
+
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.drugs-search:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(122, 31, 43, 0.15);
+}
+
+[data-theme="dark"] .drugs-search:focus {
+  box-shadow: 0 0 0 3px rgba(122, 31, 43, 0.35);
+}
+
+/* Стили для иконки очистки (webkit) */
+.drugs-search::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+  height: 16px;
+  width: 16px;
+  background: var(--muted);
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+/* ===== Баннер обновления PWA ===== */
+.pwa-update-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 200;
+
+  padding: 0 16px calc(12px + env(safe-area-inset-bottom));
+
+  animation: pwa-banner-in 0.3s ease;
+}
+
+@keyframes pwa-banner-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.pwa-update-banner-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  max-width: 1080px;
+  margin: 0 auto;
+
+  padding: 12px 14px;
+
+  background: var(--card);
+  border: 1px solid var(--accent);
+  border-radius: 14px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.18);
+}
+
+.pwa-update-banner-icon {
+  flex: 0 0 auto;
+  font-size: 1.3rem;
+}
+
+.pwa-update-banner-text {
+  flex: 1;
+  min-width: 0;
+
+  font-size: 0.9rem;
+  font-weight: 650;
+  color: var(--text);
+  line-height: 1.3;
+}
+
+.pwa-update-banner-btn {
+  flex: 0 0 auto;
+
+  padding: 8px 16px;
+
+  background: var(--accent);
+  color: #ffffff;
+
+  border: 0;
+  border-radius: 999px;
+
+  font-size: 0.85rem;
+  font-weight: 750;
+
+  cursor: pointer;
+
+  transition: filter 0.15s ease, transform 0.12s ease;
+}
+
+.pwa-update-banner-btn:hover {
+  filter: brightness(1.08);
+}
+
+.pwa-update-banner-btn:active {
+  transform: scale(0.96);
 }

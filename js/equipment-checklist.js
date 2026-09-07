@@ -9,6 +9,7 @@
     var CHOICE_KEY = "smp-equipment-choice-" + brigadeId + "-v1";
   var expandedItems = {}; // какие пункты развёрнуты (по имени)
   var choiceState = {};   // выбранные варианты (по имени → массив индексов)
+  var searchQuery = "";   // текущий поисковый запрос
 
   function loadChoiceState() {
     try {
@@ -53,6 +54,43 @@
     soft: "Мягкие (мази, гели)",
     gas: "Газообразные (аэрозоли, газы)"
   };
+
+    function updateProgress(state) {
+    var progressWrap = document.getElementById("equipmentProgress");
+    var progressFill = document.getElementById("equipmentProgressFill");
+    var progressText = document.getElementById("equipmentProgressText");
+    if (!progressWrap || !progressFill || !progressText || !brigade || !brigade.items) return;
+
+    var totalItems = brigade.items.length;
+    if (totalItems === 0) {
+      progressWrap.hidden = true;
+      return;
+    }
+
+    var checkedCount = 0;
+    var refillCount = 0;
+
+    brigade.items.forEach(function(item) {
+      var itemState = state[item.name];
+      if (itemState) {
+        if (itemState.status === 1) checkedCount++;
+        else if (itemState.status === 2) refillCount++;
+      }
+    });
+
+    var uncheckedCount = totalItems - checkedCount - refillCount;
+    var percent = Math.round((checkedCount / totalItems) * 100);
+
+    progressWrap.hidden = false;
+    progressFill.style.width = percent + "%";
+    
+    var textParts = [];
+    if (checkedCount > 0) textParts.push('<span style="color: var(--accent); font-weight: 750;">✅ ' + checkedCount + '</span>');
+    if (refillCount > 0) textParts.push('<span class="progress-refill">🔴 ' + refillCount + '</span>');
+    if (uncheckedCount > 0) textParts.push('⚪ ' + uncheckedCount);
+    
+    progressText.innerHTML = textParts.join(' &nbsp;·&nbsp; ') + ' <span style="opacity:0.6; font-weight: 500;">(' + percent + '%)</span>';
+  }
 
   function loadState() {
     try {
@@ -154,6 +192,7 @@
           checkbox.className = "equipment-variant-check";
           checkbox.checked = selectedIdx.indexOf(partIndex) !== -1;
           checkbox.setAttribute("data-variant-index", partIndex);
+          checkbox.setAttribute("aria-label", "Выбрать вариант: " + part.name + (part.details ? " " + part.details : ""));
           
           // Используем change вместо click, чтобы не срабатывал обработчик клика по mainRow
           checkbox.addEventListener("change", function (e) {
@@ -413,7 +452,7 @@
     render();
   }
 
-  function render() {
+    function render() {
     var titleEl = document.getElementById("brigadeTitle");
     var listEl = document.getElementById("equipmentList");
     var emptyEl = document.getElementById("equipmentEmpty");
@@ -425,16 +464,45 @@
 
     if (!brigade || !brigade.items || brigade.items.length === 0) {
       if (emptyEl) emptyEl.hidden = false;
+      updateProgress({});
       return;
     }
     if (emptyEl) emptyEl.hidden = true;
 
     var state = loadState();
+    updateProgress(state);
+
+    // === Поиск ===
+    var query = searchQuery.trim().toLowerCase();
+    var itemsToRender = brigade.items;
+    if (query) {
+      itemsToRender = brigade.items.filter(function(item) {
+        if (item.name.toLowerCase().indexOf(query) !== -1) return true;
+        if (item.parts && item.parts.length > 0) {
+          for (var i = 0; i < item.parts.length; i++) {
+            if (item.parts[i].name.toLowerCase().indexOf(query) !== -1) return true;
+            if (item.parts[i].details && item.parts[i].details.toLowerCase().indexOf(query) !== -1) return true;
+          }
+        }
+        return false;
+      });
+    }
+
+    if (itemsToRender.length === 0 && query) {
+      var noResults = document.createElement("p");
+      noResults.className = "muted";
+      noResults.style.textAlign = "center";
+      noResults.style.padding = "16px 0";
+      noResults.style.margin = "0";
+      noResults.textContent = "Ничего не найдено по запросу «" + searchQuery.trim() + "»";
+      listEl.appendChild(noResults);
+      return;
+    }
 
     // Группируем позиции
     var groups = {};
-    for (var i = 0; i < brigade.items.length; i++) {
-      var it = brigade.items[i];
+    for (var i = 0; i < itemsToRender.length; i++) {
+      var it = itemsToRender[i];
       var g = it.group || "other";
       if (!groups[g]) groups[g] = [];
       groups[g].push(it);
@@ -489,9 +557,16 @@
 
     content.innerHTML = "";
 
+    var openReportModal = function () {
+      var modal = document.getElementById("refill-report-modal");
+      if (modal && window.SMP && window.SMP.modal) {
+        window.SMP.modal.open(modal, document.getElementById("refillReportBtn"));
+      }
+    };
+
     if (!brigade || !brigade.items || brigade.items.length === 0) {
       if (emptyEl) emptyEl.hidden = false;
-      openModal("refill-report-modal");
+      openReportModal();
       return;
     }
 
@@ -506,7 +581,6 @@
         var hasVariants = item.parts && item.parts.length > 1 && itemState.refillQtyMap;
         
         if (hasVariants) {
-          // Для пунктов с вариантами: каждая выбранная форма отдельно
           selectedIdx.forEach(function (variantIndex) {
             var part = item.parts[variantIndex];
             refillItems.push({
@@ -532,7 +606,7 @@
 
     if (refillItems.length === 0) {
       if (emptyEl) emptyEl.hidden = false;
-      openModal("refill-report-modal");
+      openReportModal();
       return;
     }
 
@@ -581,16 +655,7 @@
       content.appendChild(card);
     });
 
-    openModal("refill-report-modal");
-  }
-
-  function openModal(id) {
-    var m = document.getElementById(id);
-    if (m) {
-      m.hidden = false;
-      m.setAttribute("aria-hidden", "false");
-      document.body.classList.add("modal-open");
-    }
+    openReportModal();
   }
 
   function resetCheck() {
@@ -612,6 +677,14 @@
     var resetBtn = document.getElementById("resetCheckBtn");
     if (resetBtn) {
       resetBtn.addEventListener("click", resetCheck);
+    }
+
+    var searchInput = document.getElementById("equipmentSearch");
+    if (searchInput) {
+      searchInput.addEventListener("input", function () {
+        searchQuery = searchInput.value;
+        render();
+      });
     }
   }
 

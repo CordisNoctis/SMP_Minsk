@@ -47,8 +47,7 @@
       </button>
 
       <div id="templatesAdminList" class="templates-admin-list"></div>
-      <p id="templatesEmpty" class="muted" hidden style="text-align:center; padding: 16px 0;">
-        Шаблонов пока нет. Создайте первый шаблон.
+      <p id="templatesEmpty" class="muted" hidden style="text-align:center; padding: 4px 0; margin: 0;">        Шаблонов пока нет. Создайте первый шаблон.
       </p>
     </section>
   </main>
@@ -79,12 +78,12 @@
               <div class="wheel-triple-row">
                 <div class="wheel-triple wheel-triple-vertical">
                   <button type="button" class="wheel-adjacent" data-tplfield="startHour" data-direction="prev" aria-label="Уменьшить час">−</button>
-                  <div class="wheel-main" id="tplStartHourMain">08</div>
+                  <input type="text" class="wheel-main-input" id="tplStartHourMain" value="08" inputmode="numeric" autocomplete="off" aria-label="Час начала">
                   <button type="button" class="wheel-adjacent" data-tplfield="startHour" data-direction="next" aria-label="Увеличить час">+</button>
                 </div>
                 <div class="wheel-triple wheel-triple-vertical">
                   <button type="button" class="wheel-adjacent" data-tplfield="startMinute" data-direction="prev" aria-label="Уменьшить минуту">−</button>
-                  <div class="wheel-main" id="tplStartMinuteMain">00</div>
+                  <input type="text" class="wheel-main-input" id="tplStartMinuteMain" value="00" inputmode="numeric" autocomplete="off" aria-label="Минута начала">
                   <button type="button" class="wheel-adjacent" data-tplfield="startMinute" data-direction="next" aria-label="Увеличить минуту">+</button>
                 </div>
               </div>
@@ -97,12 +96,12 @@
               <div class="wheel-triple-row">
                 <div class="wheel-triple wheel-triple-vertical">
                   <button type="button" class="wheel-adjacent" data-tplfield="endHour" data-direction="prev" aria-label="Уменьшить час">−</button>
-                  <div class="wheel-main" id="tplEndHourMain">20</div>
+                  <input type="text" class="wheel-main-input" id="tplEndHourMain" value="20" inputmode="numeric" autocomplete="off" aria-label="Час конца">
                   <button type="button" class="wheel-adjacent" data-tplfield="endHour" data-direction="next" aria-label="Увеличить час">+</button>
                 </div>
                 <div class="wheel-triple wheel-triple-vertical">
                   <button type="button" class="wheel-adjacent" data-tplfield="endMinute" data-direction="prev" aria-label="Уменьшить минуту">−</button>
-                  <div class="wheel-main" id="tplEndMinuteMain">00</div>
+                  <input type="text" class="wheel-main-input" id="tplEndMinuteMain" value="00" inputmode="numeric" autocomplete="off" aria-label="Минута конца">
                   <button type="button" class="wheel-adjacent" data-tplfield="endMinute" data-direction="next" aria-label="Увеличить минуту">+</button>
                 </div>
               </div>

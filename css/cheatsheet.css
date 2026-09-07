@@ -1,0 +1,310 @@
+/* ============================================
+   Шпаргалки — стили для инструкций препаратов
+   ============================================ */
+
+/* Переключатель «Специалист / Пациент» */
+.drug-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+
+  padding: 4px;
+  margin-bottom: 16px;
+
+  background: var(--menu-icon-bg);
+  border-radius: 12px;
+}
+
+.drug-tab {
+  padding: 10px 12px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.drug-tab.active {
+  background: var(--card);
+  color: var(--accent);
+  box-shadow: var(--shadow);
+}
+
+/* Контейнер инструкции */
+.drug-content {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  box-shadow: var(--shadow);
+}
+
+/* ===== Заголовки ===== */
+
+.drug-content h1 {
+  margin: 0 0 14px;
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--accent);
+  line-height: 1.3;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--accent);
+}
+
+.drug-content h2 {
+  margin: 24px 0 10px;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--accent);
+  line-height: 1.3;
+}
+
+.drug-content h2:first-child {
+  margin-top: 0;
+}
+
+.drug-content h3 {
+  margin: 18px 0 8px;
+  font-size: 0.98rem;
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1.3;
+}
+
+.drug-content h4 {
+  margin: 14px 0 6px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.3;
+}
+
+/* ===== Обычный текст ===== */
+
+.drug-content p {
+  margin: 0 0 10px;
+  line-height: 1.55;
+  font-size: 0.95rem;
+  text-align: justify;
+  hyphens: auto;
+}
+
+.drug-content p:last-child {
+  margin-bottom: 0;
+}
+
+.drug-content strong {
+  font-weight: 800;
+  color: var(--text);
+}
+
+.drug-content em {
+  font-style: italic;
+  color: var(--muted);
+}
+
+/* ===== Горизонтальная линия ===== */
+
+.drug-content hr {
+  margin: 18px 0;
+  border: 0;
+  border-top: 1px dashed var(--border);
+}
+
+/* ===== Списки ===== */
+
+.drug-content ul,
+.drug-content ol {
+  margin: 0 0 12px;
+  padding-left: 22px;
+}
+
+.drug-content ul:last-child,
+.drug-content ol:last-child {
+  margin-bottom: 0;
+}
+
+.drug-content li {
+  margin-bottom: 6px;
+  line-height: 1.5;
+  font-size: 0.95rem;
+}
+
+.drug-content li::marker {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.drug-content ul ul,
+.drug-content ol ol,
+.drug-content ul ol,
+.drug-content ol ul {
+  margin-top: 6px;
+  margin-bottom: 0;
+}
+
+/* ===== Цитаты ===== */
+
+.drug-content blockquote {
+  margin: 12px 0;
+  padding: 10px 14px;
+  border-left: 3px solid var(--accent);
+  background: var(--menu-icon-bg);
+  border-radius: 8px;
+  font-style: italic;
+  color: var(--text);
+}
+
+.drug-content blockquote p {
+  margin: 0;
+  text-align: left;
+}
+
+/* ===== Блоки предупреждений (ВАЖНО, ⚠️) ===== */
+
+.drug-alert {
+  margin: 14px 0;
+  padding: 12px 14px;
+  background: #fff3e0;
+  border-left: 4px solid #e65100;
+  border-radius: 10px;
+  font-size: 0.93rem;
+  line-height: 1.5;
+}
+
+[data-theme="dark"] .drug-alert {
+  background: rgba(230, 81, 0, 0.18);
+  border-left-color: #ff9800;
+}
+
+.drug-alert strong {
+  color: #bf360c;
+}
+
+[data-theme="dark"] .drug-alert strong {
+  color: #ffb74d;
+}
+
+.drug-alert p {
+  margin: 0;
+  text-align: left;
+}
+
+/* ===== Таблицы ===== */
+
+.drug-content table {
+  width: 100%;
+  margin: 14px 0;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.drug-content thead {
+  background: var(--menu-icon-bg);
+}
+
+.drug-content th {
+  padding: 10px 12px;
+  font-weight: 800;
+  color: var(--text);
+  text-align: left;
+  border-bottom: 2px solid var(--border);
+}
+
+.drug-content td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+
+.drug-content tr:last-child td {
+  border-bottom: 0;
+}
+
+.drug-content tbody tr:hover {
+  background: var(--menu-icon-bg);
+}
+
+/* ===== Адаптивные таблицы (карточный вид на мобильных) ===== */
+
+@media (max-width: 520px) {
+  .drug-content table,
+  .drug-content thead,
+  .drug-content tbody,
+  .drug-content tr,
+  .drug-content th,
+  .drug-content td {
+    display: block;
+    width: 100%;
+  }
+
+  .drug-content thead {
+    position: absolute;
+    left: -9999px;
+  }
+
+  .drug-content table {
+    border: 0;
+    background: transparent;
+  }
+
+  .drug-content tr {
+    margin-bottom: 10px;
+    padding: 10px 12px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+  }
+
+  .drug-content td {
+    padding: 4px 0;
+    border: 0;
+    border-bottom: 1px dashed var(--border);
+  }
+
+  .drug-content td:last-child {
+    border-bottom: 0;
+  }
+
+  .drug-content td::before {
+    content: attr(data-label);
+    display: block;
+    font-weight: 700;
+    font-size: 0.78rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    margin-bottom: 2px;
+  }
+}
+
+/* ===== Код / дозировки (inline) ===== */
+
+.drug-content code {
+  padding: 2px 6px;
+  background: var(--menu-icon-bg);
+  border-radius: 5px;
+  font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+  font-size: 0.88em;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* ===== Ссылки ===== */
+
+.drug-content a {
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom: 1px dashed var(--accent);
+}
+
+.drug-content a:hover {
+  border-bottom-style: solid;
+}
