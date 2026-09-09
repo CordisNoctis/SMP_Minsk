@@ -83,7 +83,23 @@
 
 .main-menu {
   display: grid;
-  gap: 14px;
+  gap: 24px;
+}
+
+.menu-group {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: 1fr;
+}
+
+.menu-group-title {
+  grid-column: 1 / -1;
+  margin: 0 0 4px 4px;
+  font-size: 0.82rem;
+  font-weight: 750;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
 }
 
 .menu-card {
@@ -293,7 +309,7 @@
 }
 
 @media (min-width: 700px) {
-  .main-menu {
+  .menu-group {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
@@ -303,10 +319,6 @@
 }
 
 @media (min-width: 1024px) {
-  .main-menu {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
   .list-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
