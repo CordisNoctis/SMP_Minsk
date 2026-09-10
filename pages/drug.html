@@ -29,6 +29,16 @@
   </header>
 
   <main class="page">
+    <!-- Заглушка для отсутствующего препарата -->
+    <section class="card coming-soon-card drug-not-found" id="drugNotFound" hidden>
+      <div class="coming-soon-icon" aria-hidden="true">⏰</div>
+      <h2 class="coming-soon-title">Инструкция в разработке</h2>
+      <p class="coming-soon-description">
+        Инструкция к этому препарату ещё не загружена в базу. Совсем скоро здесь появится подробная информация для специалиста и пациента.
+      </p>
+      <a href="drugs.html" class="btn-primary coming-soon-btn">← К списку препаратов</a>
+    </section>
+
     <!-- Переключатель инструкций -->
     <div class="drug-tabs" id="drugTabs" hidden>
       <button type="button" class="drug-tab active" id="tabSpec">Специалисту</button>
@@ -46,6 +56,33 @@
   <script src="../js/back.js"></script>
   <script src="../js/markdown.js"></script>
   <script src="../js/drugs-data.js"></script>
+    <script>
+    (function () {
+      "use strict";
+
+      var params = new URLSearchParams(window.location.search);
+      var id = params.get("id");
+      var drug = (window.SMP && window.SMP.drugs && window.SMP.drugs.get)
+        ? window.SMP.drugs.get(id)
+        : null;
+
+      // Если препарат не найден — показываем заглушку и скрываем остальные блоки
+      if (!drug) {
+        var notFoundEl = document.getElementById("drugNotFound");
+        var tabsEl = document.getElementById("drugTabs");
+        var specEl = document.getElementById("specContent");
+        var patEl = document.getElementById("patContent");
+
+        if (notFoundEl) notFoundEl.hidden = false;
+        if (tabsEl) tabsEl.hidden = true;
+        if (specEl) specEl.hidden = true;
+        if (patEl) patEl.hidden = true;
+
+        // Отключаем дальнейшую обработку cheatsheet.js
+        window.__SMP_DRUG_NOT_FOUND__ = true;
+      }
+    })();
+  </script>
   <script src="../js/cheatsheet.js"></script>
   <script src="../js/sw-register.js"></script>
 </body>

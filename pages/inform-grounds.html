@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content">
+  <title>Поводы информирования — СМП Помощник</title>
+  <meta name="theme-color" content="#7A1F2B">
+
+  <script src="../js/theme-init.js"></script>
+  <link rel="stylesheet" href="../css/styles.css">
+
+  <link rel="icon" href="../icons/favicon.ico" sizes="any">
+  <link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+
+  <style>
+    .ig-search-wrap {
+      position: sticky;
+      top: 72px;
+      z-index: 15;
+      display: grid;
+      gap: 8px;
+      padding: 10px 12px;
+      margin: 0 0 12px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+    }
+    .ig-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .ig-chip {
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: transparent;
+      color: var(--muted);
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background-color .15s ease, color .15s ease, border-color .15s ease;
+    }
+    .ig-chip.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+    .ig-counter {
+      font-size: 0.8rem;
+      font-weight: 650;
+      color: var(--muted);
+      font-variant-numeric: tabular-nums;
+    }
+    .ig-title-card { text-align: center; padding: 18px 16px; }
+    .ig-doc-title { margin: 0 0 6px; font-size: 1.3rem; font-weight: 900; letter-spacing: 0.02em; }
+    .ig-doc-subtitle { margin: 0; font-size: 0.95rem; font-weight: 650; color: var(--muted); line-height: 1.4; }
+    .ig-list { display: grid; gap: 10px; margin-bottom: 12px; }
+    .ig-card {
+      position: relative;
+      padding: 12px 14px 12px 16px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .ig-card::before {
+      content: "";
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 4px;
+      background: var(--border);
+    }
+    .ig-card.ig-urgent::before { background: #c62828; }
+    [data-theme="dark"] .ig-card.ig-urgent::before { background: #ef9a9a; }
+    .ig-card-head { display: flex; gap: 10px; align-items: flex-start; }
+    .ig-num {
+      flex: 0 0 auto;
+      min-width: 34px; height: 34px; padding: 0 6px;
+      display: grid; place-items: center;
+      background: var(--menu-icon-bg);
+      color: var(--accent);
+      border-radius: 10px;
+      font-weight: 800; font-size: 0.95rem;
+      font-variant-numeric: tabular-nums;
+    }
+    .ig-urgent .ig-num { background: rgba(198, 40, 40, 0.12); color: #c62828; }
+    [data-theme="dark"] .ig-urgent .ig-num { background: rgba(239, 154, 154, 0.15); color: #ef9a9a; }
+    .ig-text { min-width: 0; font-size: 0.95rem; line-height: 1.45; }
+    .ig-subs { margin: 8px 0 0; padding-left: 44px; display: grid; gap: 4px; }
+    .ig-subs li { font-size: 0.9rem; line-height: 1.4; }
+    .ig-urgent-word { color: #c62828; font-weight: 800; }
+    [data-theme="dark"] .ig-urgent-word { color: #ef9a9a; }
+    .ig-mark { background: var(--accent); color: #fff; border-radius: 4px; padding: 0 2px; }
+    .ig-footnote p { margin: 0; font-size: 0.8rem; color: var(--muted); line-height: 1.5; }
+    .ig-top-btn {
+      position: fixed;
+      right: 16px;
+      bottom: calc(16px + env(safe-area-inset-bottom));
+      width: 48px; height: 48px;
+      border: 0; border-radius: 50%;
+      background: var(--accent); color: #fff;
+      font-size: 1.3rem; font-weight: 800;
+      cursor: pointer;
+      box-shadow: var(--shadow-hover);
+      opacity: 0; pointer-events: none; transform: translateY(10px);
+      transition: opacity .2s ease, transform .2s ease;
+      z-index: 60;
+    }
+    .ig-top-btn.show { opacity: 1; pointer-events: auto; transform: none; }
+  </style>
+</head>
+
+<body>
+  <header class="page-header">
+    <button type="button" class="back-button" data-back data-back-fallback="cheatsheets.html" aria-label="Назад">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+    <h1 class="page-title-centered">Поводы информирования</h1>
+    <span class="header-spacer" aria-hidden="true"></span>
+  </header>
+
+  <main class="page">
+    <div class="ig-search-wrap">
+      <input type="search" id="igSearch" class="drugs-search" placeholder="Поиск по перечню..." autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Поиск по перечню">
+      <div class="ig-toolbar">
+        <button type="button" class="ig-chip" id="igUrgentChip" aria-pressed="false">⚡ Только немедленные</button>
+        <span class="ig-counter" id="igCounter"></span>
+      </div>
+    </div>
+
+    <section class="card ig-title-card">
+      <h2 class="ig-doc-title">ПЕРЕЧЕНЬ*</h2>
+      <p class="ig-doc-subtitle">поводов обязательного информирования врача - руководителя смен оперативного отдела</p>
+    </section>
+
+    <div id="igList" class="ig-list"></div>
+
+    <section class="card ig-footnote">
+      <p>* для бригад скорой медицинской помощи<br>для фельдшеров по приему вызовов и передаче их выездным бригадам (оперативного отдела)</p>
+    </section>
+  </main>
+
+  <button type="button" class="ig-top-btn" id="igTopBtn" aria-label="Наверх">↑</button>
+
+  <script src="../js/theme.js"></script>
+  <script src="../js/back.js"></script>
+  <script src="../js/sw-register.js"></script>
+
+  <script type="application/json" id="igData">
+[
+  {"n":"1","t":"Случаи оказания помощи пострадавшим в условиях ЧС или угрозе возникновения ЧС, при которых возможно большое количество пострадавших (в течение 10 минут от момента прибытия к месту ЧС или происшествия доложить предварительные данные о ЧС и о количестве пострадавших, далее - доклад каждый час до ликвидации последствий ЧС):","s":["наличие двух и более погибших;","наличие пяти и более пострадавших;","пожар, задымление (задымление в метро и др. ЧС);","заминирование общественных зданий и др.;","железнодорожные, автомобильные, авиационные аварии и катастрофы;","взрыв, утечка или распыление ядовитых веществ;","отравление людей toxicными и другими веществами;","информация о радиационном облучении людей сверх установленных норм;","информация об угрозе или возникновении эпидемической вспышки инфекционных заболеваний;","информация о единичных и групповых случаях инфекционных заболеваний, на которые распространяются мероприятия по санитарной охране территории Республики Беларусь;"]},
+  {"n":"2","t":"Несчастные случаи (при наличии пострадавших или гибели одного и более людей) с места события:","s":["падение с высоты,","ожоги пламенем, возгорание одежды и имущества;","наличие пострадавших в результате падения конструкций, деревьев, отложений льда и снега, стихийных бедствий;","смертельные случаи холодовой травмы;","происшествия на водоемах (утопление, несмертельное погружение в воду, переохлаждение)."]},
+  {"n":"3","t":"Тяжелые производственные травмы, связанные с увечьем или гибелью одного и более людей, другие травмы на рабочем месте в рабочее время пациентов;"},
+  {"n":"4","t":"Случаи получения травмы сотрудниками учреждения во время исполнения служебных обязанностей - немедленно."},
+  {"n":"5","t":"ДТП с пострадавшими (с места события указать вид транспортных средств, участников ДТП, характеристику механизма получения травм пострадавшими, необходимость в дополнительных силах и средствах - немедленно, об отсутствии пострадавших на месте ДТП - немедленно)."},
+  {"n":"6","t":"ДТП с участием автомобиля скорой медицинской помощи (при вызове сотрудников ГАИ) - немедленно."},
+  {"n":"7","t":"Заболевания и травмы, полученные пациентами в общественном транспорте (автобус, троллейбус, трамвай, метро, маршрутное такси)."},
+  {"n":"8","t":"Суициды и парасуициды."},
+  {"n":"9","t":"Прибытие к месту проведения массового (спортивного) мероприятия, окончание массового (спортивного) мероприятия, каждый случай обращения за медицинской помощью, необходимость транспортировки больного (пострадавшего) в учреждение здравоохранения с места проведения мероприятия."},
+  {"n":"10","t":"Случаи младенческой, детской, материнской смертности - немедленно после констатации."},
+  {"n":"11","t":"Случаи смерти больных (пострадавших) трудоспособного возраста - немедленно после констатации."},
+  {"n":"12","t":"Случаи смерти больных (пострадавших) во время оказания медицинской помощи - немедленно после констатации."},
+  {"n":"13","t":"Случаи смерти больных (пострадавших) при наличии видимых телесных повреждений - немедленно после констатации."},
+  {"n":"14","t":"Случаи смерти больных (пострадавших) при повторном вызове бригады СМП - немедленно после констатации."},
+  {"n":"15","t":"Случаи смерти на территории организации здравоохранения, подчиненных комитету по здравоохранению Мингорисполкома, не связанные с оказанием медицинской помощи;"},
+  {"n":"16","t":"Обнаружение детей и подростков в социально опасном положении (возможные противоправные действия со стороны третьих лиц, насилие в семье, нетрезвые родственники, осуществляющие уход за ребенком, оставление детей без присмотра, детские суициды и парасуициды, употребление несовершеннолетними психоактивных веществ, в том числе алкоголя и курительных смесей)."},
+  {"n":"17","t":"Случаи оказания медицинской помощи и доставки в стационар несовершеннолетних (до 18 лет) без родителей или официальных опекунов;"},
+  {"n":"18","t":"Оказание медицинской помощи пациенту, относящемуся к категории руководителей ведомств и служб, включая высших должностных лиц, высокопоставленным иностранным гражданам."},
+  {"n":"19","t":"Отказ от доставки в стационар больного (пострадавшего) при наличии признаков угрожающего жизни состояния - во всех случаях с места события."},
+  {"n":"20","t":"Отказ беременной от доставки в лечебное учреждение."},
+  {"n":"21","t":"Необходимость вызова «на себя» специализированной бригады."},
+  {"n":"22","t":"Необходимость вызова сотрудников спецслужб в случаях агрессивного поведения пациента и (или) окружающих его лиц, угрозы жизни или здоровью персонала бригады скорой медицинской помощи - с места события."},
+  {"n":"23","t":"Проблемы транспортировки пациентов (вес пациента превышает 150 кг, необходимость извлечения пациентов с козырьков зданий, из колодцев, ям, котлованов, деблокировке из транспортных средств, эвакуации со льда, поверхности водоемов)."},
+  {"n":"24","t":"Задержка при выполнении вызова более 60 минут (от момента прибытия на вызов до момента окончания вызова или до момента начала транспортировки)."},
+  {"n":"25","t":"Неисправность автомобиля или иные обстоятельства, препятствующие прибытию бригады на вызов или транспортировке пациента в стационар."},
+  {"n":"26","t":"Попутный вызов или дополнительный пострадавший."},
+  {"n":"27","t":"Случаи, когда у медицинского персонала бригады СНМП или водителя замечены (или обвинение со стороны пациентов или иных лиц) признаки состояния алкогольного, наркотического или токсического опьянения, неадекватность поведения;"},
+  {"n":"28","t":"Конфликтная ситуация при обслуживании вызова (конфликтная ситуация - это наличие противоречий между сотрудниками бригады СМП и пациентом (родственниками или другими лицами) по вопросам оказания медицинской помощи, этики, санэпидрежима, в случаях угроз жалобой) - с адреса вызова."},
+  {"n":"29","t":"Вызов сотрудников милиции (сообщить цель (обоснование) вызова сотрудников милиции)."},
+  {"n":"30","t":"Задержка бригады СМП в приемном отделении, конфликтная ситуация в приемном отделении, отказ в приеме пациента - из приемного отделения."},
+  {"n":"31","t":"Попытка предложения взятки на вызове."},
+  {"n":"32","t":"При наличии информации или оснований, позволяющих полагать, что вред здоровью пациента причинен в результате противоправных действий. Основаниями, позволяющими полагать, что вред здоровью пациента причинен в результате противоправных действий, считать:","s":["**32.1** личное сообщение пациента о том, что вред его здоровью причинен в результате противоправных действий;","**32.2** сообщение родственников пациента либо сопровождающих его лиц о том, что вред здоровью пациента причинен в результате противоправных действий;","**32.3** характер травм, повреждений, состояния или заболевания пациента, свидетельствующие о том, что вред его здоровью причинен в результате противоправных действий, в том числе:","**32.4** изнасилования и иные действия сексуального характера;","**32.5** установление факта беременности у лиц, не достигших 16-летнего возраста;","**32.6** признаки проведения вмешательства в целях искусственного прерывания беременности (аборта) вне организации здравоохранения, имеющей соответствующую лицензию;","**32.7** огнестрельные ранения;","**32.8** отравление, вызванное воздействием наркотических средств, психотропных веществ, их аналогов, токсических или других одурманивающих веществ, установление у несовершеннолетнего психического расстройства (заболевания), вызванного воздействием алкоголя;","**32.9** иные сведения о том, что вред здоровью пациента причинен в результате противоправных действий."]}
+]
+  </script>
+
+  <script>
+    (function () {
+      "use strict";
+
+      var dataEl = document.getElementById("igData");
+      var listEl = document.getElementById("igList");
+      if (!dataEl || !listEl) return;
+
+      var DATA;
+      try { DATA = JSON.parse(dataEl.textContent); }
+      catch (e) { console.error("inform-grounds: некорректный JSON", e); return; }
+
+      function esc(s) {
+        return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+      }
+      function fmt(s) {
+        return esc(s).replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+      }
+      function isUrgent(item) {
+        if (/немедленно/i.test(item.t)) return true;
+        return (item.s || []).some(function (x) { return /немедленно/i.test(x); });
+      }
+
+      // Подсветка слова/запроса в текстовых узлах (текст остаётся прежним)
+      function markWord(root, word, cls) {
+        var q = word.toLowerCase();
+        var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null);
+        var nodes = [];
+        while (walker.nextNode()) nodes.push(walker.currentNode);
+        nodes.forEach(function (node) {
+          var text = node.nodeValue;
+          var lower = text.toLowerCase();
+          var i = lower.indexOf(q);
+          if (i === -1) return;
+          var frag = document.createDocumentFragment();
+          var pos = 0;
+          while (i !== -1) {
+            frag.appendChild(document.createTextNode(text.slice(pos, i)));
+            var mk = document.createElement("span");
+            mk.className = cls;
+            mk.textContent = text.substr(i, q.length);
+            frag.appendChild(mk);
+            pos = i + q.length;
+            i = lower.indexOf(q, pos);
+          }
+          frag.appendChild(document.createTextNode(text.slice(pos)));
+          node.parentNode.replaceChild(frag, node);
+        });
+      }
+
+      var cards = [];
+      DATA.forEach(function (item) {
+        var urgent = isUrgent(item);
+        var card = document.createElement("article");
+        card.className = "ig-card" + (urgent ? " ig-urgent" : "");
+
+        var html = '<div class="ig-card-head"><span class="ig-num">' + esc(item.n) + '</span><div class="ig-text">' + fmt(item.t) + '</div></div>';
+        if (item.s && item.s.length) {
+          html += '<ul class="ig-subs">';
+          item.s.forEach(function (sub) { html += '<li>' + fmt(sub) + '</li>'; });
+          html += '</ul>';
+        }
+        card.innerHTML = html;
+        card.dataset.hay = (item.n + " " + item.t + " " + (item.s || []).join(" ")).toLowerCase();
+        card.dataset.urgent = urgent ? "1" : "0";
+
+        listEl.appendChild(card);
+        cards.push(card);
+      });
+
+      // Подсветка слова «немедленно» во всех карточках
+      cards.forEach(function (c) { markWord(c, "немедленно", "ig-urgent-word"); });
+
+      var searchEl = document.getElementById("igSearch");
+      var chipEl = document.getElementById("igUrgentChip");
+      var counterEl = document.getElementById("igCounter");
+      var urgentOnly = false;
+
+      function clearMarks() {
+        cards.forEach(function (card) {
+          card.querySelectorAll(".ig-mark").forEach(function (m) {
+            var parent = m.parentNode;
+            parent.replaceChild(document.createTextNode(m.textContent), m);
+            parent.normalize();
+          });
+        });
+      }
+
+      function applyFilter() {
+        var q = (searchEl && searchEl.value || "").trim().toLowerCase();
+        var shown = 0;
+        cards.forEach(function (card) {
+          var okQ = !q || card.dataset.hay.indexOf(q) !== -1;
+          var okU = !urgentOnly || card.dataset.urgent === "1";
+          var show = okQ && okU;
+          card.hidden = !show;
+          if (show) shown++;
+        });
+        if (counterEl) counterEl.textContent = "Показано " + shown + " из " + cards.length;
+        clearMarks();
+        if (q) {
+          cards.forEach(function (card) {
+            if (!card.hidden) markWord(card, q, "ig-mark");
+          });
+        }
+      }
+
+      if (chipEl) {
+        chipEl.addEventListener("click", function () {
+          urgentOnly = !urgentOnly;
+          chipEl.classList.toggle("active", urgentOnly);
+          chipEl.setAttribute("aria-pressed", urgentOnly ? "true" : "false");
+          applyFilter();
+        });
+      }
+      if (searchEl) {
+        searchEl.addEventListener("input", applyFilter);
+        searchEl.addEventListener("search", applyFilter);
+      }
+      applyFilter();
+
+      var topBtn = document.getElementById("igTopBtn");
+      if (topBtn) {
+        topBtn.addEventListener("click", function () {
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        });
+        window.addEventListener("scroll", function () {
+          topBtn.classList.toggle("show", window.scrollY > 400);
+        }, { passive: true });
+      }
+    })();
+  </script>
+</body>
+</html>

@@ -29,7 +29,7 @@
 
   <main class="page">
     <!-- Поиск -->
-    <div class="drugs-search-wrap">
+    <div class="drugs-search-wrap" id="drugsSearchWrap">
       <input
         type="search"
         id="drugsSearch"
@@ -41,6 +41,15 @@
       >
     </div>
 
+    <!-- Заглушка для пустой базы -->
+    <section class="card coming-soon-card drugs-empty-state" id="drugsEmptyState" hidden>
+      <div class="coming-soon-icon" aria-hidden="true">⏰</div>
+      <h2 class="coming-soon-title">Инструкции готовятся к загрузке</h2>
+      <p class="coming-soon-description">
+        Работаю над базой официальных инструкций к препаратам из табеля оснащения. Совсем скоро здесь появится подробная информация по каждому средству.
+      </p>
+    </section>
+
     <nav id="drugsList" class="list-grid" aria-label="Список препаратов"></nav>
     <p id="drugsEmpty" class="muted" style="text-align:center; padding:20px 0;" hidden>
       По запросу ничего не найдено
@@ -50,6 +59,7 @@
   <script src="../js/theme.js"></script>
   <script src="../js/back.js"></script>
   <script src="../js/drugs-data.js"></script>
+  <script src="../js/drugs-db.js"></script>
   <script>
     (function () {
       "use strict";
@@ -63,6 +73,17 @@
       var allIds = Object.keys(drugs).sort(function (a, b) {
         return (drugs[a].title || "").localeCompare(drugs[b].title || "", "ru", { sensitivity: "base" });
       });
+
+      var emptyStateEl = document.getElementById("drugsEmptyState");
+      var searchWrapEl = document.getElementById("drugsSearchWrap");
+
+      // Если база пустая — показываем заглушку и скрываем поиск
+      if (allIds.length === 0) {
+        if (emptyStateEl) emptyStateEl.hidden = false;
+        if (searchWrapEl) searchWrapEl.hidden = true;
+        if (listEl) listEl.hidden = true;
+        return;
+      }
 
       // Сохраняем список элементов для быстрого скрытия/показа
       var items = [];

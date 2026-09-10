@@ -7,6 +7,9 @@
   }
 
   function renderDrug() {
+    // Если препарат не найден в базе — заглушка уже показана в HTML
+    if (window.__SMP_DRUG_NOT_FOUND__) return;
+
     var id = getDrugId();
     var drug = (window.SMP.drugs && window.SMP.drugs.get(id)) || null;
 

@@ -1,0 +1,36 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "SMP Drugs Index",
+  "type": "object",
+  "required": ["version", "drugs"],
+  "properties": {
+    "version": { "type": "integer", "minimum": 1, "description": "Версия формата индекса" },
+    "updated": { "type": "string", "format": "date", "description": "Дата последнего обновления базы" },
+    "drugs": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/drug" }
+    }
+  },
+  "definitions": {
+    "drug": {
+      "type": "object",
+      "required": ["id", "title"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9-]+$",
+          "description": "Идентификатор: совпадает с именем файла drugs/{id}.md и параметром drug.html?id={id}"
+        },
+        "title": { "type": "string", "minLength": 1, "description": "Название с дозировкой для списка" },
+        "group": { "type": "string", "description": "Фармакологическая группа" },
+        "atc": { "type": "string", "description": "Код АТХ" },
+        "form": { "type": "string", "description": "Лекарственная форма" },
+        "tags": { "type": "array", "items": { "type": "string" }, "description": "Метки для фильтров (экстренные, ингаляционные...)" },
+        "aliases": { "type": "array", "items": { "type": "string" }, "description": "Синонимы для поиска (второе название, торговое имя)" },
+        "hasPatient": { "type": "boolean", "description": "true, если существует файл drugs/{id}-patient.md" },
+        "updated": { "type": "string", "format": "date", "description": "Дата пересмотра инструкции" }
+      }
+    }
+  }
+}

@@ -36,15 +36,6 @@
 <body>
   <a class="skip-link" href="#main">Перейти к главному меню</a>
 
-    <!-- Баннер обновления PWA -->
-  <div class="pwa-update-banner" id="pwaUpdateBanner" hidden role="alert" aria-live="polite">
-    <div class="pwa-update-banner-content">
-      <span class="pwa-update-banner-icon" aria-hidden="true">🆕</span>
-      <span class="pwa-update-banner-text">Доступна новая версия приложения</span>
-      <button type="button" class="pwa-update-banner-btn" id="pwaUpdateBtn">Обновить</button>
-    </div>
-  </div>
-
   <header class="app-header">
     <div class="brand">
       <img class="brand-icon" src="icons/icon-192.png" alt="Иконка приложения" width="56" height="56">
@@ -78,22 +69,17 @@
       <!-- ===== Группа: Справочники ===== -->
       <div class="menu-group">
         <h2 class="menu-group-title">📖 Справочники</h2>
-        <a class="menu-card" href="pages/drugs.html" data-page="drugs">
-          <span class="menu-icon" aria-hidden="true">💊</span>
-          <span class="menu-title">Препараты</span>
-          <span class="menu-arrow" aria-hidden="true">›</span>
-        </a>
         <a class="menu-card" href="pages/cheatsheets.html" data-page="cheatsheets">
           <span class="menu-icon" aria-hidden="true">📋</span>
           <span class="menu-title">Шпаргалки</span>
           <span class="menu-arrow" aria-hidden="true">›</span>
         </a>
-        <a class="menu-card" href="#calculators" data-page="calculators">
+        <a class="menu-card" href="pages/coming-soon.html?section=calculators" data-page="calculators">
           <span class="menu-icon" aria-hidden="true">🧮</span>
           <span class="menu-title">Клинические калькуляторы и шкалы</span>
           <span class="menu-arrow" aria-hidden="true">›</span>
         </a>
-        <a class="menu-card" href="#normative-base" data-page="normative-base">
+        <a class="menu-card" href="pages/coming-soon.html?section=normative-base" data-page="normative-base">
           <span class="menu-icon" aria-hidden="true">📚</span>
           <span class="menu-title">Нормативная база</span>
           <span class="menu-arrow" aria-hidden="true">›</span>
@@ -108,18 +94,18 @@
           <span class="menu-title">Настройки</span>
           <span class="menu-arrow" aria-hidden="true">›</span>
         </a>
+        <button type="button" class="menu-card" data-modal-open="changelog-modal" aria-label="История обновлений">
+          <span class="menu-icon" aria-hidden="true">🔄</span>
+          <span class="menu-card-text">
+            <span class="menu-title">История обновлений</span>
+            <span class="menu-sub">Версия: <span id="footerVersion">—</span></span>
+          </span>
+          <span class="menu-arrow" aria-hidden="true">›</span>
+        </button>
       </div>
 
     </nav>
   </main>
-
-  <footer class="app-footer">
-    <button type="button" class="footer-bar" data-modal-open="changelog-modal" aria-label="История обновлений">
-      <span class="menu-icon" aria-hidden="true">🔄</span>
-      <span class="menu-title">История обновлений</span>
-      <span class="footer-bar-right">Версия: <span id="footerVersion">—</span></span>
-    </button>
-  </footer>
 
     <!-- ===== МОДАЛКА ИСТОРИИ ОБНОВЛЕНИЙ ===== -->
   <div class="modal" id="changelog-modal" hidden aria-hidden="true">

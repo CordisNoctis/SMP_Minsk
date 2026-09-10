@@ -49,7 +49,12 @@ const APP_SHELL = [
   "./js/cheatsheet.js",
   "./pages/drug.html",
   "./pages/drugs.html",
-  "./js/drugs-data.js"
+  "./js/drugs-data.js",
+  "./js/drugs-db.js",
+  "./pages/coming-soon.html",
+  "./js/coming-soon.js",
+  "./pages/policlinic.html",
+  "./pages/policlinic.html",
 ];
 
 const OPTIONAL_ASSETS = [
@@ -65,7 +70,7 @@ const OPTIONAL_ASSETS = [
 ];
 
 const DATA_ASSETS = [
-  "./data/content.json"
+  "./data/drugs-index.json"
 ];
 
 self.addEventListener("install", (event) => {
@@ -82,7 +87,6 @@ self.addEventListener("install", (event) => {
           )
         ]);
       })
-      .then(() => self.skipWaiting())
   );
 });
 
@@ -117,14 +121,6 @@ self.addEventListener("fetch", (event) => {
   const url = new URL(request.url);
 
   if (url.origin !== location.origin) {
-    return;
-  }
-
-  if (url.pathname.endsWith("/version.json")) {
-    event.respondWith(
-      fetch(request, { cache: "no-store" })
-        .catch(() => caches.match(request))
-    );
     return;
   }
 
