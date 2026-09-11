@@ -20,10 +20,12 @@ const APP_SHELL = [
   "./js/app.js",
   "./js/modal.js",
   "./js/back.js",
+  "./js/exporter.js",
   "./js/time-picker.js",
   "./js/shift-schedule.js",
   "./js/templates-admin.js",
   "./js/calendar-export.js",
+  "./vendor/html2canvas.min.js",
   "./js/settings-backup.js",
   "./js/equipment-data.js",
   "./js/equipment-checklist.js",
@@ -55,6 +57,9 @@ const APP_SHELL = [
   "./js/coming-soon.js",
   "./pages/policlinic.html",
   "./pages/policlinic.html",
+  "./pages/inform-grounds.html",
+  "./pages/unconscious-public.html",
+  "./pages/call-card-110.html",
 ];
 
 const OPTIONAL_ASSETS = [

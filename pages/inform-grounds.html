@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content">
-  <title>Поводы информирования — СМП Помощник</title>
+  <title>Перечень поводов обязательного информирования — СМП Помощник</title>
   <meta name="theme-color" content="#7A1F2B">
 
   <script src="../js/theme-init.js"></script>
@@ -15,51 +15,17 @@
   <meta name="mobile-web-app-capable" content="yes">
 
   <style>
-    .ig-search-wrap {
-      position: sticky;
-      top: 72px;
-      z-index: 15;
-      display: grid;
-      gap: 8px;
-      padding: 10px 12px;
-      margin: 0 0 12px;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      box-shadow: var(--shadow);
+    /* Длинный заголовок в шапке: переносим на несколько строк */
+    .ig-header-title {
+      white-space: normal;
+      line-height: 1.25;
+      font-size: 0.95rem;
     }
-    .ig-toolbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
+    @media (max-width: 480px) {
+      .ig-header-title { font-size: 0.85rem; }
     }
-    .ig-chip {
-      padding: 6px 12px;
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      background: transparent;
-      color: var(--muted);
-      font-size: 0.8rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: background-color .15s ease, color .15s ease, border-color .15s ease;
-    }
-    .ig-chip.active {
-      background: var(--accent);
-      border-color: var(--accent);
-      color: #fff;
-    }
-    .ig-counter {
-      font-size: 0.8rem;
-      font-weight: 650;
-      color: var(--muted);
-      font-variant-numeric: tabular-nums;
-    }
-    .ig-title-card { text-align: center; padding: 18px 16px; }
-    .ig-doc-title { margin: 0 0 6px; font-size: 1.3rem; font-weight: 900; letter-spacing: 0.02em; }
-    .ig-doc-subtitle { margin: 0; font-size: 0.95rem; font-weight: 650; color: var(--muted); line-height: 1.4; }
     .ig-list { display: grid; gap: 10px; margin-bottom: 12px; }
+
     .ig-card {
       position: relative;
       padding: 12px 14px 12px 16px;
@@ -78,6 +44,7 @@
     }
     .ig-card.ig-urgent::before { background: #c62828; }
     [data-theme="dark"] .ig-card.ig-urgent::before { background: #ef9a9a; }
+
     .ig-card-head { display: flex; gap: 10px; align-items: flex-start; }
     .ig-num {
       flex: 0 0 auto;
@@ -91,13 +58,26 @@
     }
     .ig-urgent .ig-num { background: rgba(198, 40, 40, 0.12); color: #c62828; }
     [data-theme="dark"] .ig-urgent .ig-num { background: rgba(239, 154, 154, 0.15); color: #ef9a9a; }
-    .ig-text { min-width: 0; font-size: 0.95rem; line-height: 1.45; }
+
+    /* Выравнивание по ширине */
+    .ig-text {
+      min-width: 0;
+      font-size: 0.95rem;
+      line-height: 1.45;
+      text-align: justify;
+      hyphens: auto;
+    }
     .ig-subs { margin: 8px 0 0; padding-left: 44px; display: grid; gap: 4px; }
-    .ig-subs li { font-size: 0.9rem; line-height: 1.4; }
+    .ig-subs li {
+      font-size: 0.9rem;
+      line-height: 1.4;
+      text-align: justify;
+      hyphens: auto;
+    }
+
     .ig-urgent-word { color: #c62828; font-weight: 800; }
     [data-theme="dark"] .ig-urgent-word { color: #ef9a9a; }
-    .ig-mark { background: var(--accent); color: #fff; border-radius: 4px; padding: 0 2px; }
-    .ig-footnote p { margin: 0; font-size: 0.8rem; color: var(--muted); line-height: 1.5; }
+
     .ig-top-btn {
       position: fixed;
       right: 16px;
@@ -123,29 +103,12 @@
         <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
     </button>
-    <h1 class="page-title-centered">Поводы информирования</h1>
+    <h1 class="page-title-centered ig-header-title">Перечень поводов обязательного информирования врача - руководителя смен оперативного отдела</h1>
     <span class="header-spacer" aria-hidden="true"></span>
   </header>
 
   <main class="page">
-    <div class="ig-search-wrap">
-      <input type="search" id="igSearch" class="drugs-search" placeholder="Поиск по перечню..." autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Поиск по перечню">
-      <div class="ig-toolbar">
-        <button type="button" class="ig-chip" id="igUrgentChip" aria-pressed="false">⚡ Только немедленные</button>
-        <span class="ig-counter" id="igCounter"></span>
-      </div>
-    </div>
-
-    <section class="card ig-title-card">
-      <h2 class="ig-doc-title">ПЕРЕЧЕНЬ*</h2>
-      <p class="ig-doc-subtitle">поводов обязательного информирования врача - руководителя смен оперативного отдела</p>
-    </section>
-
     <div id="igList" class="ig-list"></div>
-
-    <section class="card ig-footnote">
-      <p>* для бригад скорой медицинской помощи<br>для фельдшеров по приему вызовов и передаче их выездным бригадам (оперативного отдела)</p>
-    </section>
   </main>
 
   <button type="button" class="ig-top-btn" id="igTopBtn" aria-label="Наверх">↑</button>
@@ -187,7 +150,7 @@
   {"n":"29","t":"Вызов сотрудников милиции (сообщить цель (обоснование) вызова сотрудников милиции)."},
   {"n":"30","t":"Задержка бригады СМП в приемном отделении, конфликтная ситуация в приемном отделении, отказ в приеме пациента - из приемного отделения."},
   {"n":"31","t":"Попытка предложения взятки на вызове."},
-  {"n":"32","t":"При наличии информации или оснований, позволяющих полагать, что вред здоровью пациента причинен в результате противоправных действий. Основаниями, позволяющими полагать, что вред здоровью пациента причинен в результате противоправных действий, считать:","s":["**32.1** личное сообщение пациента о том, что вред его здоровью причинен в результате противоправных действий;","**32.2** сообщение родственников пациента либо сопровождающих его лиц о том, что вред здоровью пациента причинен в результате противоправных действий;","**32.3** характер травм, повреждений, состояния или заболевания пациента, свидетельствующие о том, что вред его здоровью причинен в результате противоправных действий, в том числе:","**32.4** изнасилования и иные действия сексуального характера;","**32.5** установление факта беременности у лиц, не достигших 16-летнего возраста;","**32.6** признаки проведения вмешательства в целях искусственного прерывания беременности (аборта) вне организации здравоохранения, имеющей соответствующую лицензию;","**32.7** огнестрельные ранения;","**32.8** отравление, вызванное воздействием наркотических средств, психотропных веществ, их аналогов, токсических или других одурманивающих веществ, установление у несовершеннолетнего психического расстройства (заболевания), вызванного воздействием алкоголя;","**32.9** иные сведения о том, что вред здоровью пациента причинен в результате противоправных действий."]}
+  {"n":"32","t":"При наличии информации или оснований, позволяющих полагать, что вред здоровью пациента причинен в результате противоправных действий. Основаниями, позволяющими полагать, что вред здоровью пациента причинен в результате противоправных действий, считать:","s":["личное сообщение пациента о том, что вред его здоровью причинен в результате противоправных действий;","сообщение родственников пациента либо сопровождающих его лиц о том, что вред здоровью пациента причинен в результате противоправных действий;","характер травм, повреждений, состояния или заболевания пациента, свидетельствующие о том, что вред его здоровью причинен в результате противоправных действий, в том числе:","изнасилования и иные действия сексуального характера;","установление факта беременности у лиц, не достигших 16-летнего возраста;","признаки проведения вмешательства в целях искусственного прерывания беременности (аборта) вне организации здравоохранения, имеющей соответствующую лицензию;","огнестрельные ранения;","отравление, вызванное воздействием наркотических средств, психотропных веществ, их аналогов, токсических или других одурманивающих веществ, установление у несовершеннолетнего психического расстройства (заболевания), вызванного воздействием алкоголя;","иные сведения о том, что вред здоровью пациента причинен в результате противоправных действий."]}
 ]
   </script>
 
@@ -206,15 +169,13 @@
       function esc(s) {
         return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
       }
-      function fmt(s) {
-        return esc(s).replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
-      }
+
       function isUrgent(item) {
         if (/немедленно/i.test(item.t)) return true;
         return (item.s || []).some(function (x) { return /немедленно/i.test(x); });
       }
 
-      // Подсветка слова/запроса в текстовых узлах (текст остаётся прежним)
+      // Подсветка слова «немедленно» в текстовых узлах (текст не меняется)
       function markWord(root, word, cls) {
         var q = word.toLowerCase();
         var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null);
@@ -241,76 +202,22 @@
         });
       }
 
-      var cards = [];
       DATA.forEach(function (item) {
         var urgent = isUrgent(item);
         var card = document.createElement("article");
         card.className = "ig-card" + (urgent ? " ig-urgent" : "");
 
-        var html = '<div class="ig-card-head"><span class="ig-num">' + esc(item.n) + '</span><div class="ig-text">' + fmt(item.t) + '</div></div>';
+        var html = '<div class="ig-card-head"><span class="ig-num">' + esc(item.n) + '</span><div class="ig-text">' + esc(item.t) + '</div></div>';
         if (item.s && item.s.length) {
           html += '<ul class="ig-subs">';
-          item.s.forEach(function (sub) { html += '<li>' + fmt(sub) + '</li>'; });
+          item.s.forEach(function (sub) { html += '<li>' + esc(sub) + '</li>'; });
           html += '</ul>';
         }
         card.innerHTML = html;
-        card.dataset.hay = (item.n + " " + item.t + " " + (item.s || []).join(" ")).toLowerCase();
-        card.dataset.urgent = urgent ? "1" : "0";
 
         listEl.appendChild(card);
-        cards.push(card);
+        markWord(card, "немедленно", "ig-urgent-word");
       });
-
-      // Подсветка слова «немедленно» во всех карточках
-      cards.forEach(function (c) { markWord(c, "немедленно", "ig-urgent-word"); });
-
-      var searchEl = document.getElementById("igSearch");
-      var chipEl = document.getElementById("igUrgentChip");
-      var counterEl = document.getElementById("igCounter");
-      var urgentOnly = false;
-
-      function clearMarks() {
-        cards.forEach(function (card) {
-          card.querySelectorAll(".ig-mark").forEach(function (m) {
-            var parent = m.parentNode;
-            parent.replaceChild(document.createTextNode(m.textContent), m);
-            parent.normalize();
-          });
-        });
-      }
-
-      function applyFilter() {
-        var q = (searchEl && searchEl.value || "").trim().toLowerCase();
-        var shown = 0;
-        cards.forEach(function (card) {
-          var okQ = !q || card.dataset.hay.indexOf(q) !== -1;
-          var okU = !urgentOnly || card.dataset.urgent === "1";
-          var show = okQ && okU;
-          card.hidden = !show;
-          if (show) shown++;
-        });
-        if (counterEl) counterEl.textContent = "Показано " + shown + " из " + cards.length;
-        clearMarks();
-        if (q) {
-          cards.forEach(function (card) {
-            if (!card.hidden) markWord(card, q, "ig-mark");
-          });
-        }
-      }
-
-      if (chipEl) {
-        chipEl.addEventListener("click", function () {
-          urgentOnly = !urgentOnly;
-          chipEl.classList.toggle("active", urgentOnly);
-          chipEl.setAttribute("aria-pressed", urgentOnly ? "true" : "false");
-          applyFilter();
-        });
-      }
-      if (searchEl) {
-        searchEl.addEventListener("input", applyFilter);
-        searchEl.addEventListener("search", applyFilter);
-      }
-      applyFilter();
 
       var topBtn = document.getElementById("igTopBtn");
       if (topBtn) {

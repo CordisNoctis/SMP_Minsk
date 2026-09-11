@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content">
+  <title>Порядок действий бригад СМП в общественных местах — СМП Помощник</title>
+  <meta name="theme-color" content="#7A1F2B">
+
+  <script src="../js/theme-init.js"></script>
+  <link rel="stylesheet" href="../css/styles.css">
+
+  <link rel="icon" href="../icons/favicon.ico" sizes="any">
+  <link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+
+  <style>
+    /* Длинный заголовок в шапке: переносим на несколько строк */
+    .uc-header-title {
+      white-space: normal;
+      line-height: 1.25;
+      font-size: 0.95rem;
+    }
+    @media (max-width: 480px) {
+      .uc-header-title { font-size: 0.85rem; }
+    }
+
+    .uc-list { display: grid; gap: 10px; margin-bottom: 12px; }
+
+    .uc-card {
+      position: relative;
+      padding: 12px 14px 12px 16px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .uc-card::before {
+      content: "";
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 4px;
+      background: var(--accent);
+    }
+
+    .uc-head { display: flex; gap: 10px; align-items: flex-start; }
+    .uc-num {
+      flex: 0 0 auto;
+      min-width: 34px; height: 34px; padding: 0 6px;
+      display: grid; place-items: center;
+      background: var(--menu-icon-bg);
+      color: var(--accent);
+      border-radius: 10px;
+      font-weight: 800; font-size: 0.95rem;
+      font-variant-numeric: tabular-nums;
+    }
+    .uc-text {
+      min-width: 0;
+      font-size: 0.95rem;
+      line-height: 1.45;
+      text-align: justify;
+      hyphens: auto;
+    }
+
+    /* Примечание со звёздочкой — акцентный блок внутри шага */
+    .uc-note {
+      margin-top: 10px;
+      padding: 10px 12px;
+      background: var(--menu-icon-bg);
+      border-left: 3px solid var(--accent);
+      border-radius: 0 10px 10px 0;
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+    }
+    .uc-note-star {
+      flex: 0 0 auto;
+      font-weight: 900;
+      color: var(--accent);
+      font-size: 1.1rem;
+      line-height: 1.2;
+    }
+    .uc-note-text {
+      font-size: 0.9rem;
+      line-height: 1.4;
+      font-weight: 700;
+      text-align: justify;
+      hyphens: auto;
+    }
+
+    .uc-top-btn {
+      position: fixed;
+      right: 16px;
+      bottom: calc(16px + env(safe-area-inset-bottom));
+      width: 48px; height: 48px;
+      border: 0; border-radius: 50%;
+      background: var(--accent); color: #fff;
+      font-size: 1.3rem; font-weight: 800;
+      cursor: pointer;
+      box-shadow: var(--shadow-hover);
+      opacity: 0; pointer-events: none; transform: translateY(10px);
+      transition: opacity .2s ease, transform .2s ease;
+      z-index: 60;
+    }
+    .uc-top-btn.show { opacity: 1; pointer-events: auto; transform: none; }
+  </style>
+</head>
+
+<body>
+  <header class="page-header">
+    <button type="button" class="back-button" data-back data-back-fallback="cheatsheets.html" aria-label="Назад">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+    <h1 class="page-title-centered uc-header-title">Порядок действий бригад скорой медицинской помощи при выезде в общественные места для оказания медицинской помощи пациентам без сознания</h1>
+    <span class="header-spacer" aria-hidden="true"></span>
+  </header>
+
+  <main class="page">
+    <div id="ucList" class="uc-list"></div>
+  </main>
+
+  <button type="button" class="uc-top-btn" id="ucTopBtn" aria-label="Наверх">↑</button>
+
+  <script src="../js/theme.js"></script>
+  <script src="../js/back.js"></script>
+  <script src="../js/sw-register.js"></script>
+
+  <script type="application/json" id="ucData">
+[
+  {"n":"1","t":"При получении вызова с поводом «Потеря пациентом сознания» к пациентам (пострадавшим), находящимся в общественным месте припарковать автомобиль, как можно ближе к местонахождению пациента (пострадавшего), убедиться в безопасности сотрудников бригады скорой медицинской помощи."},
+  {"n":"2","t":"Выходить из автомобиля скорой медицинской помощи имея при себе медицинские изделия и лекарственные средства, необходимые для проведения расширенной сердечно-лёгочной реанимации, а также средства переноски пациентов."},
+  {"n":"3","t":"При возможности - водителю выкатить носилки-каталку из автомобиля и быть готовым оказать помощь в транспортировке пациента (пострадавшего) в автомобиль скорой медицинской помощи."},
+  {"n":"4","t":"При необходимости и возможности привлекать к содействию в обеспечении условий безопасной работы и организации оказания медицинской помощи сотрудников МВД, МЧС, службы охраны и т.д., находящихся по адресу вызова."},
+  {"n":"5","t":"При прибытии к пациенту (пострадавшему) провести осмотр пациента (пострадавшего): сознание, дыхание, сердцебиение."},
+  {"n":"6","t":"При наличии признаков биологической смерти, свидетельских показаний о том, что с момента потери сознания, остановки дыхания, остановки кровообращения прошло более 30 минут, при отсутствии эффекта от выполняемых окружающими лицами базовых реанимационных мероприятий в течение 30 минут с момента остановки кровообращения – констатировать биологическую смерть, действовать в соответствии с утвержденным порядком констатации смерти граждан, укрыть тело одноразовой простынею."},
+  {"n":"7","t":"При отсутствии признаков биологической смерти, если с момента остановки кровообращения прошло менее 30 минут, в случаях выполняемых окружающими лицами реанимационных мероприятий продолжительностью до 30 минут – начать, либо продолжить проведение реанимационных мероприятий.","note":"Решение о проведении реанимационных мероприятий на месте вызова, в изолированном помещении или в автомобиле скорой медицинской помощи, принять после оценки окружающей обстановки (культурно-массовое или спортивное мероприятие; присутствие агрессивно настроенных окружающих; неблагоприятные погодные условия: снег, дождь; и т.д.)."},
+  {"n":"8","t":"При возможности транспортировки в автомобиле скорой медицинской помощи или изолированное помещение выполнить три цикла компрессий грудной клетки и искусственных вдохов (мешком Амбу через установленную предварительно ларингеальную маску или интубационную трубку) в соотношении 30:2.","note":"Эвакуацию пациента предпочтительно осуществлять на спинальном щите."},
+  {"n":"9","t":"Во время эвакуации пациента реанимационные мероприятия не должны прерываться более чем на 10 секунд, если данный перерыв во времени неизбежен, то вслед за ним должно последовать три цикла компрессий грудной клетки и искусственных вдохов в соотношении 30:2.","note":"При принятии решения о транспортировке для проведения реанимационных мероприятий анализ сердечного ритма (дефибриллятором или аппаратом ЭКГ) должен быть произведён не позднее, чем через 2 минуты после начала базовой сердечно-легочной реанимации или 3-х циклов компрессий грудной клетки и искусственных вдохов в соотношении 30:2."},
+  {"n":"10","t":"При невозможности транспортировки пациента в автомобиль скорой медицинской помощи или изолированное помещение расширенная сердечно-легочная реанимация проводится на месте в соответствии с требованиями клинических протоколов, с последующим переводом на аппаратную искусственную вентиляцию лёгких."},
+  {"n":"11","t":"В случаях наличия дыхания, пульса и нуждаемости в интенсивной терапии жизнеугрожающего состояния – начать интенсивную терапию в месте оказания помощи и транспортировать пациента в автомобиль скорой медицинской помощи или изолированное помещение."},
+  {"n":"12","t":"Констатация биологической смерти в автомобиле скорой медицинской помощи, на месте вызова или изолированом помещении после проведения бригадой скорой медицинской помощи сердечно-лёгочной реанимации осуществлять в соответствии с утвержденным порядком констатации смерти граждан."},
+  {"n":"13","t":"В случае восстановления сердечной деятельности и стабилизации состояния пациента транспортировать пациента в ОИТР ближайшего стационара или профильный стационар, предварительно согласовав место госпитализации с отделом госпитализации."}
+]
+  </script>
+
+  <script>
+    (function () {
+      "use strict";
+
+      var dataEl = document.getElementById("ucData");
+      var listEl = document.getElementById("ucList");
+      if (!dataEl || !listEl) return;
+
+      var DATA;
+      try { DATA = JSON.parse(dataEl.textContent); }
+      catch (e) { console.error("unconscious-public: некорректный JSON", e); return; }
+
+      function esc(s) {
+        return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+      }
+
+      DATA.forEach(function (item) {
+        var card = document.createElement("article");
+        card.className = "uc-card";
+
+        var html = '<div class="uc-head"><span class="uc-num">' + esc(item.n) + '</span><div class="uc-text">' + esc(item.t) + '</div></div>';
+        if (item.note) {
+          html += '<div class="uc-note"><span class="uc-note-star">*</span><div class="uc-note-text">' + esc(item.note) + '</div></div>';
+        }
+        card.innerHTML = html;
+
+        listEl.appendChild(card);
+      });
+
+      var topBtn = document.getElementById("ucTopBtn");
+      if (topBtn) {
+        topBtn.addEventListener("click", function () {
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        });
+        window.addEventListener("scroll", function () {
+          topBtn.classList.toggle("show", window.scrollY > 400);
+        }, { passive: true });
+      }
+    })();
+  </script>
+</body>
+</html>

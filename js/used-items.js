@@ -529,26 +529,17 @@
   function reportExportPng() {
     var wrap = document.getElementById("reportTableWrap");
     if (!wrap || !wrap.querySelector("table")) {
-      showToast("⚠️ Нет данных для экспорта");
-      return;
-    }
-    if (typeof window.html2canvas !== "function") {
-      showToast("⚠️ Библиотека экспорта недоступна (нужен интернет при первой загрузке)");
+      (window.SMP.exporter || { showToast: console.warn }).showToast("⚠️ Нет данных для экспорта");
       return;
     }
 
-    showToast("🖼️ Формирую изображение...");
-    window.html2canvas(wrap, { backgroundColor: "#ffffff", scale: 2 })
-      .then(function (canvas) {
-        var a = document.createElement("a");
-        a.href = canvas.toDataURL("image/png");
-        a.download = "otchet-smena-" + new Date().toISOString().slice(0, 10) + ".png";
-        a.click();
-        showToast("✅ Изображение сохранено");
-      })
-      .catch(function () {
-        showToast("⚠️ Не удалось создать изображение");
-      });
+    window.SMP.exporter.export(wrap, {
+      filename: "otchet-smena",
+      format: "png",
+      background: "#ffffff",
+      shareFirst: true,
+      title: "Отчёт об использованных средствах"
+    }).catch(function () { /* toast уже показан */ });
   }
 
   // ===== Привязки =====

@@ -48,6 +48,36 @@
       overflow-wrap: break-word;
       word-wrap: break-word;
     }
+
+    /* ===== Малые экраны: компактная таблица вместо карточек ===== */
+    @media (max-width: 600px) {
+      /* Возвращаем обычную табличную структуру,
+         даже если cheatsheet.css переключает таблицы в карточки */
+      #policlinicContent table {
+        display: table;
+        table-layout: auto;
+        font-size: 0.86rem;
+      }
+      #policlinicContent thead { display: table-header-group; }
+      #policlinicContent tbody { display: table-row-group; }
+      #policlinicContent tr { display: table-row; }
+      #policlinicContent th,
+      #policlinicContent td {
+        display: table-cell;
+        padding: 6px 8px;
+      }
+      /* Убираем подписи-Labels («Код:», «Диагноз:») из карточного режима */
+      #policlinicContent th::before,
+      #policlinicContent td::before {
+        content: none !important;
+      }
+      /* Колонка кода — по ширине содержимого, без переносов */
+      #policlinicContent th:first-child,
+      #policlinicContent td:first-child {
+        width: 1%;
+        white-space: nowrap;
+      }
+    }
   </style>
 </head>
 

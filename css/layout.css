@@ -78,7 +78,7 @@
 .page {
   max-width: 1080px;
   margin: 0 auto;
-  padding: 16px;
+  padding: 16px var(--page-pad-x, 16px);
 }
 
 .main-menu {
@@ -100,6 +100,19 @@
   text-transform: uppercase;
   letter-spacing: 0.04em;
   color: var(--muted);
+}
+
+/* ===== Шпаргалки: группы разделов ===== */
+.cheats-group {
+  margin-bottom: 22px;
+}
+
+.cheats-group:last-child {
+  margin-bottom: 0;
+}
+
+.cheats-group .menu-group-title {
+  margin-bottom: 10px;
 }
 
 .menu-card {
@@ -436,5 +449,17 @@ button.menu-card:focus-visible {
     width: 36px !important;
     height: 36px !important;
     font-size: 1.1rem !important;
+  }
+}
+
+/* =========================================
+   Малые экраны: сохраняем привычные поля страницы
+   и скруглённые карточки, но уменьшаем боковой
+   отступ внутри карточек — контенту больше места.
+   ========================================= */
+@media (max-width: 480px) {
+  :root {
+    --page-pad-x: 16px;
+    --card-pad-x: 12px;
   }
 }
