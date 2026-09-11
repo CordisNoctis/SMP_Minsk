@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content">
+  <title>Индекс Альговера — СМП Минск</title>
+  <meta name="theme-color" content="#7A1F2B">
+
+  <script src="../js/core/theme-init.js"></script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/calculators.css">
+
+  <link rel="icon" href="../icons/favicon.ico" sizes="any">
+  <link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+</head>
+
+<body>
+  <header class="page-header">
+    <button type="button" class="back-button" data-back data-back-fallback="calculators.html" aria-label="Назад">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+    <h1 class="page-title-centered">Индекс Альговера</h1>
+    <button type="button" class="header-alert-btn" id="calcInfoBtn" aria-label="Об индексе">i</button>
+  </header>
+
+  <main class="page">
+    <section class="card calc-description">
+      <p style="margin:0;">Оценка тяжести шока и объёма кровопотери: отношение ЧСС к систолическому АД. Выявляет скрытый шок при нормальном АД.</p>
+    </section>
+
+    <section class="card algover-inputs">
+      <div class="algover-input-group">
+        <label class="algover-input-label">❤️ Частота сердечных сокращений</label>
+        <div class="algover-input-row">
+          <input type="text" id="hrInput" class="algover-field" inputmode="numeric" maxlength="3" placeholder="—">
+          <span class="algover-unit">уд/мин</span>
+        </div>
+      </div>
+      <div class="algover-input-group">
+        <label class="algover-input-label">🩸 Систолическое АД</label>
+        <div class="algover-input-row">
+          <input type="text" id="sbpInput" class="algover-field" inputmode="numeric" maxlength="3" placeholder="—">
+          <span class="algover-unit">мм рт. ст.</span>
+        </div>
+      </div>
+      <div class="algover-formula-hint">ИА = ЧСС / САД · Норма: 0.5–0.7</div>
+    </section>
+
+    <section class="card algover-scale-card">
+      <div class="algover-scale">
+        <div class="algover-scale-segment seg-normal"><div class="seg-label">0.5–0.7</div><div class="seg-title">Норма</div></div>
+        <div class="algover-scale-segment seg-sub"><div class="seg-label">0.7–1.0</div><div class="seg-title">Субкомп.</div></div>
+        <div class="algover-scale-segment seg-mod"><div class="seg-label">1.0–1.5</div><div class="seg-title">Средний</div></div>
+        <div class="algover-scale-segment seg-sev"><div class="seg-label">1.5–2.0</div><div class="seg-title">Тяжёлый</div></div>
+        <div class="algover-scale-segment seg-crit"><div class="seg-label">>2.0</div><div class="seg-title">Крит.</div></div>
+        <div class="algover-scale-marker" id="algoverMarker" style="display:none;"></div>
+      </div>
+    </section>
+
+    <div id="resultPanel" class="result-panel"></div>
+  </main>
+
+  <script src="../js/core/theme.js"></script>
+  <script src="../js/core/back.js"></script>
+  <script src="../js/calculators/calculator-utils.js"></script>
+  <script src="../js/calculators/calc-algover.js"></script>
+  <script src="../js/core/sw-register.js"></script>
+</body>
+</html>

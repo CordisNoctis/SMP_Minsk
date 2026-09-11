@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content">
+  <title>Калькуляторы — СМП Минск</title>
+  <meta name="theme-color" content="#7A1F2B">
+
+  <script src="../js/core/theme-init.js"></script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/calculators.css">
+
+  <link rel="icon" href="../icons/favicon.ico" sizes="any">
+  <link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+</head>
+
+<body>
+  <header class="page-header">
+    <button type="button" class="back-button" data-back data-back-fallback="../index.html" aria-label="Назад">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+    <h1 class="page-title-centered">Клинические калькуляторы и шкалы</h1>
+    <span class="header-spacer" aria-hidden="true"></span>
+  </header>
+
+  <main id="main" class="page">
+    <p class="calc-subtitle-info">Медицинские шкалы и расчёты · показано <span id="calcCount">0</span></p>
+
+    <div class="search-filter-bar">
+      <div class="search-wrapper">
+        <span class="search-icon">🔍</span>
+        <input type="search" id="calcSearch" placeholder="Поиск калькулятора..." autocomplete="off">
+      </div>
+    </div>
+
+    <div id="calcChips" class="filter-chips-grid" style="margin-bottom: 12px;"></div>
+
+    <div id="calcList" class="calculators-list-compact"></div>
+
+    <div id="calcEmpty" class="empty-state" hidden>
+      <div class="icon">🔎</div>
+      <div class="title">Ничего не найдено</div>
+      <p>Попробуйте изменить поисковый запрос или фильтры</p>
+    </div>
+  </main>
+
+  <script src="../js/core/theme.js"></script>
+  <script src="../js/core/back.js"></script>
+  <script src="../js/calculators/calculators-list.js"></script>
+  <script src="../js/core/sw-register.js"></script>
+
+  <script>
+    (function () {
+      "use strict";
+
+      var CALC = (window.SMP && window.SMP.CALCULATORS) || [];
+      var listEl = document.getElementById("calcList");
+      var emptyEl = document.getElementById("calcEmpty");
+      var chipsEl = document.getElementById("calcChips");
+      var searchEl = document.getElementById("calcSearch");
+      var countEl = document.getElementById("calcCount");
+      if (!listEl) return;
+
+      var query = "";
+      var selectedCats = {};
+
+      function esc(s) {
+        return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+      }
+
+      function showToast(msg) {
+        var old = document.querySelector(".toast");
+        if (old) old.remove();
+        var t = document.createElement("div");
+        t.className = "toast";
+        t.textContent = msg;
+        document.body.appendChild(t);
+        requestAnimationFrame(function () { t.hidden = false; });
+        setTimeout(function () { if (t.parentNode) t.parentNode.removeChild(t); }, 2500);
+      }
+
+      function categories() {
+        var map = {};
+        CALC.forEach(function (c) {
+          (c.categories || []).forEach(function (k) { map[k] = true; });
+        });
+        return Object.keys(map).sort(function (a, b) { return a.localeCompare(b, "ru"); });
+      }
+
+      function filtered() {
+        var q = query.trim().toLowerCase();
+        var cats = Object.keys(selectedCats);
+        return CALC.filter(function (c) {
+          if (q && c.title.toLowerCase().indexOf(q) === -1) return false;
+          if (cats.length) {
+            var ok = cats.some(function (k) { return (c.categories || []).indexOf(k) !== -1; });
+            if (!ok) return false;
+          }
+          return true;
+        });
+      }
+
+      function renderChips() {
+        chipsEl.innerHTML = categories().map(function (k) {
+          return '<button type="button" class="filter-chip' + (selectedCats[k] ? " selected" : "") + '" data-cat="' + esc(k) + '">' + esc(k) + "</button>";
+        }).join("");
+      }
+
+      function renderList() {
+        var items = filtered();
+        if (countEl) countEl.textContent = items.length + " из " + CALC.length;
+        emptyEl.hidden = items.length !== 0;
+        listEl.innerHTML = items.map(function (c) {
+          return '<div class="calc-compact-card" data-id="' + c.id + '">' +
+            '<div class="calc-compact-icon"><span>' + c.emoji + "</span></div>" +
+            '<div class="calc-compact-title">' + esc(c.title) + (c.page ? "" : '<span class="calc-soon-badge">скоро</span>') + "</div>" +
+            '<span class="calc-compact-arrow">›</span></div>';
+        }).join("");
+      }
+
+      chipsEl.addEventListener("click", function (e) {
+        var btn = e.target.closest(".filter-chip");
+        if (!btn) return;
+        var cat = btn.getAttribute("data-cat");
+        if (selectedCats[cat]) delete selectedCats[cat]; else selectedCats[cat] = true;
+        renderChips();
+        renderList();
+      });
+
+      searchEl.addEventListener("input", function () {
+        query = searchEl.value;
+        renderList();
+      });
+
+      listEl.addEventListener("click", function (e) {
+        var card = e.target.closest(".calc-compact-card");
+        if (!card) return;
+        var id = card.getAttribute("data-id");
+        var calc = null;
+        for (var i = 0; i < CALC.length; i++) if (CALC[i].id === id) { calc = CALC[i]; break; }
+        if (!calc) return;
+        if (calc.page) {
+          window.location.href = calc.page;
+        } else {
+          var params = new URLSearchParams();
+          params.set("title", calc.title);
+          params.set("subtitle", calc.desc || "Этот калькулятор сейчас в разработке и скоро будет доступен. Пока можно воспользоваться другими инструментами.");
+          params.set("icon", calc.emoji || "🧮");
+          params.set("back", "calculators.html");
+          window.location.href = "coming-soon.html?" + params.toString();
+        }
+      });
+
+      renderChips();
+      renderList();
+    })();
+  </script>
+</body>
+</html>

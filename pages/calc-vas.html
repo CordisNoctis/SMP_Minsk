@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Шкала ВАШ (боль) — СМП Минск</title>
+  <meta name="theme-color" content="#7A1F2B">
+  <script src="../js/core/theme-init.js"></script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/calculators.css">
+  <link rel="icon" href="../icons/favicon.ico" sizes="any">
+</head>
+<body>
+  <header class="page-header">
+    <button type="button" class="back-button" data-back data-back-fallback="calculators.html" aria-label="Назад">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <h1 class="page-title-centered">Шкала ВАШ</h1>
+    <button type="button" class="header-alert-btn" id="calcInfoBtn" aria-label="О шкале">i</button>
+  </header>
+  <main class="page">
+    <section class="card calc-description">
+      <p style="margin:0;">Субъективная оценка интенсивности боли 0–10. Для мониторинга эффективности анальгезии. Целевой уровень после обезболивания — ≤ 3 балла.</p>
+    </section>
+    <div class="card vas-slider-card">
+      <div class="vas-current-display">
+        <div class="vas-face" id="vasFace">😌</div>
+        <div class="vas-score" id="vasScore">0</div>
+        <div class="vas-label" id="vasLabel">Нет боли</div>
+      </div>
+      <div class="vas-slider-wrapper">
+        <input type="range" id="vasSlider" class="vas-slider" min="0" max="10" step="1" value="0">
+        <div class="vas-slider-track"><div class="vas-slider-fill" id="vasFill" style="width:0%"></div></div>
+      </div>
+      <div class="vas-scale-labels">
+        <span>0<br><small>Нет боли</small></span>
+        <span>5<br><small>Умеренная</small></span>
+        <span>10<br><small>Невыносимая</small></span>
+      </div>
+      <div class="vas-quick-buttons" id="vasQuick"></div>
+    </div>
+    <div id="resultPanel" class="result-panel"></div>
+  </main>
+  <script src="../js/core/theme.js"></script>
+  <script src="../js/core/back.js"></script>
+  <script src="../js/calculators/calculator-utils.js"></script>
+  <script src="../js/calculators/calc-vas.js"></script>
+  <script src="../js/core/sw-register.js"></script>
+</body>
+</html>

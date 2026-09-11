@@ -1,0 +1,2620 @@
+/* ===== Стили калькуляторов ===== */
+
+/* Заголовок калькулятора */
+.calc-breadcrumb-minimal {
+  margin-bottom: 8px;
+}
+.breadcrumb-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--accent);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 4px 0;
+}
+.breadcrumb-back-link .material-symbols-rounded {
+  font-size: 20px;
+}
+
+.calc-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0 16px;
+}
+.calc-header-content {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex: 1;
+  min-width: 0;
+}
+.calc-icon-wrapper {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: var(--menu-icon-bg);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+.calc-icon-wrapper .material-symbols-rounded {
+  font-size: 28px;
+  color: var(--accent);
+}
+.calc-header-text {
+  min-width: 0;
+}
+.calc-title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--text);
+  margin: 0 0 2px;
+  line-height: 1.25;
+}
+.calc-subtitle {
+  font-size: 0.88rem;
+  color: var(--muted);
+  margin: 0;
+  line-height: 1.35;
+}
+
+.calc-info-btn {
+  width: 40px;
+  height: 40px;
+  border: 0;
+  background: var(--menu-icon-bg);
+  border-radius: 50%;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  color: var(--accent);
+  transition: background .15s ease;
+}
+.calc-info-btn:hover { background: var(--accent); color: #fff; }
+.calc-info-btn .material-symbols-rounded { font-size: 22px; }
+
+/* Описание */
+.calc-description {
+  margin-bottom: 16px;
+}
+
+/* ===== Модальное окно информации ===== */
+.reference-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity .2s ease;
+}
+.reference-modal.open { opacity: 1; }
+
+.reference-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.reference-modal-content {
+  position: relative;
+  background: var(--card);
+  border-radius: 20px 20px 0 0;
+  width: 100%;
+  max-width: 560px;
+  max-height: 85vh;
+  overflow-y: auto;
+  transform: translateY(100%);
+  transition: transform .25s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 20px;
+}
+.reference-modal.open .reference-modal-content {
+  transform: translateY(0);
+}
+
+.reference-modal-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.reference-modal-header-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: var(--menu-icon-bg);
+  display: grid;
+  place-items: center;
+  color: var(--accent);
+}
+.reference-modal-title {
+  flex: 1;
+  font-size: 1.1rem;
+  font-weight: 750;
+  margin: 0;
+}
+.reference-modal-close {
+  width: 36px;
+  height: 36px;
+  border: 0;
+  background: var(--menu-icon-bg);
+  border-radius: 50%;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+}
+.reference-modal-body p {
+  font-size: 0.93rem;
+  line-height: 1.55;
+  text-align: justify;
+  hyphens: auto;
+  margin: 0 0 10px;
+}
+.reference-modal-body p:last-child { margin-bottom: 0; }
+
+.calc-important-note {
+  margin-top: 14px;
+  padding: 12px 14px;
+  background: var(--menu-icon-bg);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 10px 10px 0;
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  font-size: 0.93rem;
+  line-height: 1.45;
+}
+.calc-important-note .material-symbols-rounded {
+  font-size: 20px;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+/* ===== Радиогруппы (Глазго, Апгар, CIWA) ===== */
+.gcs-groups {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.gcs-group {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.gcs-group-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  background: var(--menu-icon-bg);
+  border-bottom: 1px solid var(--border);
+}
+.gcs-group-header .material-symbols-rounded {
+  font-size: 22px;
+  color: var(--accent);
+}
+.gcs-group-title {
+  flex: 1;
+  font-weight: 750;
+  font-size: 0.98rem;
+}
+.gcs-group-value {
+  min-width: 32px;
+  height: 26px;
+  padding: 0 10px;
+  border-radius: 8px;
+  background: var(--border);
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  font-size: 0.9rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.gcs-group-value.has-value {
+  background: var(--accent);
+  color: #fff;
+}
+.gcs-group-items {
+  padding: 6px;
+}
+.gcs-radio-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background .15s ease;
+  user-select: none;
+}
+.gcs-radio-item:hover { background: var(--menu-icon-bg); }
+.gcs-radio-item.selected {
+  background: var(--accent);
+  color: #fff;
+}
+.gcs-radio-circle {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  transition: border-color .15s ease;
+}
+.gcs-radio-item.selected .gcs-radio-circle {
+  border-color: #fff;
+}
+.gcs-radio-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: transparent;
+  transition: background .15s ease;
+}
+.gcs-radio-item.selected .gcs-radio-dot {
+  background: #fff;
+}
+.gcs-radio-content { flex: 1; min-width: 0; }
+.gcs-radio-title {
+  font-size: 0.92rem;
+  line-height: 1.35;
+}
+.gcs-radio-points {
+  min-width: 28px;
+  text-align: center;
+  font-weight: 800;
+  font-size: 0.95rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.gcs-radio-item.selected .gcs-radio-points { color: #fff; }
+
+/* ===== Панель результата ===== */
+.result-panel {
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+  margin: 0 -16px;
+  padding: 0 16px 16px;
+  background: linear-gradient(to top, var(--bg) 80%, transparent);
+  padding-top: 20px;
+}
+.result-content {
+  position: relative;
+  padding: 14px 16px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  box-shadow: var(--shadow-hover);
+}
+.result-content.result-incomplete {
+  background: var(--card);
+  border: 1px solid var(--border);
+  color: var(--muted);
+}
+.result-content.result-gcs-15,
+.result-content.result-success {
+  background: #1a7a3e;
+  color: #fff;
+}
+.result-content.result-gcs-11-12,
+.result-content.result-warning {
+  background: #c77700;
+  color: #fff;
+}
+.result-content.result-gcs-4-5,
+.result-content.result-error {
+  background: #b42323;
+  color: #fff;
+}
+.result-content.result-gcs-3,
+.result-content.result-critical {
+  background: #7a0e1c;
+  color: #fff;
+}
+.result-score {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 72px;
+}
+.result-score-value {
+  font-size: 2.2rem;
+  font-weight: 800;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.result-score-label {
+  font-size: 0.75rem;
+  opacity: 0.85;
+  margin-top: 2px;
+}
+.result-divider {
+  width: 1px;
+  height: 44px;
+  background: currentColor;
+  opacity: 0.3;
+}
+.result-info { flex: 1; min-width: 0; }
+.result-label {
+  font-weight: 750;
+  font-size: 0.95rem;
+  margin-bottom: 2px;
+}
+.result-description {
+  font-size: 0.85rem;
+  opacity: 0.9;
+  line-height: 1.4;
+}
+.result-therapy {
+  font-weight: 700;
+  font-size: 0.88rem;
+  margin-bottom: 4px;
+}
+.result-reset {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  background: rgba(255,255,255,0.2);
+  color: currentColor;
+  border-radius: 50%;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+.result-reset:hover { background: rgba(255,255,255,0.35); }
+.result-reset .material-symbols-rounded { font-size: 18px; }
+
+.result-warning {
+  margin-top: 10px;
+  padding: 8px 12px;
+  background: rgba(255,255,255,0.18);
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+/* ===== Альговер — шкала ===== */
+.algover-inputs { margin-bottom: 14px; }
+.algover-input-group { margin-bottom: 12px; }
+.algover-input-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: var(--text);
+}
+.algover-input-label .material-symbols-rounded {
+  font-size: 18px;
+  color: var(--accent);
+}
+.algover-input-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.algover-field {
+  flex: 1;
+  padding: 12px 14px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-size: 1rem;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+.algover-field:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+.algover-unit {
+  font-size: 0.88rem;
+  color: var(--muted);
+  font-weight: 600;
+  min-width: 70px;
+}
+.algover-formula-hint {
+  margin-top: 8px;
+  padding: 8px 12px;
+  background: var(--menu-icon-bg);
+  border-radius: 8px;
+  font-size: 0.85rem;
+  color: var(--muted);
+  text-align: center;
+}
+
+.algover-scale-card { margin-bottom: 14px; padding: 16px 14px; }
+.algover-scale {
+  position: relative;
+  height: 56px;
+  display: flex;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+.algover-scale-segment {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  padding: 4px;
+}
+.seg-normal { background: #1a7a3e; }
+.seg-sub { background: #8ba82a; }
+.seg-mod { background: #c77700; }
+.seg-sev { background: #b42323; }
+.seg-crit { background: #7a0e1c; }
+.seg-label {
+  font-size: 0.72rem;
+  opacity: 0.9;
+  font-weight: 700;
+}
+.seg-title {
+  font-size: 0.82rem;
+  font-weight: 750;
+}
+.algover-scale-marker {
+  position: absolute;
+  top: -6px;
+  width: 4px;
+  height: calc(100% + 12px);
+  background: #fff;
+  border: 2px solid #000;
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.5), 0 2px 6px rgba(0,0,0,0.4);
+  transition: left .2s ease;
+  pointer-events: none;
+}
+
+.algover-big-number {
+  font-size: 2.6rem;
+  font-weight: 800;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.algover-big-label {
+  font-size: 0.75rem;
+  opacity: 0.85;
+  margin-top: 2px;
+}
+.algover-details { flex: 1; min-width: 0; }
+.algover-detail-row {
+  font-size: 0.85rem;
+  margin-bottom: 2px;
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.algover-detail-label { opacity: 0.85; }
+.algover-detail-value { font-weight: 700; }
+.algover-therapy {
+  margin-top: 8px;
+  padding: 8px 10px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 8px;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  font-weight: 600;
+}
+
+/* ===== Апгар ===== */
+.apgar-time-switcher {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.apgar-time-btn {
+  padding: 12px 14px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: all .15s ease;
+  color: var(--text);
+}
+.apgar-time-btn.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.apgar-time-btn .material-symbols-rounded {
+  font-size: 22px;
+}
+.apgar-time-content { flex: 1; text-align: left; }
+.apgar-time-label {
+  font-size: 0.85rem;
+  opacity: 0.85;
+  display: block;
+}
+.apgar-time-score {
+  font-size: 1.1rem;
+  font-weight: 800;
+  display: block;
+  font-variant-numeric: tabular-nums;
+}
+
+.apgar-result-grid {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 10px;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 10px;
+}
+.apgar-result-cell {
+  text-align: center;
+  padding: 10px;
+  background: rgba(255,255,255,0.12);
+  border-radius: 10px;
+}
+.apgar-result-cell.filled { background: rgba(255,255,255,0.22); }
+.apgar-cell-label {
+  font-size: 0.78rem;
+  opacity: 0.85;
+  margin-bottom: 4px;
+}
+.apgar-cell-value {
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.apgar-cell-range {
+  font-size: 0.78rem;
+  opacity: 0.8;
+  margin-top: 2px;
+}
+.apgar-result-divider {
+  font-size: 1.2rem;
+  font-weight: 800;
+  opacity: 0.6;
+}
+.apgar-trend {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.apgar-trend .material-symbols-rounded { font-size: 18px; }
+.apgar-interpretation {
+  font-size: 0.88rem;
+  line-height: 1.45;
+  text-align: justify;
+}
+
+/* ===== Страница списка калькуляторов ===== */
+.calc-subtitle-info {
+  font-size: 0.88rem;
+  color: var(--muted);
+  margin: 4px 0 12px;
+}
+
+.search-filter-bar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.search-wrapper {
+  flex: 1;
+  position: relative;
+}
+.search-wrapper .search-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 20px;
+  color: var(--muted);
+  pointer-events: none;
+}
+.search-wrapper input {
+  width: 100%;
+  padding: 12px 14px 12px 42px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  font-size: 0.95rem;
+  color: var(--text);
+}
+.search-wrapper input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+.filter-toggle-btn,
+.filter-reset-btn {
+  width: 48px;
+  height: 48px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  border-radius: 12px;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+  position: relative;
+  transition: all .15s ease;
+}
+.filter-toggle-btn.has-active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.filter-toggle-btn:hover,
+.filter-reset-btn:hover { background: var(--menu-icon-bg); }
+.filter-toggle-btn.has-active:hover { background: var(--accent); }
+.filter-toggle-btn .material-symbols-rounded,
+.filter-reset-btn .material-symbols-rounded { font-size: 22px; }
+.filter-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  background: var(--accent);
+  color: #fff;
+  border: 2px solid var(--bg);
+  border-radius: 9px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  display: grid;
+  place-items: center;
+}
+.filter-toggle-btn.has-active .filter-badge {
+  background: #fff;
+  color: var(--accent);
+}
+
+.calculators-list-compact {
+  display: grid;
+  gap: 8px;
+}
+.calc-compact-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all .15s ease;
+  box-shadow: var(--shadow);
+}
+.calc-compact-card:hover {
+  border-color: var(--accent);
+  transform: translateX(2px);
+}
+.calc-compact-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: var(--menu-icon-bg);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+.calc-compact-icon .material-symbols-rounded {
+  font-size: 22px;
+  color: var(--accent);
+}
+.calc-compact-title {
+  flex: 1;
+  font-size: 0.95rem;
+  font-weight: 600;
+  min-width: 0;
+}
+.calc-compact-arrow {
+  font-size: 20px;
+  color: var(--muted);
+  flex-shrink: 0;
+}
+
+/* ===== Шторка фильтров ===== */
+.filter-sheet-wrapper {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity .25s ease;
+  pointer-events: none;
+}
+.filter-sheet-wrapper.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+.filter-sheet-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+}
+.filter-sheet {
+  position: relative;
+  background: var(--card);
+  border-radius: 20px 20px 0 0;
+  width: 100%;
+  max-width: 560px;
+  max-height: 80vh;
+  overflow-y: auto;
+  transform: translateY(100%);
+  transition: transform .3s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 16px;
+}
+.filter-sheet-wrapper.open .filter-sheet {
+  transform: translateY(0);
+}
+.filter-sheet-handle {
+  width: 40px;
+  height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  margin: 0 auto 12px;
+}
+.filter-sheet-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+.filter-sheet-title {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 750;
+  font-size: 1.05rem;
+}
+.filter-sheet-close {
+  width: 36px;
+  height: 36px;
+  border: 0;
+  background: var(--menu-icon-bg);
+  border-radius: 50%;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+}
+.filter-sheet-body {
+  padding: 16px 0;
+}
+.filter-section {
+  margin-bottom: 18px;
+}
+.filter-section-title {
+  font-weight: 750;
+  font-size: 0.95rem;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.filter-mode-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--muted);
+}
+.filter-mode-hint .material-symbols-rounded { font-size: 14px; }
+
+.sort-toggle-btn {
+  width: 100%;
+  padding: 12px 14px;
+  background: var(--menu-icon-bg);
+  border: 1px solid transparent;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text);
+  font-size: 0.95rem;
+}
+.sort-toggle-btn.active {
+  background: var(--accent);
+  color: #fff;
+}
+.sort-toggle-btn .material-symbols-rounded { font-size: 20px; }
+.sort-label { font-weight: 600; flex: 1; text-align: left; }
+.sort-hint { font-size: 0.75rem; opacity: 0.65; }
+
+.filter-chips-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.filter-chip {
+  padding: 6px 12px;
+  background: var(--menu-icon-bg);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.88rem;
+  color: var(--text);
+  transition: all .15s ease;
+}
+.filter-chip .check-icon {
+  font-size: 16px;
+  display: none;
+}
+.filter-chip.selected {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.filter-chip.selected .check-icon { display: inline-block; }
+
+.filter-sheet-footer {
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  gap: 8px;
+}
+.filter-sheet-footer button { flex: 1; }
+
+.empty-state {
+  padding: 32px 20px;
+  text-align: center;
+  color: var(--muted);
+}
+.empty-state .icon {
+  font-size: 48px;
+  opacity: 0.5;
+  margin-bottom: 8px;
+}
+.empty-state .title {
+  font-weight: 750;
+  font-size: 1.05rem;
+  margin-bottom: 4px;
+  color: var(--text);
+}
+
+/* Недостающие цвета результатов */
+.result-content.result-gcs-8-10 { background: #d2401e; color: #fff; }
+.result-content.result-gcs-14 { background: #8ba82a; color: #fff; }
+
+/* Бейдж «скоро» в списке калькуляторов */
+.calc-soon-badge {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  background: var(--menu-icon-bg);
+  color: var(--muted);
+  font-size: 0.7rem;
+  font-weight: 700;
+  vertical-align: middle;
+}
+
+/* Эмодзи-иконки вместо Material Symbols (офлайн-безопасно) */
+.calc-compact-icon span { font-size: 22px; }
+.gcs-group-header > span:first-child { font-size: 20px; }
+
+/* ===== Универсальная шапка калькулятора ===== */
+.calc-page-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.calc-page-title {
+  flex: 1;
+  font-size: 1.15rem;
+  font-weight: 800;
+  margin: 0;
+  line-height: 1.25;
+}
+.calc-page-icon {
+  font-size: 1.6rem;
+  line-height: 1;
+}
+
+/* ===== Конвертер препаратов ===== */
+.drug-mode-switcher {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  margin-bottom: 12px;
+}
+.drug-mode-btn {
+  padding: 10px 6px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  cursor: pointer;
+  text-align: center;
+  transition: all .15s ease;
+  color: var(--text);
+}
+.drug-mode-btn.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.drug-mode-btn .material-symbols-rounded,
+.drug-mode-btn span { font-size: 20px; display: block; margin-bottom: 2px; }
+.drug-mode-label { font-size: 0.82rem; font-weight: 700; }
+.drug-mode-subtitle { font-size: 0.7rem; opacity: 0.75; margin-top: 2px; }
+
+.drug-presets { margin-bottom: 12px; }
+.drug-presets-summary {
+  padding: 10px 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  list-style: none;
+}
+.drug-presets-summary::-webkit-details-marker { display: none; }
+.drug-presets-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  padding: 10px;
+}
+.drug-preset-btn {
+  padding: 8px 4px;
+  background: var(--menu-icon-bg);
+  border: 1px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.72rem;
+  color: var(--text);
+  transition: all .15s ease;
+  text-align: center;
+}
+.drug-preset-btn:hover { border-color: var(--accent); }
+.drug-preset-btn span { display: block; font-size: 18px; margin-bottom: 2px; }
+
+.drug-input-card { margin-bottom: 10px; padding: 12px; }
+.drug-input-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+  font-size: 0.92rem;
+  margin-bottom: 8px;
+}
+.drug-input-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.drug-field {
+  flex: 1;
+  padding: 10px 12px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 1rem;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+.drug-field:focus { outline: none; border-color: var(--accent); }
+.drug-unit { font-size: 0.85rem; color: var(--muted); font-weight: 600; min-width: 44px; }
+.drug-separator { color: var(--muted); font-weight: 700; }
+.drug-hint {
+  margin-top: 6px;
+  padding: 6px 10px;
+  background: var(--menu-icon-bg);
+  border-radius: 6px;
+  font-size: 0.78rem;
+  color: var(--muted);
+  text-align: center;
+}
+
+.drug-result { flex-direction: column; align-items: stretch; padding: 14px !important; }
+.drug-result-main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin-bottom: 10px;
+}
+.drug-result-big { font-size: 2rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+.drug-result-eq { font-size: 1.5rem; opacity: 0.6; }
+.drug-result-unit { font-size: 0.9rem; opacity: 0.85; margin-top: 2px; }
+.drug-result-details { font-size: 0.88rem; }
+.drug-result-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 3px;
+}
+.drug-result-label { opacity: 0.85; }
+.drug-result-value { font-weight: 700; }
+
+.drug-ampoules { margin-top: 10px; }
+.drug-ampoules-title { font-size: 0.8rem; opacity: 0.85; margin-bottom: 6px; }
+.drug-ampoules-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 4px;
+}
+.drug-ampoule-item {
+  background: rgba(255,255,255,0.15);
+  padding: 6px 4px;
+  border-radius: 6px;
+  text-align: center;
+}
+.drug-ampoule-count { font-weight: 800; font-size: 0.95rem; }
+.drug-ampoule-label { font-size: 0.7rem; opacity: 0.85; }
+
+/* ===== CIWA-Ar прогресс ===== */
+.ciwa-progress-card { margin-bottom: 12px; padding: 12px 14px; }
+.ciwa-progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: 0.88rem;
+}
+.ciwa-progress-label { color: var(--muted); }
+.ciwa-progress-value { font-weight: 800; color: var(--accent); }
+.ciwa-progress-bar {
+  height: 6px;
+  background: var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.ciwa-progress-fill {
+  height: 100%;
+  background: var(--accent);
+  transition: width .25s ease;
+}
+.ciwa-items { max-height: 280px; overflow-y: auto; }
+
+/* ===== ЭТТ ===== */
+.ett-input-section { padding: 14px; margin-bottom: 12px; }
+.ett-input-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.ett-input-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.ett-age-input {
+  flex: 1;
+  padding: 12px 14px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-size: 1.05rem;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+.ett-age-input:focus { outline: none; border-color: var(--accent); }
+.ett-age-unit { font-size: 0.9rem; color: var(--muted); font-weight: 600; }
+.ett-formulas-hint {
+  margin-top: 8px;
+  padding: 8px 10px;
+  background: var(--menu-icon-bg);
+  border-radius: 8px;
+  font-size: 0.78rem;
+  color: var(--muted);
+  text-align: center;
+  line-height: 1.4;
+}
+
+.ett-result { flex-direction: column; align-items: stretch; padding: 14px !important; }
+.ett-result-grid {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.ett-result-column { text-align: center; padding: 8px; background: rgba(255,255,255,0.12); border-radius: 8px; }
+.ett-result-type { font-size: 0.78rem; opacity: 0.85; margin-bottom: 4px; }
+.ett-result-main { font-size: 1.8rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+.ett-result-range { font-size: 0.8rem; margin-top: 4px; opacity: 0.85; }
+.ett-highlight { font-weight: 800; opacity: 1 !important; }
+.ett-result-divider-v {
+  width: 1px;
+  background: currentColor;
+  opacity: 0.3;
+  align-self: stretch;
+}
+.ett-result-note, .ett-result-tip {
+  font-size: 0.82rem;
+  padding: 6px 10px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 6px;
+  margin-bottom: 6px;
+  line-height: 1.4;
+}
+
+/* ===== FAST-ED / FOUR / детская ШКГ — используют .gcs-groups, уже есть ===== */
+
+/* ===== Чеклист-калькуляторы (Женевская, VAS и др.) ===== */
+.calc-items { display: grid; gap: 6px; margin-bottom: 14px; }
+.calc-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all .15s ease;
+  box-shadow: var(--shadow);
+}
+.calc-item:hover { border-color: var(--accent); }
+.calc-item.checked {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.calc-item-checkbox {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  border: 2px solid var(--border);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  transition: all .15s ease;
+}
+.calc-item.checked .calc-item-checkbox {
+  border-color: #fff;
+  background: rgba(255,255,255,0.2);
+}
+.calc-item-checkbox .check-icon {
+  font-size: 16px;
+  color: transparent;
+  transition: color .15s ease;
+}
+.calc-item.checked .check-icon { color: #fff; }
+.calc-item-content { flex: 1; min-width: 0; }
+.calc-item-title { font-size: 0.9rem; line-height: 1.35; }
+.calc-item-points {
+  font-weight: 800;
+  font-size: 0.92rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+}
+.calc-item.checked .calc-item-points { color: #fff; }
+
+/* Цвета success/warning/error для чеклистов */
+.result-content.result-success { background: #1a7a3e; color: #fff; }
+.result-content.result-warning { background: #c77700; color: #fff; }
+.result-content.result-error { background: #b42323; color: #fff; }
+
+/* ===== Killip ===== */
+.killip-classes { display: grid; gap: 10px; margin-bottom: 14px; }
+.killip-class {
+  padding: 12px 14px;
+  background: var(--card);
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all .15s ease;
+  box-shadow: var(--shadow);
+}
+.killip-class:hover { border-color: var(--accent); }
+.killip-class.selected {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 10%, var(--card));
+}
+.killip-class-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.killip-class-badge {
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  display: grid; place-items: center;
+  font-weight: 800; font-size: 0.95rem;
+  flex-shrink: 0;
+  color: #fff;
+}
+.killip-class-badge.gcs-15 { background: #1a7a3e; }
+.killip-class-badge.gcs-11-12 { background: #b08900; }
+.killip-class-badge.gcs-8-10 { background: #d2401e; }
+.killip-class-badge.gcs-3 { background: #b42323; }
+.killip-class-title { font-weight: 700; font-size: 0.98rem; }
+.killip-class-description {
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+.killip-section { margin-bottom: 10px; }
+.killip-section-title {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 0.82rem; font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  margin-bottom: 6px;
+}
+.killip-list {
+  margin: 0; padding-left: 18px;
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+.killip-list li { margin-bottom: 3px; }
+.killip-list-management { color: var(--accent-strong, var(--accent)); }
+.killip-mortality {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--border);
+}
+.killip-mortality-item { text-align: center; }
+.killip-mortality-label {
+  font-size: 0.72rem;
+  color: var(--muted);
+  margin-bottom: 2px;
+}
+.killip-mortality-value {
+  font-weight: 800;
+  font-size: 1.05rem;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ===== QTc Bazett ===== */
+.qtc-inputs { padding: 14px; margin-bottom: 12px; }
+.qtc-input-group { margin-bottom: 10px; }
+.qtc-input-label {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 0.85rem; font-weight: 600;
+  margin-bottom: 6px;
+}
+.qtc-input-row { display: flex; align-items: center; gap: 10px; }
+.qtc-field {
+  flex: 1;
+  padding: 12px 14px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-size: 1.05rem;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+.qtc-field:focus { outline: none; border-color: var(--accent); }
+.qtc-unit { font-size: 0.88rem; color: var(--muted); font-weight: 600; min-width: 60px; }
+.qtc-formula-hint {
+  margin-top: 8px;
+  padding: 8px 10px;
+  background: var(--menu-icon-bg);
+  border-radius: 8px;
+  font-size: 0.8rem;
+  color: var(--muted);
+  text-align: center;
+  font-family: ui-monospace, monospace;
+}
+.qtc-result { flex-direction: column; align-items: stretch; padding: 14px !important; }
+.qtc-main-value { text-align: center; margin-bottom: 8px; }
+.qtc-big-number { font-size: 2.4rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+.qtc-big-label { font-size: 0.85rem; opacity: 0.85; }
+.qtc-details { width: 100%; }
+.qtc-detail-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 6px 0;
+  font-size: 0.88rem;
+}
+.qtc-detail-label { opacity: 0.85; }
+.qtc-detail-value { font-weight: 700; }
+.qtc-gender-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 8px;
+}
+.qtc-gender-item {
+  padding: 8px;
+  background: rgba(255,255,255,0.12);
+  border-radius: 8px;
+  text-align: center;
+  font-size: 0.85rem;
+}
+.qtc-gender-item span:first-child { font-size: 16px; vertical-align: -2px; margin-right: 4px; }
+.qtc-status-normal { font-weight: 700; }
+.qtc-status-borderline { font-weight: 700; color: #fff3a0; }
+.qtc-status-prolonged { font-weight: 800; color: #ffb3b3; }
+.result-content.result-error { background: #b42323; color: #fff; }
+.result-content.result-warning { background: #c77700; color: #fff; }
+.result-content.result-success { background: #1a7a3e; color: #fff; }
+
+/* ===== Sgarbossa ===== */
+.sgarbossa-probability-card {
+  padding: 0;
+  margin-bottom: 14px;
+  overflow: hidden;
+}
+.sgarbossa-probability-table {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--border);
+}
+.sgarbossa-prob-row {
+  padding: 8px 4px;
+  background: var(--card);
+  text-align: center;
+  transition: all .15s ease;
+  font-size: 0.82rem;
+}
+.sgarbossa-prob-row.active {
+  background: var(--accent);
+  color: #fff;
+  font-weight: 700;
+}
+.sgarbossa-prob-score {
+  display: block;
+  font-weight: 800;
+  font-size: 0.95rem;
+  margin-bottom: 2px;
+  font-variant-numeric: tabular-nums;
+}
+.sgarbossa-prob-value { opacity: 0.85; }
+
+/* ===== PESI ===== */
+.calc-item-input {
+  cursor: default !important;
+}
+.calc-item-input:hover {
+  border-color: var(--border) !important;
+}
+.calc-age-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.calc-age-input {
+  width: 70px;
+  padding: 6px 10px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 1rem;
+  text-align: center;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+}
+.calc-age-input:focus { outline: none; border-color: var(--accent); }
+.calc-age-unit { font-size: 0.82rem; color: var(--muted); font-weight: 600; }
+.result-mortality {
+  font-weight: 700;
+  font-size: 0.9rem;
+  margin: 4px 0;
+  opacity: 0.95;
+}
+
+/* PESI цвета */
+.result-content.result-pesi-1 { background: #1a7a3e; color: #fff; }
+.result-content.result-pesi-2 { background: #4a8c2a; color: #fff; }
+.result-content.result-pesi-3 { background: #b08900; color: #fff; }
+.result-content.result-pesi-4 { background: #d2401e; color: #fff; }
+.result-content.result-pesi-5 { background: #b42323; color: #fff; }
+
+/* ===== NIHSS ===== */
+.nihss-group-note {
+  margin: 8px 14px 4px;
+  padding: 8px 10px;
+  background: color-mix(in srgb, var(--accent) 8%, var(--card));
+  border-left: 3px solid var(--accent);
+  border-radius: 6px;
+  font-size: 0.82rem;
+  color: var(--muted);
+  display: flex;
+  gap: 6px;
+  align-items: flex-start;
+  line-height: 1.4;
+}
+.nihss-group-note span:first-child {
+  flex-shrink: 0;
+  font-size: 16px;
+  color: var(--accent);
+}
+.nihss-subgroup-label {
+  padding: 6px 14px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--accent);
+  background: var(--menu-icon-bg);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+.nihss-subgroup-label:first-child { border-top: none; }
+
+/* ===== VAS ===== */
+.vas-slider-card {
+  padding: 16px;
+  margin-bottom: 12px;
+}
+.vas-current-display {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 0 14px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 14px;
+}
+.vas-face {
+  font-size: 3rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.vas-score {
+  font-size: 2.5rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+  line-height: 1;
+}
+.vas-label {
+  font-size: 1rem;
+  color: var(--muted);
+  font-weight: 600;
+}
+.vas-slider-wrapper {
+  position: relative;
+  margin-bottom: 12px;
+}
+.vas-slider {
+  width: 100%;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 8px;
+  background: transparent;
+  outline: none;
+  position: relative;
+  z-index: 2;
+}
+.vas-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+  border: 3px solid #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+.vas-slider::-moz-range-thumb {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+  border: 3px solid #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+.vas-slider-track {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 8px;
+  background: var(--border);
+  border-radius: 4px;
+  transform: translateY(-50%);
+  overflow: hidden;
+  z-index: 1;
+}
+.vas-slider-fill {
+  height: 100%;
+  background: linear-gradient(to right, #1a7a3e 0%, #b08900 50%, #b42323 100%);
+  border-radius: 4px;
+  transition: width .1s ease;
+}
+.vas-scale-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-bottom: 14px;
+  text-align: center;
+}
+.vas-scale-labels small { display: block; font-size: 0.7rem; opacity: 0.7; }
+.vas-quick-buttons {
+  display: grid;
+  grid-template-columns: repeat(11, 1fr);
+  gap: 4px;
+}
+.vas-quick-btn {
+  padding: 8px 0;
+  background: var(--menu-icon-bg);
+  border: 1px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--text);
+  transition: all .15s ease;
+}
+.vas-quick-btn:hover { border-color: var(--accent); }
+.vas-quick-btn.active {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+.result-therapy {
+  font-weight: 600;
+  font-size: 0.88rem;
+  margin-top: 6px;
+  padding: 6px 10px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 6px;
+}
+
+/* VAS цвета */
+.result-content.result-vas-0 { background: #1a7a3e; color: #fff; }
+.result-content.result-vas-1-3 { background: #4a8c2a; color: #fff; }
+.result-content.result-vas-4-6 { background: #b08900; color: #fff; }
+.result-content.result-vas-7-10 { background: #b42323; color: #fff; }
+
+/* ===== SAD PERSONS ===== */
+.result-warning {
+  margin-top: 8px;
+  padding: 8px 10px;
+  background: rgba(0,0,0,0.2);
+  border-left: 3px solid #ffcc00;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+/* ===== ШСХН (Матвеева) ===== */
+.shsn-groups { display: grid; gap: 10px; margin-bottom: 14px; }
+
+/* ===== Инфузомат ===== */
+.infusomat-section {
+  padding: 12px 14px;
+  margin-bottom: 12px;
+}
+.infusomat-section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  margin-bottom: 10px;
+}
+.infusomat-select {
+  width: 100%;
+  padding: 12px 14px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.infusomat-select:focus { outline: none; border-color: var(--accent); }
+
+.infusomat-drug-info {
+  margin-top: 10px;
+  padding: 12px;
+  background: var(--menu-icon-bg);
+  border-radius: 10px;
+}
+.drug-info-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.drug-info-header span { font-size: 24px; }
+.drug-info-name { font-weight: 800; font-size: 1.05rem; }
+.drug-info-details { font-size: 0.85rem; }
+.drug-info-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 3px;
+}
+.drug-info-label { color: var(--muted); }
+.drug-info-value { font-weight: 700; text-align: right; }
+.drug-info-warning {
+  margin-top: 8px;
+  padding: 6px 10px;
+  background: #c77700;
+  color: #fff;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.infusomat-forms-grid,
+.infusomat-dilution-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: 6px;
+}
+.infusomat-form-btn,
+.infusomat-dilution-btn {
+  padding: 10px 6px;
+  background: var(--menu-icon-bg);
+  border: 1px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: center;
+  transition: all .15s ease;
+  color: var(--text);
+}
+.infusomat-form-btn:hover,
+.infusomat-dilution-btn:hover { border-color: var(--accent); }
+.infusomat-form-btn.active,
+.infusomat-dilution-btn.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.form-btn-label, .dilution-btn-label { font-weight: 700; font-size: 0.88rem; }
+.form-btn-details, .dilution-btn-total { font-size: 0.75rem; opacity: 0.85; margin-top: 2px; }
+
+.infusomat-dose-inputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.dose-input-group { display: flex; flex-direction: column; gap: 4px; }
+.dose-input-label { font-size: 0.82rem; color: var(--muted); font-weight: 600; }
+.infusomat-field {
+  padding: 10px 12px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 1rem;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+.infusomat-field:focus { outline: none; border-color: var(--accent); }
+
+.infusomat-dose-presets {
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+.presets-label {
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+.presets-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
+  gap: 4px;
+}
+.preset-btn {
+  padding: 8px 4px;
+  background: var(--menu-icon-bg);
+  border: 1px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--text);
+}
+.preset-btn:hover { border-color: var(--accent); }
+.preset-btn.active { background: var(--accent); color: #fff; }
+
+.infusomat-result {
+  flex-direction: column;
+  align-items: stretch;
+  padding: 14px !important;
+}
+.infusomat-result-main {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255,255,255,0.2);
+}
+.infusomat-result-speed { display: flex; align-items: baseline; gap: 6px; }
+.speed-value { font-size: 2.4rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+.speed-unit { font-size: 1rem; opacity: 0.85; }
+.infusomat-result-alt { font-size: 0.95rem; opacity: 0.85; }
+
+.infusomat-result-details { width: 100%; }
+.result-detail-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 3px 0;
+  font-size: 0.85rem;
+}
+.result-detail-label { opacity: 0.85; }
+.result-detail-value { font-weight: 700; text-align: right; }
+.result-detail-highlight {
+  margin-top: 6px;
+  padding: 6px 10px;
+  background: rgba(255,255,255,0.12);
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+/* ===== ОДН ===== */
+.odn-groups { display: grid; gap: 10px; margin-bottom: 14px; }
+.odn-group {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+.odn-group-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: var(--menu-icon-bg);
+  border-bottom: 1px solid var(--border);
+}
+.odn-group-header span:first-child { font-size: 22px; }
+.odn-group-title { flex: 1; font-weight: 700; font-size: 0.95rem; }
+.odn-group-value {
+  font-weight: 800;
+  font-size: 0.95rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+.odn-group-value.has-value {
+  background: var(--accent);
+  color: #fff;
+}
+.odn-group-items { padding: 6px 14px 10px; }
+
+.odn-radio-group { margin-bottom: 10px; }
+.odn-radio-label {
+  font-weight: 700;
+  font-size: 0.9rem;
+  margin-bottom: 6px;
+}
+.odn-radio-options { display: grid; gap: 4px; }
+.odn-radio-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all .15s ease;
+}
+.odn-radio-item:hover { border-color: var(--accent); }
+.odn-radio-item.selected {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.odn-radio-circle {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+.odn-radio-item.selected .odn-radio-circle { border-color: #fff; }
+.odn-radio-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: transparent;
+}
+.odn-radio-item.selected .odn-radio-dot { background: #fff; }
+.odn-radio-content { flex: 1; font-size: 0.88rem; }
+.odn-radio-points {
+  font-weight: 800;
+  font-size: 0.88rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+}
+.odn-radio-item.selected .odn-radio-points { color: #fff; }
+
+.odn-number-item { margin-bottom: 12px; }
+.odn-number-label {
+  font-weight: 700;
+  font-size: 0.9rem;
+  margin-bottom: 6px;
+}
+.odn-number-input-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.odn-number-field {
+  flex: 1;
+  padding: 10px 12px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 1rem;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+.odn-number-field:focus { outline: none; border-color: var(--accent); }
+.odn-number-unit {
+  font-size: 0.85rem;
+  color: var(--muted);
+  font-weight: 600;
+  min-width: 70px;
+}
+.odn-number-hint {
+  margin-top: 4px;
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+.odn-number-status { margin-top: 4px; min-height: 20px; }
+.odn-status-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #fff;
+}
+.odn-status-badge.status-success { background: #1a7a3e; }
+.odn-status-badge.status-warning { background: #c77700; }
+.odn-status-badge.status-error { background: #b42323; }
+.odn-status-badge.status-critical { background: #7a1f1f; }
+
+.odn-result {
+  flex-direction: column;
+  align-items: stretch;
+  padding: 14px !important;
+}
+.result-content.result-critical { background: #7a1f1f; color: #fff; }
+.odn-result-main {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255,255,255,0.2);
+  margin-bottom: 10px;
+}
+.odn-result-score { text-align: center; }
+.odn-result-score-value { font-size: 2.2rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+.odn-result-score-label { font-size: 0.85rem; opacity: 0.85; }
+.odn-horowitz {
+  flex: 1;
+  padding: 8px;
+  background: rgba(255,255,255,0.12);
+  border-radius: 8px;
+  text-align: center;
+}
+.odn-horowitz-value { font-size: 1.6rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+.odn-horowitz-label { font-size: 0.75rem; opacity: 0.85; }
+.odn-horowitz-status { font-size: 0.82rem; font-weight: 700; margin-top: 2px; }
+.result-action {
+  margin-top: 6px;
+  padding: 6px 10px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 0.88rem;
+}
+
+/* ===== Педиатрический (Брослоу) ===== */
+.pediatric-inputs {
+  padding: 14px;
+  margin-bottom: 12px;
+}
+.pediatric-input-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  margin-bottom: 12px;
+}
+.pediatric-input-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.pediatric-input-group { display: flex; flex-direction: column; gap: 4px; }
+.pediatric-input-label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.82rem;
+  color: var(--muted);
+  font-weight: 600;
+}
+.pediatric-field-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.pediatric-field {
+  flex: 1;
+  padding: 10px 12px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 1rem;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+.pediatric-field:focus { outline: none; border-color: var(--accent); }
+.pediatric-field-unit { font-size: 0.85rem; color: var(--muted); font-weight: 600; }
+
+.limits-warning {
+  margin-bottom: 12px;
+  padding: 12px;
+  background: #fff3cd;
+  color: #856404;
+  border-left: 4px solid #ffc107;
+  border-radius: 8px;
+  font-size: 0.88rem;
+}
+.limits-warning-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.limits-warning-list {
+  margin: 0;
+  padding-left: 18px;
+  line-height: 1.5;
+}
+
+.pediatric-summary {
+  margin-bottom: 14px;
+  overflow: hidden;
+}
+.pediatric-summary-header {
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.broselow-zone-badge {
+  padding: 4px 12px;
+  border-radius: 14px;
+  font-weight: 800;
+  font-size: 0.88rem;
+}
+.broselow-zone-label { font-weight: 700; }
+.broselow-weight {
+  font-size: 1.4rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  flex: 1;
+  text-align: right;
+}
+.estimated-badge {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 2px 8px;
+  background: rgba(0,0,0,0.15);
+  border-radius: 10px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  vertical-align: middle;
+}
+.pediatric-summary-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  padding: 12px 14px;
+}
+.summary-column { padding: 4px 0; }
+.broselaw-column { padding-left: 12px; }
+.norms-column { padding-left: 14px; border-left: 1px solid var(--border); }
+.summary-column-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  margin-bottom: 6px;
+  color: var(--accent);
+}
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 2px 0;
+  font-size: 0.85rem;
+}
+.summary-label { color: var(--muted); }
+.summary-value { font-weight: 700; text-align: right; }
+
+.pediatric-section { margin-bottom: 14px; }
+.pediatric-section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 1rem;
+  margin-bottom: 10px;
+  padding: 0 4px;
+}
+.pediatric-drugs-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+.pediatric-drug-card {
+  padding: 12px 14px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+}
+.pediatric-drug-card.adult-dose-card {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 5%, var(--card));
+}
+.drug-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.drug-header .material-symbols-rounded {
+  font-size: 24px;
+  color: var(--accent);
+}
+.drug-name {
+  font-weight: 800;
+  font-size: 1rem;
+  line-height: 1.25;
+  flex: 1;
+}
+
+.adult-dose-banner {
+  margin-bottom: 10px;
+  padding: 8px 10px;
+  background: var(--accent);
+  color: #fff;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.adult-dose-banner .material-symbols-rounded { font-size: 20px; }
+.adult-dose-title { font-weight: 800; font-size: 0.85rem; }
+.adult-dose-subtitle { font-size: 0.78rem; opacity: 0.9; }
+
+.drug-dose-section { margin-bottom: 10px; }
+.drug-dose-label {
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  font-weight: 600;
+}
+.drug-doses {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 8px 10px;
+  background: var(--menu-icon-bg);
+  border-radius: 8px;
+}
+.drug-dose-item {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+.drug-dose-main, .drug-dose-volume {
+  font-size: 1.5rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--accent);
+}
+.drug-dose-unit { font-size: 0.88rem; color: var(--muted); }
+.drug-dose-separator {
+  font-size: 1.2rem;
+  color: var(--muted);
+  font-weight: 700;
+}
+.drug-dose-note {
+  margin-top: 4px;
+  font-size: 0.75rem;
+  color: var(--muted);
+  font-style: italic;
+}
+
+.drug-details { font-size: 0.85rem; }
+.drug-detail {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 3px 0;
+  border-bottom: 1px dashed var(--border);
+}
+.drug-detail:last-child { border-bottom: none; }
+.drug-label { color: var(--muted); }
+.drug-value { font-weight: 600; text-align: right; flex: 1; }
+.drug-detail.highlight {
+  background: color-mix(in srgb, var(--accent) 10%, var(--card));
+  padding: 4px 8px;
+  margin: 4px 0;
+  border-radius: 6px;
+  border-bottom: none;
+}
+.drug-detail.limited .drug-value { color: var(--accent); }
+.drug-detail.max-dose-info,
+.drug-detail.ampoules-info {
+  margin-top: 4px;
+  padding: 4px 8px;
+  background: var(--menu-icon-bg);
+  border-radius: 6px;
+  border-bottom: none;
+}
+
+.drug-age-warning,
+.drug-warning {
+  margin-top: 8px;
+  padding: 6px 10px;
+  background: #fff3cd;
+  color: #856404;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+.drug-warning { background: #ffe0b3; color: #8b4513; }
+
+/* Норадреналин (инфузомат) */
+.norepinephrine-card {
+  border-color: #c77700;
+  background: color-mix(in srgb, #c77700 5%, var(--card));
+}
+.ne-dilution-section {
+  margin-bottom: 10px;
+  padding: 10px;
+  background: var(--menu-icon-bg);
+  border-radius: 8px;
+}
+.ne-dilution-label {
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+.ne-dilution-options {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+.ne-dilution-btn {
+  padding: 8px 4px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--text);
+}
+.ne-dilution-btn.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.ne-concentration {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 6px 10px;
+  background: var(--menu-icon-bg);
+  border-radius: 6px;
+  margin-bottom: 10px;
+}
+.ne-conc-label { font-size: 0.82rem; color: var(--muted); }
+.ne-conc-value { font-weight: 800; font-size: 1rem; color: var(--accent); }
+.ne-conc-detail { font-size: 0.78rem; color: var(--muted); }
+
+.ne-speed-section { margin-bottom: 10px; }
+.ne-speed-title {
+  font-size: 0.82rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.ne-speed-grid {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr auto 1fr;
+  gap: 4px;
+  align-items: baseline;
+}
+.ne-speed-item { text-align: center; }
+.ne-speed-value {
+  font-size: 1.2rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--accent);
+}
+.ne-speed-unit { font-size: 0.75rem; color: var(--muted); }
+.ne-speed-separator { font-size: 1rem; color: var(--muted); text-align: center; }
+
+.ne-titration {
+  padding: 8px 10px;
+  background: var(--menu-icon-bg);
+  border-radius: 8px;
+  margin-bottom: 10px;
+  border-left: 3px solid var(--accent);
+}
+.ne-titration-title {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.ne-titration-desc {
+  font-size: 0.82rem;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+/* Спойлер "Остальные препараты" */
+.drugs-spoiler {
+  margin-bottom: 14px;
+  overflow: hidden;
+}
+.drugs-spoiler-summary {
+  padding: 12px 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  list-style: none;
+  background: var(--menu-icon-bg);
+  font-weight: 700;
+}
+.drugs-spoiler-summary::-webkit-details-marker { display: none; }
+.spoiler-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.spoiler-title { font-size: 0.95rem; }
+.spoiler-count {
+  padding: 2px 8px;
+  background: var(--accent);
+  color: #fff;
+  border-radius: 10px;
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+.spoiler-arrow { transition: transform .2s ease; }
+.drugs-spoiler[open] .spoiler-arrow { transform: rotate(180deg); }
+.drugs-spoiler-content { padding: 10px 14px; }
+.spoiler-category { margin-bottom: 12px; }
+.spoiler-category:last-child { margin-bottom: 0; }
+.spoiler-category-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: var(--accent);
+  margin-bottom: 8px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* Дефибрилляция */
+.pediatric-defib-card { padding: 14px; }
+.defib-header { margin-bottom: 14px; }
+.defib-main {
+  text-align: center;
+  padding: 12px;
+  background: var(--accent);
+  color: #fff;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+.defib-value { font-size: 2rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+.defib-label { font-size: 0.82rem; opacity: 0.9; }
+.defib-legend {
+  display: grid;
+  gap: 6px;
+  padding: 8px 10px;
+  background: var(--menu-icon-bg);
+  border-radius: 8px;
+  font-size: 0.82rem;
+}
+.defib-legend-item { display: flex; align-items: center; gap: 6px; }
+.defib-legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.defib-timeline {
+  position: relative;
+  padding-left: 40px;
+}
+.defib-timeline::before {
+  content: '';
+  position: absolute;
+  left: 15px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--border);
+}
+.defib-step {
+  position: relative;
+  padding-bottom: 12px;
+}
+.defib-step:last-child { padding-bottom: 0; }
+.defib-step-num {
+  position: absolute;
+  left: -40px;
+  top: 0;
+  width: 30px;
+  height: 30px;
+  background: var(--card);
+  border: 2px solid var(--border);
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  font-size: 0.85rem;
+  color: var(--text);
+  z-index: 1;
+}
+.defib-step.shock .defib-step-num {
+  background: #b42323;
+  border-color: #b42323;
+  color: #fff;
+}
+.defib-step.cpr .defib-step-num {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.defib-step.drug .defib-step-num {
+  background: #c77700;
+  border-color: #c77700;
+  color: #fff;
+}
+.defib-step.max-shock .defib-step-num {
+  background: #7a1f1f;
+  border-color: #7a1f1f;
+  color: #fff;
+}
+.defib-step-content {
+  padding: 6px 10px;
+  background: var(--menu-icon-bg);
+  border-radius: 8px;
+}
+.defib-step-title { font-weight: 700; font-size: 0.9rem; margin-bottom: 2px; }
+.defib-step-desc { font-size: 0.82rem; line-height: 1.4; color: var(--muted); }
+.defib-step-desc strong { color: var(--accent); }
+.defib-max-note {
+  margin-top: 4px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #b42323;
+}
+.defib-footer {
+  margin-top: 12px;
+  padding: 8px 10px;
+  background: var(--menu-icon-bg);
+  border-radius: 8px;
+  border-left: 3px solid var(--accent);
+}
+.defib-footer-note {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+/* Оборудование */
+.pediatric-equipment-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+.pediatric-equip-card {
+  padding: 10px 12px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+}
+.pediatric-equip-card.equip-wide {
+  grid-column: 1 / -1;
+}
+.equip-icon {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+.equip-icon .material-symbols-rounded {
+  font-size: 20px;
+  color: var(--accent);
+}
+.equip-name {
+  font-weight: 700;
+  font-size: 0.88rem;
+  line-height: 1.25;
+}
+.equip-value {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+  margin: 4px 0 2px;
+}
+.equip-details {
+  font-size: 0.78rem;
+  color: var(--muted);
+  line-height: 1.4;
+}
+.equip-route {
+  margin-top: 4px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--accent);
+}
+.equip-warning {
+  margin-top: 6px;
+  padding: 4px 8px;
+  background: #ffe0b3;
+  border-radius: 4px;
+  font-size: 0.78rem;
+  color: #8b4513;
+  font-weight: 600;
+}
+.equip-alternative {
+  margin-top: 6px;
+  padding: 6px 8px;
+  background: var(--menu-icon-bg);
+  border-radius: 6px;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+.ett-details { margin-top: 8px; }
+.ett-additional {
+  display: grid;
+  gap: 3px;
+  padding: 6px 8px;
+  background: var(--menu-icon-bg);
+  border-radius: 6px;
+  margin-bottom: 6px;
+}
+.ett-additional-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+}
+.ett-additional-item .material-symbols-rounded {
+  font-size: 14px;
+  color: var(--accent);
+}
+.ett-additional-label { color: var(--muted); flex: 1; }
+.ett-additional-value { font-weight: 700; }
+.ett-additional-alt {
+  padding-left: 12px;
+  border-left: 2px solid var(--border);
+}
+
+.ett-safety-notes { display: grid; gap: 4px; }
+.safety-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 4px 8px;
+  background: var(--menu-icon-bg);
+  border-radius: 4px;
+  font-size: 0.78rem;
+  line-height: 1.4;
+}
+.safety-note .material-symbols-rounded {
+  font-size: 14px;
+  color: var(--accent);
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.safety-note.safety-warning {
+  background: #ffe0b3;
+  color: #8b4513;
+}
+.safety-note.safety-warning .material-symbols-rounded { color: #c77700; }
+.safety-note.safety-highlight {
+  background: color-mix(in srgb, var(--accent) 15%, var(--card));
+  font-weight: 600;
+}
+
+/* Инфузионная терапия */
+.pediatric-infusion-card {
+  padding: 14px;
+}
+.infusion-bolus, .infusion-maintenance {
+  padding: 10px 12px;
+  background: var(--menu-icon-bg);
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+.infusion-maintenance { margin-bottom: 0; }
+.infusion-title {
+  font-size: 0.82rem;
+  color: var(--muted);
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+.infusion-value {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+.infusion-subtitle {
+  font-size: 0.78rem;
+  color: var(--muted);
+  line-height: 1.35;
+}

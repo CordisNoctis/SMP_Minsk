@@ -4,17 +4,16 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content">
 
-  <title>СМП Помощник</title>
+  <title>СМП Минск</title>
 
-  <meta name="description" content="Офлайн-помощник для сотрудников скорой медицинской помощи">
-
+  <meta name="description" content="СМП Минск: информационно-справочная база сотрудника скорой медицинской помощи">
   <meta name="theme-color" content="#7A1F2B">
 
   <link rel="manifest" href="manifest.webmanifest">
 
   <!-- Тема подключается до CSS, чтобы уменьшить мигание темы -->
-  <script src="js/theme-init.js"></script>
-  <script src="js/version.js"></script>
+  <script src="js/core/theme-init.js"></script>
+  <script src="js/core/version.js"></script>
 
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="css/changelog.css">
@@ -30,7 +29,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="СМП">
+  <meta name="apple-mobile-web-app-title" content="СМП Минск">
 </head>
 
 <body>
@@ -74,7 +73,7 @@
           <span class="menu-title">Шпаргалки</span>
           <span class="menu-arrow" aria-hidden="true">›</span>
         </a>
-        <a class="menu-card" href="pages/coming-soon.html?section=calculators" data-page="calculators">
+        <a class="menu-card" href="pages/calculators.html" data-page="calculators">
           <span class="menu-icon" aria-hidden="true">🧮</span>
           <span class="menu-title">Клинические калькуляторы и шкалы</span>
           <span class="menu-arrow" aria-hidden="true">›</span>
@@ -133,7 +132,7 @@
         <button type="button" class="modal-close" data-modal-close aria-label="Закрыть">×</button>
       </header>
       <div class="modal-body about-modal-body">
-        <p>Приложение является неофициальным инструментом и создано для удобства медицинских работников сотрудников СМП г. Минска.</p>
+        <p>«СМП Минск» — неофициальная информационно-справочная база сотрудника скорой медицинской помощи, созданная для удобства медицинских работников СМП г. Минска.</p>
         <p>В первую очередь следует руководствоваться официальными приказами, постановлениями и клиническими протоколами Министерства здравоохранения Республики Беларусь. Данные в приложении носят справочный характер. Разработчик не несёт ответственности за возможные последствия использования информации из приложения в клинической практике.</p>
 
         <h3 class="about-subtitle">Обратная связь</h3>
@@ -155,11 +154,11 @@
     </section>
   </div>
 
-  <script src="js/theme.js"></script>
-  <script src="js/modal.js"></script>
-  <script src="js/app.js"></script>
-  <script src="js/changelog.js"></script>
-  <script src="js/update-notice.js"></script>
-  <script src="js/sw-register.js"></script>
+  <script src="js/core/theme.js"></script>
+  <script src="js/core/modal.js"></script>
+  <script src="js/core/app.js"></script>
+  <script src="js/core/changelog.js"></script>
+  <script src="js/core/update-notice.js"></script>
+  <script src="js/core/sw-register.js"></script>
 </body>
 </html>

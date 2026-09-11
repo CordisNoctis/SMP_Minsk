@@ -1,0 +1,23 @@
+(function () {
+  "use strict";
+
+  window.SMP = window.SMP || {};
+  window.SMP.CALCULATORS = [
+    { id: "geneva-score",            title: "Клиническая оценка вероятности ТЭЛА (Женевская шкала)", emoji: "🫀", categories: ["Кардиология", "Реанимация и ИТ"], priority: "high", page: "calc-geneva.html" },
+    { id: "glasgow-coma",            title: "Шкала комы Глазго (ШКГ)",                              emoji: "🧠", categories: ["Неврология", "Реанимация и ИТ", "Хирургия и травматология"], priority: "critical", page: "calc-glasgow.html" },
+    { id: "four-score",              title: "Шкала комы FOUR",                                      emoji: "🧠", categories: ["Неврология", "Реанимация и ИТ"], priority: "critical", page: "calc-four.html" },
+    { id: "sad-persons",             title: "Шкала оценки риска суицида (SAD PERSONS)",             emoji: "💭", categories: ["Психиатрия", "Реанимация и ИТ"], priority: "critical", page: "calc-sad-persons.html" },
+    { id: "pediatric",               title: "Педиатрические калькуляторы (лента Брослоу)",           emoji: "👶", categories: ["Педиатрия", "Реанимация и ИТ"], priority: "critical", page: "calc-pediatric.html" },    { id: "apgar",                   title: "Шкала Апгар",                                          emoji: "👶", categories: ["Педиатрия", "Акушерство и гинекология", "Реанимация и ИТ"], priority: "critical", page: "calc-apgar.html" },
+    { id: "ciwa-ar",                 title: "Шкала оценки отмены алкоголя (CIWA-Ar)",                emoji: "💭", categories: ["Психиатрия", "Реанимация и ИТ"], priority: "medium", page: "calc-ciwa.html" },
+    { id: "nihss",                   title: "Шкала инсульта NIHSS",                                 emoji: "🧠", categories: ["Неврология", "Реанимация и ИТ"], priority: "critical", page: "calc-nihss.html" },
+    { id: "killip",                  title: "Тяжесть сердечной недостаточности (Killip)",           emoji: "🫀", categories: ["Кардиология", "Реанимация и ИТ"], priority: "critical", page: "calc-killip.html" },
+    { id: "vas",                     title: "Шкала ВАШ (визуально-аналоговая шкала боли)",           emoji: "😣", categories: ["Реанимация и ИТ", "Хирургия и травматология", "Неврология"], priority: "high", page: "calc-vas.html" },
+    { id: "fast-ed",                 title: "Усечённая шкала FAST-ED",                              emoji: "🧠", categories: ["Неврология", "Реанимация и ИТ"], priority: "critical", page: "calc-fast-ed.html" },
+    { id: "algover",                 title: "Индекс Альговера (шоковый индекс)",                     emoji: "🩸", categories: ["Реанимация и ИТ", "Хирургия и травматология", "Акушерство и гинекология"], priority: "critical", page: "calc-algover.html" },
+    { id: "drug-converter",          title: "Перевод мг ↔ мл ↔ %",                                   emoji: "💊", categories: ["Реанимация и ИТ", "Фармакология"], priority: "critical", page: "calc-drug-converter.html" },
+    { id: "pesi-score",              title: "Шкала PESI (тяжесть ТЭЛА)",                            emoji: "🫀", categories: ["Кардиология", "Реанимация и ИТ"], priority: "high", page: "calc-pesi.html" },
+    { id: "infusomat",               title: "Расчёт скорости введения (инфузомат)",                 emoji: "💉", categories: ["Реанимация и ИТ", "Фармакология"], priority: "critical", page: "calc-infusomat.html" },    { id: "odn-scale",               title: "Оценка тяжести ОДН",                                   emoji: "🫁", categories: ["Реанимация и ИТ", "Пульмонология"], priority: "critical", page: "calc-odn.html" },
+    { id: "shsn-scale",              title: "Шкала оценки клинического состояния при ХСН",           emoji: "🫀", categories: ["Кардиология", "Реанимация и ИТ"], priority: "high", page: "calc-shsn.html" },    { id: "sgarbossa",               title: "Критерии Сгарбоссы (ИМ при БЛНПГ)",                    emoji: "📈", categories: ["Кардиология", "Реанимация и ИТ"], priority: "critical", page: "calc-sgarbossa.html" },
+    { id: "ett-size",                title: "Размер эндотрахеальной трубки (дети)",                  emoji: "👶", categories: ["Педиатрия", "Реанимация и ИТ", "Акушерство и гинекология"], priority: "critical", page: "calc-ett-size.html" },
+    { id: "qtc-bazett",              title: "Коррекция интервала QT (QTc по Bazett)",                emoji: "📈", categories: ["Кардиология", "Реанимация и ИТ"], priority: "critical", page: "calc-qtc.html" },  ];
+})();
