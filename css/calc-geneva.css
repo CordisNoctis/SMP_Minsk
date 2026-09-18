@@ -1,0 +1,60 @@
+/* ===== Женевская шкала ===== */
+/* Блок ЧСС — 3 кнопки в ряд */
+.geneva-item-hr {
+  flex-direction: column !important;
+  align-items: stretch !important;
+  padding: 14px 16px !important;
+  background: var(--card) !important;
+  border-bottom: 1px solid var(--border-light, rgba(0,0,0,0.06)) !important;
+}
+.geneva-item-hr:last-child { border-bottom: none !important; }
+
+.geneva-hr-group {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 8px !important;
+  margin-top: 10px !important;
+}
+.geneva-hr-option {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 10px 6px !important;
+  background: var(--card) !important;
+  border: 2px solid var(--border) !important;
+  border-radius: 10px !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+  gap: 4px !important;
+}
+.geneva-hr-option.active {
+  background: var(--cat-color) !important;
+  border-color: var(--cat-color) !important;
+  color: #fff !important;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.15) !important;
+}
+.geneva-hr-option input[type="radio"] {
+  position: absolute !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+.hr-label {
+  font-size: 0.92rem !important;
+  font-weight: 600 !important;
+}
+.hr-points {
+  font-size: 0.82rem !important;
+  opacity: 0.75 !important;
+  font-weight: 700 !important;
+}
+.geneva-hr-option.active .hr-points { opacity: 0.95 !important; }
+
+/* Центрирование пункта с радио — для правильного выравнивания */
+.geneva-item {
+  align-items: center !important;
+}
+.geneva-checkbox-custom,
+.geneva-radio-custom {
+  margin-top: 0 !important;
+}

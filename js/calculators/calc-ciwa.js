@@ -97,11 +97,12 @@
     var fc = filledCount();
     if (fc < GROUPS.length) {
       panelEl.innerHTML =
-        '<div class="result-content result-incomplete">' +
-        '<div class="result-score"><div class="result-score-value">—</div><div class="result-score-label">неполная оценка</div></div>' +
-        '<div class="result-divider"></div>' +
-        '<div class="result-info"><div class="result-label">Заполните все 10 параметров</div><div class="result-description">Осталось: ' + (GROUPS.length - fc) + '</div></div>' +
-        '</div>';
+      '<div class="result-content result-incomplete">' +
+      '<div class="result-score"><div class="result-score-value">—</div><div class="result-score-label">неполная оценка</div></div>' +
+      '<div class="result-divider"></div>' +
+      '<div class="result-info"><div class="result-label">Заполните все 10 параметров</div><div class="result-description">Осталось: ' + (GROUPS.length - fc) + '</div></div>' +
+      resetButtonHtml() +
+      '</div>';
       return;
     }
     var s = total();
@@ -111,10 +112,12 @@
       '<div class="result-score"><div class="result-score-value">' + s + '</div><div class="result-score-label">из 67 баллов</div></div>' +
       '<div class="result-divider"></div>' +
       '<div class="result-info">' +
-        '<div class="result-label">' + r.label + '</div>' +
-        '<div class="result-therapy" style="font-weight:700;margin-bottom:4px;">💊 ' + r.therapy + '</div>' +
-        '<div class="result-description">' + r.description + '</div>' +
-      '</div></div>';
+          '<div class="result-label">' + r.label + '</div>' +
+          '<div class="result-therapy" style="font-weight:700;margin-bottom:4px;">💊 ' + r.therapy + '</div>' +
+          '<div class="result-description">' + r.description + '</div>' +
+      '</div>' +
+      resetButtonHtml() +
+      '</div>';
   }
 
   function updateProgress() {
@@ -122,6 +125,17 @@
     var percent = Math.round((fc / GROUPS.length) * 100);
     if (progressEl) progressEl.textContent = fc + " / " + GROUPS.length;
     if (fillEl) fillEl.style.width = percent + "%";
+  }
+
+  function resetButtonHtml() {
+      return '<button type="button" class="result-reset-big" aria-label="Сбросить" title="Сбросить">↺</button>';
+  }
+
+  function resetAll() {
+      selections = {};
+      renderGroups();
+      renderResult();
+      updateProgress();
   }
 
   function init() {
@@ -146,12 +160,17 @@
       updateProgress();
     });
 
+    panelEl.addEventListener("click", function (e) {
+        if (e.target.closest(".result-reset-big")) resetAll();
+    });
+
     var infoBtn = document.getElementById("calcInfoBtn");
     if (infoBtn) infoBtn.addEventListener("click", function () {
       CU.openReferenceModal({ reference: REFERENCE });
     });
   }
-
+  
+  CU.autoPersist("smp-calc-ciwa-v1");
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
   else init();
 })();

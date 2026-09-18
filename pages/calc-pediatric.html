@@ -3,11 +3,14 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Педиатрический калькулятор (Брослоу) — СМП Минск</title>
+  <title>Педиатрические калькуляторы (основаны на ленте Broselow) — СМП Минск</title>
   <meta name="theme-color" content="#7A1F2B">
+<meta name="description" content="Педиатрические калькуляторы для СМП: возраст, вес, рост, расчёт по ленте Broselow.">
   <script src="../js/core/theme-init.js"></script>
   <link rel="stylesheet" href="../css/styles.css">
-  <link rel="stylesheet" href="../css/calculators.css">
+  <link rel="stylesheet" href="../css/calculators-common.css">
+  <link rel="stylesheet" href="../css/calc-pediatric.css">  
+  <link rel="stylesheet" href="../css/result-panel.css">
   <link rel="icon" href="../icons/favicon.ico" sizes="any">
 </head>
 <body>
@@ -15,41 +18,48 @@
     <button type="button" class="back-button" data-back data-back-fallback="calculators.html" aria-label="Назад">
       <svg viewBox="0 0 24 24" fill="none"><path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
     </button>
-    <h1 class="page-title-centered">Педиатрический (Брослоу)</h1>
+    <h1 class="page-title-centered" style="white-space: normal; line-height: 1.25;">Педиатрические калькуляторы (основаны на ленте Broselow)</h1>
     <button type="button" class="header-alert-btn" id="calcInfoBtn" aria-label="О калькуляторе">i</button>
   </header>
   <main class="page">
-    <section class="card calc-description">
-      <p style="margin:0;">Комплексный расчёт для экстренной педиатрической помощи: вес, дозы 20+ препаратов, размеры оборудования для интубации, дефибрилляция, инфузионная терапия.</p>
-    </section>
-    <div class="card pediatric-inputs">
-      <div class="pediatric-input-title">📝 Параметры ребёнка (заполните любое поле)</div>
-      <div class="pediatric-input-grid">
-        <div class="pediatric-input-group">
-          <label class="pediatric-input-label">⚖️ Вес</label>
-          <div class="pediatric-field-wrapper">
-            <input type="text" id="weightInput" class="pediatric-field" inputmode="decimal" placeholder="1–120">
-            <span class="pediatric-field-unit">кг</span>
-          </div>
+        <div class="geneva-category pediatric-category" style="--cat-color: var(--accent); margin-bottom: 12px;">
+      <div class="geneva-category-header">
+        <div class="geneva-category-left">
+          <span class="geneva-category-icon">📝</span>
+          <span class="geneva-category-title">Параметры ребёнка (заполните любое поле)</span>
         </div>
-        <div class="pediatric-input-group">
-          <label class="pediatric-input-label">📏 Рост</label>
-          <div class="pediatric-field-wrapper">
-            <input type="text" id="heightInput" class="pediatric-field" inputmode="decimal" placeholder="40–200">
-            <span class="pediatric-field-unit">см</span>
+        <button type="button" class="result-reset-big reset-inline" id="pedResetBtn" aria-label="Сбросить" title="Сбросить">↺</button>
+      </div>
+      <div class="geneva-category-items" style="padding: 0 !important;">
+        <div class="pediatric-input-grid">
+          <div class="pediatric-input-group">
+            <label class="pediatric-input-label" for="ageInput">Возраст</label>
+            <div class="pediatric-field-wrapper">
+              <input type="text" id="ageInput" class="pediatric-field" inputmode="decimal" placeholder="0–18">
+              <span class="pediatric-field-unit">лет</span>
+            </div>
           </div>
-        </div>
-        <div class="pediatric-input-group">
-          <label class="pediatric-input-label">🎂 Возраст</label>
-          <div class="pediatric-field-wrapper">
-            <input type="text" id="ageInput" class="pediatric-field" inputmode="decimal" placeholder="0–18">
-            <span class="pediatric-field-unit">лет</span>
+          <div class="pediatric-input-group">
+            <label class="pediatric-input-label" for="weightInput">Вес</label>
+            <div class="pediatric-field-wrapper">
+              <input type="text" id="weightInput" class="pediatric-field" inputmode="decimal" placeholder="1–120">
+              <span class="pediatric-field-unit">кг</span>
+            </div>
+          </div>
+          <div class="pediatric-input-group">
+            <label class="pediatric-input-label" for="heightInput">Рост</label>
+            <div class="pediatric-field-wrapper">
+              <input type="text" id="heightInput" class="pediatric-field" inputmode="decimal" placeholder="40–200">
+              <span class="pediatric-field-unit">см</span>
+            </div>
           </div>
         </div>
       </div>
     </div>
+
     <div id="limitsWarning" class="limits-warning" hidden></div>
-    <div id="resultPanel"></div>
+    <div id="calcBody"></div>
+    <div id="resultPanel" aria-live="polite"></div>
   </main>
   <script src="../js/core/theme.js"></script>
   <script src="../js/core/back.js"></script>

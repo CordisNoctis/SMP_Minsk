@@ -2,17 +2,26 @@
   "use strict";
 
   function init() {
-    // Клик по кнопке [data-back] — переход на data-back-fallback
     document.addEventListener("click", function (e) {
       var btn = e.target.closest("[data-back]");
       if (!btn) return;
 
       e.preventDefault();
-      var fallback = btn.getAttribute("data-back-fallback") || "../index.html";
+      var fallback = btn.getAttribute("data-back-fallback");
 
-      // Обычная навигация — добавляет запись в историю браузера.
-      // Физическая кнопка "назад" браузера работает корректно.
-      window.location.href = fallback;
+      // Если fallback указан — переходим туда
+      if (fallback) {
+        window.location.href = fallback;
+        return;
+      }
+
+      // Иначе — пытаемся history.back()
+      if (window.history.length > 1) {
+        window.history.back();
+      } else {
+        // Крайний случай — на главную
+        window.location.href = "../index.html";
+      }
     });
   }
 

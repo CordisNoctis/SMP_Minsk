@@ -1,0 +1,199 @@
+/* ===== QTc Bazett ===== */
+.qtc-inputs { padding: 14px; margin-bottom: 12px; }
+.qtc-input-group { margin-bottom: 10px; }
+.qtc-input-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+.qtc-input-row { display: flex; align-items: center; gap: 10px; }
+.qtc-unit { min-width: 60px; }
+.qtc-formula-hint {
+  margin-top: 8px;
+  padding: 8px 10px;
+  background: var(--menu-icon-bg);
+  border-radius: 8px;
+  font-size: 0.8rem;
+  color: var(--muted);
+  text-align: center;
+  font-family: ui-monospace, monospace;
+}
+
+.qtc-result { flex-direction: column; align-items: stretch; padding: 14px !important; }
+.qtc-main-value {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255,255,255,0.2);
+}
+.qtc-big-number {
+  font-size: 2.8rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  text-align: center;
+}
+.qtc-big-label {
+  font-size: 0.85rem;
+  opacity: 0.85;
+  margin-top: 4px;
+}
+.qtc-details { width: 100%; }
+.qtc-detail-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 3px 0;
+  font-size: 0.85rem;
+}
+.qtc-detail-label { opacity: 0.85; }
+.qtc-detail-value { font-weight: 700; text-align: right; }
+
+.qtc-gender-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 8px;
+}
+.qtc-gender-item {
+  padding: 8px;
+  background: rgba(255,255,255,0.12);
+  border-radius: 8px;
+  text-align: center;
+  font-size: 0.85rem;
+}
+.qtc-gender-item span:first-child {
+  font-size: 16px;
+  vertical-align: -2px;
+  margin-right: 4px;
+}
+.qtc-status-normal { font-weight: 700; }
+.qtc-status-borderline { font-weight: 700; color: #fff3a0; }
+.qtc-status-prolonged { font-weight: 800; color: #ffb3b3; }
+
+/* Режим должного QT */
+.qtc-range-main {
+  text-align: center;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255,255,255,0.2);
+}
+.qtc-range-title {
+  font-size: 0.85rem;
+  opacity: 0.9;
+  margin-bottom: 6px;
+}
+.qtc-range-values {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 12px;
+}
+.qtc-range-value {
+  font-size: 2.4rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.qtc-range-sep { font-size: 1.8rem; opacity: 0.6; }
+.qtc-range-unit {
+  font-size: 1rem;
+  opacity: 0.85;
+  margin-left: 4px;
+}
+
+.qtc-cells-block {
+  margin-top: 10px;
+  padding: 10px;
+  background: rgba(255,255,255,0.12);
+  border-radius: 8px;
+}
+.qtc-cells-title {
+  font-size: 0.82rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.qtc-cell-row {
+  font-size: 0.78rem;
+  line-height: 1.5;
+  padding: 2px 0;
+}
+
+.qtc-section { margin-bottom: 14px; }
+.qtc-section-title {
+  font-weight: 700;
+  font-size: 0.95rem;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.qtc-category-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  margin-bottom: 12px;
+}
+.qtc-category-btn {
+  padding: 10px 6px;
+  background: var(--menu-icon-bg);
+  border: 2px solid transparent;
+  border-radius: 10px;
+  cursor: pointer;
+  text-align: center;
+  transition: all .15s ease;
+  color: var(--text);
+}
+.qtc-category-btn:hover { border-color: var(--accent); }
+.qtc-category-btn.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.qtc-category-btn span { font-size: 20px; display: block; }
+.qtc-category-label { font-size: 0.82rem; font-weight: 600; margin-top: 2px; }
+
+.qtc-input-label {
+  display: block;
+  font-size: 0.82rem;
+  color: var(--muted);
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.qtc-unit { min-width: 50px; }
+.qtc-hint {
+  margin-top: 6px;
+  padding: 6px 10px;
+  background: var(--menu-icon-bg);
+  border-radius: 6px;
+  font-size: 0.78rem;
+  color: var(--muted);
+  text-align: center;
+}
+
+.qtc-speed-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+.qtc-speed-btn {
+  padding: 10px 8px;
+  background: var(--menu-icon-bg);
+  border: 2px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: center;
+  font-weight: 700;
+  color: var(--text);
+  transition: all .15s ease;
+}
+.qtc-speed-btn:hover { border-color: var(--accent); }
+.qtc-speed-btn.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}

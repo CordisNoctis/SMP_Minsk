@@ -1,0 +1,23 @@
+/* ===== Шкала CIWA-Ar ===== */
+.ciwa-progress-card { margin-bottom: 12px; padding: 12px 14px; }
+.ciwa-progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: 0.88rem;
+}
+.ciwa-progress-label { color: var(--muted); }
+.ciwa-progress-value { font-weight: 800; color: var(--accent); }
+.ciwa-progress-bar {
+  height: 6px;
+  background: var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.ciwa-progress-fill {
+  height: 100%;
+  background: var(--accent);
+  transition: width .25s ease;
+}
+.ciwa-items { max-height: 280px; overflow-y: auto; }

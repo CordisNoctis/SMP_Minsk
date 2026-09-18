@@ -1,0 +1,926 @@
+/* =====================================================
+   ОБЩИЕ СТИЛИ ВСЕХ КАЛЬКУЛЯТОРОВ
+   Подключается на каждой странице калькулятора ПЕРВЫМ
+   ===================================================== */
+
+/* ----- Хлебные крошки и шапка ----- */
+.calc-breadcrumb-minimal { margin-bottom: 8px; }
+.breadcrumb-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--accent);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 4px 0;
+}
+.breadcrumb-back-link .material-symbols-rounded { font-size: 20px; }
+
+.calc-header,
+.calc-page-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+  padding: 4px 0 12px;
+}
+.calc-header-content {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex: 1;
+  min-width: 0;
+}
+.calc-icon-wrapper {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--accent) 14%, var(--card)),
+    var(--menu-icon-bg)
+  );
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+.calc-icon-wrapper .material-symbols-rounded {
+  font-size: 28px;
+  color: var(--accent);
+}
+.calc-header-text { min-width: 0; }
+.calc-title,
+.calc-page-title {
+  flex: 1;
+  min-width: 0;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--text);
+  margin: 0;
+  line-height: 1.3;
+  white-space: normal;
+  overflow-wrap: break-word;
+}
+.calc-subtitle {
+  font-size: 0.82rem;
+  color: var(--muted);
+  margin: 2px 0 0;
+  line-height: 1.35;
+  white-space: normal;
+}
+.calc-page-icon {
+  font-size: 1.7rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+a.back-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Кнопка «i» */
+.calc-info-btn {
+  width: 42px;
+  height: 42px;
+  min-width: 42px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  border-radius: 50%;
+  box-shadow: var(--shadow);
+  color: var(--accent);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: background .15s ease, color .15s ease, transform .15s ease;
+}
+.calc-info-btn:hover {
+  background: var(--accent);
+  color: #fff;
+  transform: rotate(8deg);
+}
+.calc-info-btn:active { transform: scale(0.92); }
+.calc-info-btn .material-symbols-rounded { font-size: 22px; }
+
+.calc-description { margin-bottom: 16px; }
+
+/* ----- Модальное окно информации ----- */
+.reference-modal {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 300;
+  opacity: 0;
+  transition: opacity .2s ease;
+  pointer-events: none;
+}
+.reference-modal.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+.reference-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+}
+.reference-modal-content {
+  position: relative;
+  background: var(--card);
+  border-radius: 16px;
+  width: 100%;
+  max-width: 420px;
+  max-height: 85vh;
+  overflow-y: auto;
+  transform: scale(.96);
+  transition: transform .18s ease;
+  padding: 20px;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+.reference-modal.open .reference-modal-content { transform: scale(1); }
+.reference-modal-content::-webkit-scrollbar { width: 6px; }
+.reference-modal-content::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+.reference-modal-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.reference-modal-header-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: var(--menu-icon-bg);
+  display: grid;
+  place-items: center;
+  color: var(--accent);
+}
+.reference-modal-title {
+  flex: 1;
+  font-size: 1.1rem;
+  font-weight: 750;
+  margin: 0;
+}
+.reference-modal-close {
+  width: 36px;
+  height: 36px;
+  border: 0;
+  background: var(--menu-icon-bg);
+  border-radius: 50%;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+}
+.reference-modal-body p {
+  font-size: 0.93rem;
+  line-height: 1.55;
+  text-align: justify;
+  hyphens: auto;
+  margin: 0 0 10px;
+}
+.reference-modal-body p:last-child { margin-bottom: 0; }
+.calc-important-note {
+  margin-top: 14px;
+  padding: 12px 14px;
+  background: var(--menu-icon-bg);
+  border-left: 3px solid var(--accent);
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1.45;
+}
+.calc-important-note .material-symbols-rounded {
+  font-size: 20px;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+/* ----- Радиогруппы в стиле Женевской (gcs) ----- */
+.gcs-groups {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.gcs-group {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.gcs-group-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: linear-gradient(
+    to right,
+    color-mix(in srgb, var(--accent) 12%, transparent),
+    color-mix(in srgb, var(--accent) 4%, transparent)
+  );
+  border-bottom: 1px solid var(--border);
+}
+.gcs-group-header .material-symbols-rounded,
+.gcs-group-header > span:first-child {
+  font-size: 20px;
+  color: var(--accent);
+}
+.gcs-group-title {
+  flex: 1;
+  font-weight: 800;
+  font-size: 0.95rem;
+  color: var(--text);
+}
+.gcs-group-value {
+  min-width: 32px;
+  height: 28px;
+  padding: 0 10px;
+  border-radius: 14px;
+  background: var(--menu-icon-bg);
+  border: 1px solid var(--border);
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  font-size: 0.9rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.gcs-group-value.has-value {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.gcs-group-items { padding: 0; }
+
+.gcs-radio-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  margin: 0;
+  border-radius: 0;
+  border-bottom: 1px solid var(--border-light, rgba(0,0,0,0.06));
+  cursor: pointer;
+  transition: background .15s ease;
+  user-select: none;
+  position: relative;
+  color: var(--text);
+}
+.gcs-radio-item:last-child { border-bottom: none; }
+.gcs-radio-item:hover {
+  background: color-mix(in srgb, var(--accent) 4%, var(--card));
+}
+.gcs-radio-item.selected {
+  background: color-mix(in srgb, var(--accent) 8%, var(--card));
+  color: var(--text);
+}
+.gcs-radio-item.selected::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 6px;
+  bottom: 6px;
+  width: 3px;
+  background: var(--accent);
+  border-radius: 0 3px 3px 0;
+}
+.gcs-radio-circle {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid var(--border-strong, #bbb);
+  background: var(--card);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  transition: border-color .15s ease;
+}
+.gcs-radio-item.selected .gcs-radio-circle { border-color: var(--accent); }
+.gcs-radio-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: transparent;
+  transition: background .15s ease;
+}
+.gcs-radio-item.selected .gcs-radio-dot { background: var(--accent); }
+.gcs-radio-content { flex: 1; min-width: 0; }
+.gcs-radio-title {
+  font-size: 0.92rem;
+  line-height: 1.35;
+}
+.gcs-radio-points {
+  min-width: 36px;
+  padding: 4px 10px;
+  text-align: center;
+  font-weight: 800;
+  font-size: 0.88rem;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  border: none;
+  border-radius: 8px;
+}
+.gcs-radio-item.selected .gcs-radio-points {
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 18%, transparent);
+}
+[data-theme="dark"] .gcs-radio-item {
+  border-bottom-color: rgba(255,255,255,0.08);
+}
+[data-theme="dark"] .gcs-radio-circle {
+  border-color: rgba(255,255,255,0.3);
+  background: transparent;
+}
+
+/* ----- Карточки Женевской (geneva) ----- */
+.geneva-category {
+  background: var(--card) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 14px !important;
+  margin-bottom: 12px !important;
+  overflow: hidden !important;
+  box-shadow: var(--shadow) !important;
+}
+.geneva-category-header {
+  background: linear-gradient(
+    to right,
+    color-mix(in srgb, var(--cat-color) 15%, transparent),
+    color-mix(in srgb, var(--cat-color) 5%, transparent)
+  ) !important;
+  border-bottom: 1px solid var(--border) !important;
+  padding: 14px 16px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+}
+.geneva-category-icon {
+  font-size: 1.4rem !important;
+  margin-right: 10px !important;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.1)) !important;
+}
+.geneva-category-title {
+  font-weight: 800 !important;
+  font-size: 1.02rem !important;
+  color: var(--text) !important;
+  letter-spacing: -0.01em !important;
+}
+.geneva-category-score {
+  min-width: 36px !important;
+  height: 36px !important;
+  display: grid !important;
+  place-items: center !important;
+  background: var(--cat-color) !important;
+  color: #fff !important;
+  border-radius: 50% !important;
+  font-weight: 800 !important;
+  font-size: 0.95rem !important;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15) !important;
+}
+.geneva-category-items {
+  padding: 4px 0 !important;
+  background: var(--card) !important;
+}
+
+.geneva-item {
+  display: flex !important;
+  align-items: center !important;
+  padding: 14px 16px !important;
+  background: var(--card) !important;
+  border-bottom: 1px solid var(--border-light, rgba(0,0,0,0.06)) !important;
+  cursor: pointer !important;
+  transition: background 0.15s ease !important;
+  gap: 12px !important;
+  margin: 0 !important;
+  position: relative !important;
+}
+.geneva-item:last-child { border-bottom: none !important; }
+.geneva-item:hover {
+  background: color-mix(in srgb, var(--cat-color, var(--accent)) 4%, var(--card)) !important;
+}
+.geneva-item.checked {
+  background: color-mix(in srgb, var(--cat-color, var(--accent)) 8%, var(--card)) !important;
+}
+.geneva-item.checked::before {
+  content: "" !important;
+  position: absolute !important;
+  left: 0 !important;
+  top: 8px !important;
+  bottom: 8px !important;
+  width: 3px !important;
+  background: var(--cat-color, var(--accent)) !important;
+  border-radius: 0 3px 3px 0 !important;
+}
+.geneva-checkbox-custom {
+  flex-shrink: 0 !important;
+  width: 22px !important;
+  height: 22px !important;
+  border: 2px solid var(--border-strong, #bbb) !important;
+  border-radius: 6px !important;
+  background: var(--card) !important;
+  display: grid !important;
+  place-items: center !important;
+  transition: all 0.15s ease !important;
+  position: relative !important;
+}
+.geneva-item.checked .geneva-checkbox-custom {
+  background: var(--cat-color, var(--accent)) !important;
+  border-color: var(--cat-color, var(--accent)) !important;
+}
+.geneva-item.checked .geneva-checkbox-custom::after {
+  content: "✓" !important;
+  color: #fff !important;
+  font-weight: 900 !important;
+  font-size: 0.85rem !important;
+  line-height: 1 !important;
+}
+.geneva-item-content {
+  flex: 1 !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  gap: 12px !important;
+  min-width: 0 !important;
+}
+.geneva-item-title {
+  font-size: 0.95rem !important;
+  line-height: 1.35 !important;
+  color: var(--text) !important;
+  font-weight: 500 !important;
+  flex: 1 !important;
+}
+.geneva-item-points {
+  flex-shrink: 0 !important;
+  min-width: 36px !important;
+  padding: 4px 10px !important;
+  background: color-mix(in srgb, var(--cat-color, var(--accent)) 12%, transparent) !important;
+  color: var(--cat-color, var(--accent)) !important;
+  border-radius: 8px !important;
+  font-weight: 800 !important;
+  font-size: 0.88rem !important;
+  text-align: center !important;
+  font-variant-numeric: tabular-nums !important;
+}
+.geneva-item input[type="checkbox"] {
+  position: absolute !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* Радио-квадратик с галочкой (Глазго, FOUR) */
+.geneva-radio-custom {
+  width: 22px !important;
+  height: 22px !important;
+  border-radius: 6px !important;
+  border: 2px solid var(--border-strong, #bbb) !important;
+  background: var(--card) !important;
+  display: grid !important;
+  place-items: center !important;
+  flex-shrink: 0 !important;
+  transition: all .15s ease !important;
+}
+.geneva-radio-item.checked .geneva-radio-custom {
+  background: var(--cat-color, var(--accent)) !important;
+  border-color: var(--cat-color, var(--accent)) !important;
+}
+.geneva-radio-item.checked .geneva-radio-custom::after {
+  content: "✓" !important;
+  width: auto !important;
+  height: auto !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  color: #fff !important;
+  font-weight: 900 !important;
+  font-size: 0.85rem !important;
+  line-height: 1 !important;
+}
+[data-theme="dark"] .geneva-category { border-color: var(--border) !important; }
+[data-theme="dark"] .geneva-category-header {
+  background: linear-gradient(
+    to right,
+    color-mix(in srgb, var(--cat-color) 20%, transparent),
+    color-mix(in srgb, var(--cat-color) 8%, transparent)
+  ) !important;
+}
+[data-theme="dark"] .geneva-item {
+  border-bottom-color: rgba(255,255,255,0.08) !important;
+}
+[data-theme="dark"] .geneva-checkbox-custom {
+  border-color: rgba(255,255,255,0.3) !important;
+  background: transparent !important;
+}
+[data-theme="dark"] .geneva-radio-custom {
+  border-color: rgba(255, 255, 255, 0.3) !important;
+  background: transparent !important;
+}
+[data-theme="dark"] .geneva-radio-item.checked .geneva-radio-custom {
+  background: var(--cat-color, var(--accent)) !important;
+  border-color: var(--cat-color, var(--accent)) !important;
+}
+
+/* ----- Чеклисты (calc-item) ----- */
+.calc-items { --cat-color: var(--accent); }
+.calc-items:has(.calc-age-input) { --cat-color: #1f6e9c; }
+#calcBody:has(.sgarbossa-probability-table) .calc-items { --cat-color: #b42323; }
+.calc-items {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 14px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+.calc-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  margin: 0;
+  background: var(--card);
+  border: none;
+  border-bottom: 1px solid var(--border-light, rgba(0,0,0,0.06));
+  border-radius: 0;
+  box-shadow: none;
+  cursor: pointer;
+  transition: background .15s ease;
+  position: relative;
+}
+.calc-item:last-child { border-bottom: none; }
+.calc-item:hover {
+  background: color-mix(in srgb, var(--cat-color) 4%, var(--card));
+}
+.calc-item.checked {
+  background: color-mix(in srgb, var(--cat-color) 8%, var(--card));
+  color: var(--text);
+}
+.calc-item.checked::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 8px;
+  bottom: 8px;
+  width: 3px;
+  background: var(--cat-color);
+  border-radius: 0 3px 3px 0;
+}
+.calc-item-checkbox {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  border: 2px solid var(--border-strong, #bbb);
+  background: var(--card);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  transition: all .15s ease;
+}
+.calc-item.checked .calc-item-checkbox {
+  background: var(--cat-color);
+  border-color: var(--cat-color);
+}
+.calc-item-checkbox .check-icon {
+  font-size: 14px;
+  color: transparent;
+  transition: color .15s ease;
+}
+.calc-item.checked .check-icon { color: #fff; }
+.calc-item-content { flex: 1; min-width: 0; }
+.calc-item-title { font-size: 0.95rem; line-height: 1.35; color: var(--text); }
+.calc-item-points {
+  flex-shrink: 0;
+  min-width: 36px;
+  padding: 4px 10px;
+  background: color-mix(in srgb, var(--cat-color) 12%, transparent);
+  color: var(--cat-color);
+  border-radius: 8px;
+  font-weight: 800;
+  font-size: 0.88rem;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+[data-theme="dark"] .calc-item {
+  border-bottom-color: rgba(255,255,255,0.08);
+}
+[data-theme="dark"] .calc-item-checkbox {
+  border-color: rgba(255,255,255,0.3);
+  background: transparent;
+}
+.calc-item-input { cursor: default !important; }
+.calc-item-input:hover { background: var(--card) !important; }
+.calc-age-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.calc-age-input {
+  width: 70px;
+  padding: 6px 10px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 1rem;
+  text-align: center;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+}
+.calc-age-input:focus { outline: none; border-color: var(--accent); }
+.calc-age-unit { font-size: 0.82rem; color: var(--muted); font-weight: 600; }
+
+/* ----- Сегмент-переключатели режимов ----- */
+.gcs-mode-switcher,
+.qtc-mode-switcher,
+.ett-mode-switcher,
+.apgar-time-switcher,
+.drug-mode-switcher,
+.infusomat-mode-switcher {
+  display: grid;
+  gap: 4px;
+  margin-bottom: 14px;
+  padding: 4px;
+  background: var(--menu-icon-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+.gcs-mode-switcher,
+.drug-mode-switcher { grid-template-columns: repeat(3, 1fr); }
+.qtc-mode-switcher,
+.ett-mode-switcher,
+.apgar-time-switcher,
+.infusomat-mode-switcher { grid-template-columns: 1fr 1fr; }
+.gcs-mode-btn,
+.qtc-mode-btn,
+.ett-mode-btn,
+.apgar-time-btn,
+.drug-mode-btn,
+.mode-btn {
+  padding: 10px 6px;
+  background: transparent;
+  border: none;
+  border-radius: 9px;
+  cursor: pointer;
+  text-align: center;
+  color: var(--muted);
+  font-weight: 700;
+  transition: background .15s ease, color .15s ease, box-shadow .15s ease;
+}
+.gcs-mode-btn:hover,
+.qtc-mode-btn:hover,
+.ett-mode-btn:hover,
+.apgar-time-btn:hover,
+.drug-mode-btn:hover,
+.mode-btn:hover {
+  color: var(--text);
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+}
+.gcs-mode-btn.active,
+.qtc-mode-btn.active,
+.ett-mode-btn.active,
+.apgar-time-btn.active,
+.drug-mode-btn.active,
+.mode-btn.active {
+  background: var(--card);
+  color: var(--accent);
+  box-shadow: var(--shadow);
+}
+.gcs-mode-btn span,
+.qtc-mode-btn span,
+.ett-mode-btn span,
+.drug-mode-btn span,
+.mode-btn span {
+  font-size: 22px;
+  display: block;
+  margin-bottom: 2px;
+}
+.gcs-mode-label,
+.qtc-mode-label,
+.ett-mode-label,
+.drug-mode-label,
+.mode-btn-label {
+  font-size: 0.88rem;
+  font-weight: 800;
+}
+.qtc-mode-desc,
+.mode-btn-desc,
+.drug-mode-subtitle {
+  font-size: 0.7rem;
+  opacity: 0.75;
+  margin-top: 2px;
+  font-weight: 600;
+}
+[data-theme="dark"] .gcs-mode-btn.active,
+[data-theme="dark"] .qtc-mode-btn.active,
+[data-theme="dark"] .ett-mode-btn.active,
+[data-theme="dark"] .apgar-time-btn.active,
+[data-theme="dark"] .drug-mode-btn.active,
+[data-theme="dark"] .mode-btn.active {
+  background: var(--card);
+  color: var(--accent);
+}
+
+/* ----- Микро-анимации и фокус ----- */
+.calc-item:active,
+.gcs-radio-item:active,
+.odn-option:active,
+.killip-class:active,
+.geneva-item:active {
+  transform: scale(0.99);
+}
+.gcs-mode-btn:focus-visible,
+.qtc-mode-btn:focus-visible,
+.ett-mode-btn:focus-visible,
+.apgar-time-btn:focus-visible,
+.drug-mode-btn:focus-visible,
+.mode-btn:focus-visible,
+.result-reset-big:focus-visible,
+.vas-quick-btn:focus-visible {
+  outline: 2px solid var(--focus, var(--accent));
+  outline-offset: 2px;
+}
+
+/* ----- Единые поля ввода ----- */
+.algover-field,
+.qtc-field,
+.ett-field,
+.ett-age-input,
+.odn-number-field,
+.pediatric-field,
+.infusomat-field,
+.drug-field,
+.calc-age-input {
+  padding: 12px 14px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+.algover-field:focus,
+.qtc-field:focus,
+.ett-field:focus,
+.ett-age-input:focus,
+.odn-number-field:focus,
+.pediatric-field:focus,
+.infusomat-field:focus,
+.drug-field:focus,
+.calc-age-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 15%, transparent);
+}
+.algover-field::-webkit-outer-spin-button,
+.algover-field::-webkit-inner-spin-button,
+.qtc-field::-webkit-outer-spin-button,
+.qtc-field::-webkit-inner-spin-button,
+.ett-field::-webkit-outer-spin-button,
+.ett-field::-webkit-inner-spin-button,
+.ett-age-input::-webkit-outer-spin-button,
+.ett-age-input::-webkit-inner-spin-button,
+.odn-number-field::-webkit-outer-spin-button,
+.odn-number-field::-webkit-inner-spin-button,
+.pediatric-field::-webkit-outer-spin-button,
+.pediatric-field::-webkit-inner-spin-button,
+.infusomat-field::-webkit-outer-spin-button,
+.infusomat-field::-webkit-inner-spin-button,
+.drug-field::-webkit-outer-spin-button,
+.drug-field::-webkit-inner-spin-button,
+.calc-age-input::-webkit-outer-spin-button,
+.calc-age-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.algover-field[type="number"],
+.qtc-field[type="number"],
+.ett-field[type="number"],
+.ett-age-input[type="number"],
+.odn-number-field[type="number"],
+.pediatric-field[type="number"],
+.infusomat-field[type="number"],
+.drug-field[type="number"],
+.calc-age-input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+.algover-unit,
+.qtc-unit,
+.ett-unit,
+.ett-age-unit,
+.odn-number-unit,
+.pediatric-field-unit,
+.drug-unit {
+  font-size: 0.85rem;
+  color: var(--muted);
+  font-weight: 700;
+  white-space: nowrap;
+}
+.algover-formula-hint,
+.qtc-hint,
+.qtc-formula-hint,
+.ett-hint,
+.ett-formulas-hint,
+.odn-number-hint,
+.drug-hint {
+  margin-top: 6px;
+  padding: 7px 10px;
+  background: var(--menu-icon-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.78rem;
+  color: var(--muted);
+  text-align: center;
+  line-height: 1.4;
+}
+.infusomat-select {
+  padding: 12px 14px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-weight: 600;
+  color: var(--text);
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+.infusomat-select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 15%, transparent);
+}
+[data-theme="dark"] .algover-field,
+[data-theme="dark"] .qtc-field,
+[data-theme="dark"] .ett-field,
+[data-theme="dark"] .ett-age-input,
+[data-theme="dark"] .odn-number-field,
+[data-theme="dark"] .pediatric-field,
+[data-theme="dark"] .infusomat-field,
+[data-theme="dark"] .drug-field,
+[data-theme="dark"] .calc-age-input,
+[data-theme="dark"] .infusomat-select {
+  background: var(--input-bg, var(--card));
+}
+
+/* ----- Тёмная тема: предупреждения ----- */
+[data-theme="dark"] .limits-warning,
+[data-theme="dark"] .drug-age-warning {
+  background: color-mix(in srgb, #ffc107 15%, var(--card));
+  color: #ffd75e;
+  border-left-color: #ffc107;
+}
+[data-theme="dark"] .drug-warning,
+[data-theme="dark"] .equip-warning,
+[data-theme="dark"] .safety-note.safety-warning {
+  background: color-mix(in srgb, #ff8c00 18%, var(--card));
+  color: #ffb26b;
+}
+[data-theme="dark"] .infusomat-drug-info .drug-info-warning {
+  background: color-mix(in srgb, #c77700 30%, var(--card));
+  color: #ffcf8a;
+}
+
+/* ----- Плашка результата: штрихи ----- */
+.result-content:not(.result-incomplete) {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.18);
+}
+.result-content.result-incomplete .result-label { color: var(--text); }
+.result-content.result-incomplete .result-reset-big { opacity: 0.5; }
+.result-divider {
+  height: auto;
+  align-self: stretch;
+  margin: 6px 4px;
+}
+.result-info .result-warning { background: rgba(255, 255, 255, 0.22); }
+
+/* ----- Сноска под калькулятором ----- */
+.calc-footnote {
+  margin: 4px 0 12px;
+  padding: 9px 14px;
+  background: var(--menu-icon-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--muted);
+  line-height: 1.4;
+  text-align: center;
+}
+[data-theme="dark"] .calc-footnote {
+  background: var(--menu-icon-bg);
+  border-color: var(--border);
+}

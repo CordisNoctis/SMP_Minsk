@@ -2,98 +2,146 @@
   "use strict";
   var CU = window.SMP.calcUtils;
 
+  // ===== ПУНКТЫ ШКАЛЫ =====
   var ITEMS = [
-    { id: "sex",        title: "S — Sex (Пол мужской)",                                      points: 1 },
-    { id: "age",        title: "A — Age (< 19 или > 45 лет)",                                points: 1 },
-    { id: "depression", title: "D — Depression (депрессия)",                                  points: 1 },
-    { id: "previous",   title: "P — Previous attempt (парасуициды в анамнезе)",                points: 1 },
-    { id: "ethanol",    title: "E — Ethanol abuse (злоупотребление алкоголем)",               points: 1 },
-    { id: "rational",   title: "R — Rational thinking loss (бред, галлюцинации)",              points: 1 },
-    { id: "social",     title: "S — Social support lacking (одиночество)",                    points: 1 },
-    { id: "plan",       title: "O — Organized plan (план с летальным методом)",              points: 1 },
-    { id: "spouse",     title: "N — No spouse (нет супруга/супруги)",                         points: 1 },
-    { id: "sickness",   title: "S — Sickness (тяжёлое хроническое заболевание)",             points: 1 }
+    { id: "sex",    title: "Пол",                                description: "", points: 1 },
+    { id: "age",    title: "Возраст до 19 лет или старше 45 лет", description: "", points: 1 },
+    { id: "depr",   title: "Депрессия",                           description: "", points: 1 },
+    { id: "prev",   title: "Парасуициды в анамнезе",              description: "", points: 1 },
+    { id: "alc",    title: "Злоупотребление алкоголем",           description: "", points: 1 },
+    { id: "think",  title: "Нарушение рационального мышления",
+                   description: "(бред, галлюцинации, фиксация на потере, депрессивное сужение восприятия), шизофрения, расстройство настроения, когнитивные нарушения",
+                   points: 1 },
+    { id: "soc",    title: "Недостаток социальной поддержки",
+                   description: "проживание в одиночестве, тяжелые нарушенные отношения, не принимающее социальное окружение",
+                   points: 1 },
+    { id: "plan",   title: "Организованный план суицида",         description: "", points: 1 },
+    { id: "spouse", title: "Отсутствие супруги (супруга)",
+                   description: "разведен, вдовец, живущий отдельно, проживает в одиночестве",
+                   points: 1 },
+    { id: "sick",   title: "Болезнь",
+                   description: "особенно хроническая, инвалидизирующая, тяжелая",
+                   points: 1 }
   ];
 
+  // ===== ОСНОВНЫЕ ГРАДАЦИИ =====
   var RANGES = [
-    { min: 0,  max: 2,  label: "Низкий риск",       color: "success", description: "Амбулаторное наблюдение." },
-    { min: 3,  max: 4,  label: "Средний риск",      color: "warning", description: "Амбулаторное наблюдение с частыми встречами (1–3 р/нед); дневной стационар; рассмотреть госпитализацию." },
-    { min: 5,  max: 6,  label: "Высокий риск",      color: "pesi-4",  description: "Рекомендовать госпитализацию, если нет уверенности в качественном амбулаторном наблюдении." },
-    { min: 7,  max: 10, label: "Очень высокий риск", color: "error",   description: "Госпитализация, в том числе принудительная." }
+    { min: 0,  max: 2,  label: "Низкий риск",          color: "success", extra: "Амбулаторное наблюдение" },
+    { min: 3,  max: 4,  label: "Средний риск",         color: "warning", extra: "Амбулаторное наблюдение с частыми встречами (1–3 р/неделю); дневной стационар; рассмотреть возможность госпитализации" },
+    { min: 5,  max: 6,  label: "Высокий риск",         color: "error",   extra: "Рекомендовать госпитализацию, если нет уверенности в качественном амбулаторном наблюдении (психиатрическая и социальная служба, родственники)" },
+    { min: 7,  max: 10, label: "Очень высокий риск",   color: "critical",extra: "Госпитализация (в том числе принудительная)" }
   ];
 
+  // ===== МОДАЛКА =====
   var REFERENCE = {
-    title: "О шкале SAD PERSONS",
+    title: "Шкала оценки риска суицида",
     paragraphs: [
-      "Шкала оценки риска суицида (ШОРС, 1983). 10 пунктов оцениваются 0/1. Аббревиатура из английских названий факторов: Sex, Age, Depression, Previous attempt, Ethanol, Rational thinking loss, Social support lacking, Organized plan, No spouse, Sickness."
-    ],
-    importantNote: "Скрининговый инструмент, не заменяет клиническую оценку. При наличии организованного плана суицида с летальным методом госпитализация показана независимо от общего балла.",
-    legalReference: "Приказ МЗ РБ № 480 от 22.04.2020 «О мерах по оптимизации профилактики суицидов в РБ»."
+      "Шкала оценки риска суицида (ШОРС, The SAD PERSONS Scale, 1983) — предназначена для экспресс-диагностики суицидального риска. Шкала содержит 10 пунктов, характеризующих факторы риска суицида и оцениваемых клиницистом как 0 (отсутствует), либо 1 (присутствует).",
+      "Скрининговый инструмент, не заменяет клиническую оценку. При наличии организованного плана суицида с летальным методом госпитализация показана независимо от общего балла."
+    ]
   };
 
-  var checked = {};
-  var itemsEl, panelEl;
+  var STORAGE_KEY = "smp-calc-sadpersons-v1";
+  var state = {};
+  ITEMS.forEach(function (it) { state[it.id] = false; });
 
-  function total() {
-    var sum = 0;
-    for (var id in checked) if (checked[id]) {
-      var it = ITEMS.find(function (i) { return i.id === id; });
-      if (it) sum += it.points;
-    }
-    return sum;
+  function saveState() { CU.saveCalcState(STORAGE_KEY, state); }
+  function loadState() {
+    var saved = CU.loadCalcState(STORAGE_KEY);
+    if (!saved) return;
+    ITEMS.forEach(function (it) {
+      if (typeof saved[it.id] === "boolean") state[it.id] = saved[it.id];
+    });
   }
 
-  function getRange(s) {
-    for (var i = 0; i < RANGES.length; i++)
-      if (s >= RANGES[i].min && s <= RANGES[i].max) return RANGES[i];
-    return RANGES[RANGES.length - 1];
-  }
+  var bodyEl, panelEl;
 
-  function pluralize(n) {
-    var lastTwo = n % 100, lastOne = n % 10;
-    if (lastTwo >= 11 && lastTwo <= 14) return "баллов";
-    if (lastOne === 1) return "балл";
-    if (lastOne >= 2 && lastOne <= 4) return "балла";
-    return "баллов";
-  }
-
+  // ===== РЕНДЕР В СТИЛЕ ЖЕНЕВСКОЙ =====
   function renderItems() {
-    itemsEl.innerHTML = ITEMS.map(function (it) {
-      var cls = checked[it.id] ? " checked" : "";
-      return '<div class="calc-item' + cls + '" data-id="' + it.id + '">' +
-        '<div class="calc-item-checkbox"><span class="check-icon">✓</span></div>' +
-        '<div class="calc-item-content"><div class="calc-item-title">' + CU.escapeHtml(it.title) + '</div></div>' +
-        '<div class="calc-item-points">+' + it.points + '</div></div>';
+    var sum = 0;
+    ITEMS.forEach(function (it) { if (state[it.id]) sum++; });
+
+    var itemsHtml = ITEMS.map(function (it) {
+      var isChecked = state[it.id];
+      var descHtml = it.description
+        ? '<div class="result-description" style="font-size: 0.78rem; opacity: 0.75; margin-top: 3px;">' + CU.escapeHtml(it.description) + '</div>'
+        : '';
+      return '<div class="geneva-item' + (isChecked ? " checked" : "") + '" data-id="' + it.id + '" role="checkbox" aria-checked="' + isChecked + '" tabindex="0">' +
+        '<span class="geneva-checkbox-custom"></span>' +
+        '<span class="geneva-item-content">' +
+          '<span class="geneva-item-title-wrap" style="flex: 1; min-width: 0;">' +
+            '<span class="geneva-item-title">' + CU.escapeHtml(it.title) + '</span>' +
+            descHtml +
+          '</span>' +
+          '<span class="geneva-item-points">' + (isChecked ? 1 : 0) + '</span>' +
+        '</span>' +
+      '</div>';
     }).join("");
-  }
 
-  function renderResult() {
-    var s = total();
-    var r = getRange(s);
-    var hasPlan = !!checked.plan;
-    var warningHtml = hasPlan ? '<div class="result-warning">⚠️ Есть план суицида — госпитализация показана независимо от балла</div>' : '';
-
-    panelEl.innerHTML =
-      '<div class="result-content result-' + r.color + '">' +
-      '<div class="result-score"><div class="result-score-value">' + s + '</div><div class="result-score-label">' + pluralize(s) + '</div></div>' +
-      '<div class="result-divider"></div>' +
-      '<div class="result-info"><div class="result-label">' + r.label + '</div><div class="result-description">' + r.description + '</div>' + warningHtml + '</div>' +
+    bodyEl.innerHTML =
+      '<div class="geneva-category" style="--cat-color: var(--accent);">' +
+        '<div class="geneva-category-header">' +
+          '<div class="geneva-category-left">' +
+            '<span class="geneva-category-icon">🩺</span>' +
+            '<span class="geneva-category-title">Факторы риска суицида</span>' +
+          '</div>' +
+          '<div class="geneva-category-score">' + sum + '</div>' +
+        '</div>' +
+        '<div class="geneva-category-items">' + itemsHtml + '</div>' +
       '</div>';
   }
 
-  function init() {
-    itemsEl = document.getElementById("calcItems");
-    panelEl = document.getElementById("resultPanel");
-    if (!itemsEl || !panelEl) return;
+  function renderResult() {
+    var sum = 0;
+    ITEMS.forEach(function (it) { if (state[it.id]) sum++; });
 
+    var r = RANGES.find(function (x) { return sum >= x.min && sum <= x.max; }) || RANGES[RANGES.length - 1];
+
+    CU.renderResultPanel({
+      score: sum,
+      scoreLabel: "из 10 баллов",
+      color: r.color,
+      title: r.label,
+      description: "",
+      extraDescription: r.extra,
+      onReset: resetAll
+    });
+  }
+
+  function resetAll() {
+    ITEMS.forEach(function (it) { state[it.id] = false; });
+    CU.clearCalcState(STORAGE_KEY);
+    renderItems();
+    renderResult();
+  }
+
+  function init() {
+    bodyEl = document.getElementById("calcBody");
+    panelEl = document.getElementById("resultPanel");
+    if (!bodyEl || !panelEl) return;
+
+    loadState();
     renderItems();
     renderResult();
 
-    itemsEl.addEventListener("click", function (e) {
-      var item = e.target.closest(".calc-item");
+    bodyEl.addEventListener("click", function (e) {
+      var item = e.target.closest(".geneva-item");
       if (!item) return;
       var id = item.getAttribute("data-id");
-      checked[id] = !checked[id];
+      state[id] = !state[id];
+      saveState();
+      renderItems();
+      renderResult();
+    });
+
+    bodyEl.addEventListener("keydown", function (e) {
+      if (e.key !== "Enter" && e.key !== " ") return;
+      var item = e.target.closest(".geneva-item");
+      if (!item) return;
+      e.preventDefault();
+      var id = item.getAttribute("data-id");
+      state[id] = !state[id];
+      saveState();
       renderItems();
       renderResult();
     });

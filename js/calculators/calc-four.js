@@ -33,23 +33,40 @@
     ]}
   ];
 
+  // ===== Основные градации (7 уровней) =====
   var RANGES = [
-    { min: 16, max: 16, label: "Ясное сознание",         color: "gcs-15",    description: "Все функции сохранены." },
-    { min: 15, max: 15, label: "Умеренное оглушение",     color: "gcs-14",    description: "Незначительное снижение уровня бодрствования." },
-    { min: 13, max: 14, label: "Глубокое оглушение",      color: "gcs-11-12", description: "Выраженная заторможенность, сонливость." },
-    { min: 9,  max: 12, label: "Сопор",                   color: "gcs-8-10",  description: "Глубокое угнетение сознания, реакция только на сильные стимулы." },
-    { min: 7,  max: 8,  label: "Кома I (умеренная)",      color: "gcs-6-7",   description: "Нет реакции на голос, сохранена реакция на боль." },
-    { min: 1,  max: 6,  label: "Кома II (глубокая)",      color: "gcs-4-5",   description: "Реакция только на болевые стимулы." },
-    { min: 0,  max: 0,  label: "Кома III (запредельная)", color: "gcs-3",     description: "Гибель коры. Отсутствие всех реакций." }
+    { min: 16, max: 16, label: "Ясное сознание",      color: "gcs-15" },
+    { min: 15, max: 15, label: "Умеренное оглушение", color: "gcs-14" },
+    { min: 13, max: 14, label: "Глубокое оглушение",  color: "gcs-11-12" },
+    { min: 9,  max: 12, label: "Сопор",               color: "gcs-8-10" },
+    { min: 7,  max: 8,  label: "Кома I",              color: "gcs-6-7" },
+    { min: 1,  max: 6,  label: "Кома II",             color: "gcs-4-5" },
+    { min: 0,  max: 0,  label: "Кома III",            color: "gcs-3" }
   ];
+
+  // ===== Дополнительная тактика (вторая строка) =====
+  function getExtra(sum) {
+    if (sum === 16) return "Полностью ориентирован. Наблюдение.";
+    if (sum >= 13 && sum <= 15) return "Умеренное нарушение сознания. Обследование, контроль динамики.";
+    if (sum >= 9 && sum <= 12) return "Глубокое нарушение. Контроль проходимости дыхательных путей.";
+    if (sum >= 1 && sum <= 8) return "Обеспечение проходимости ДП / интубация, ИВЛ.";
+    return "";
+  }
 
   var REFERENCE = {
     title: "О шкале FOUR",
     paragraphs: [
-      "Шкала FOUR разработана в Mayo Clinic (2005). Позволяет точнее детализировать неврологический статус, распознать синдром запертого человека, оценить рефлексы ствола мозга.",
+      "Шкала FOUR (Full Outline of UnResponsiveness) разработана в Mayo Clinic (2005). Позволяет точнее детализировать неврологический статус, распознать синдром запертого человека, оценить рефлексы ствола мозга.",
       "Применима у детей и взрослых. Максимум 16 баллов, минимум 0. Особенно полезна при интубации, когда вербальная оценка по ШКГ невозможна."
     ],
-    importantNote: "FOUR — дополнение к ШКГ, а не замена. Используйте обе шкалы для полноты картины."
+    importantNote: "FOUR — дополнение к ШКГ, а не замена. Используйте обе шкалы для полноты картины.",
+    indicationsTitle: "Преимущества FOUR перед шкалой Глазго:",
+    indications: [
+      "Оценивает стволовые рефлексы — критически важно при подозрении на смерть мозга",
+      "Не зависит от вербального ответа — можно использовать у интубированных пациентов",
+      "Оценивает паттерн дыхания — помогает в диагностике стволовых нарушений",
+      "0 баллов по стволовым рефлексам + апноэ = терминальное состояние"
+    ]
   };
 
   var selections = { E: null, M: null, B: null, R: null };
@@ -67,54 +84,78 @@
     return null;
   }
 
-  function getBreakdown() {
-    var parts = [], missing = [];
-    var names = { E:"глаза", M:"движение", B:"рефлексы", R:"дыхание" };
-    ["E","M","B","R"].forEach(function (k) {
-      if (selections[k] !== null) parts.push(k + selections[k]);
-      else missing.push(names[k]);
-    });
-    return { formula: parts.join("+") || "—", missing: missing };
-  }
-
   function renderGroups() {
+    // Цвета групп как в Глазго
+    var colors = { E: "#1f6e9c", M: "#e68a2e", B: "#8b5cf6", R: "#b42323" };
+    
     groupsEl.innerHTML = GROUPS.map(function (g) {
       var sel = selections[g.id];
-      return '<div class="gcs-group">' +
-        '<div class="gcs-group-header"><span>' + g.icon + '</span>' +
-        '<span class="gcs-group-title">' + g.title + '</span>' +
-        '<span class="gcs-group-value' + (sel != null ? ' has-value' : '') + '">' + (sel != null ? sel : '—') + '</span></div>' +
-        '<div class="gcs-group-items">' +
-        g.items.map(function (it) {
-          return '<div class="gcs-radio-item' + (sel === it.v ? ' selected' : '') + '" data-group="' + g.id + '" data-value="' + it.v + '">' +
-            '<div class="gcs-radio-circle"><div class="gcs-radio-dot"></div></div>' +
-            '<div class="gcs-radio-content"><div class="gcs-radio-title">' + it.t + '</div></div>' +
-            '<div class="gcs-radio-points">' + it.v + '</div></div>';
-        }).join("") +
-        '</div></div>';
+      var color = colors[g.id];
+      
+      var itemsHtml = g.items.map(function (it) {
+        var isChecked = sel === it.v;
+        return '<div class="geneva-item geneva-radio-item' + (isChecked ? " checked" : "") + '" data-group="' + g.id + '" data-value="' + it.v + '" role="radio" aria-checked="' + isChecked + '" tabindex="0">' +
+          '<span class="geneva-radio-custom"></span>' +
+          '<span class="geneva-item-content">' +
+            '<span class="geneva-item-title">' + it.t + '</span>' +
+            '<span class="geneva-item-points">' + it.v + '</span>' +
+          '</span>' +
+        '</div>';
+      }).join("");
+
+      return '<div class="geneva-category" style="--cat-color: ' + color + ';">' +
+        '<div class="geneva-category-header">' +
+          '<div class="geneva-category-left">' +
+            '<span class="geneva-category-icon">' + g.icon + '</span>' +
+            '<span class="geneva-category-title">' + g.title + '</span>' +
+          '</div>' +
+          '<div class="geneva-category-score">' + (sel !== null ? sel : "Х") + '</div>' +
+        '</div>' +
+        '<div class="geneva-category-items">' + itemsHtml + '</div>' +
+      '</div>';
     }).join("");
   }
 
+  // ===== Плашка результата через CU.renderResultPanel (как у Глазго) =====
   function renderResult() {
     var sum = total();
-    var bd = getBreakdown();
+    var filledCount = (selections.E !== null ? 1 : 0) +
+                      (selections.M !== null ? 1 : 0) +
+                      (selections.B !== null ? 1 : 0) +
+                      (selections.R !== null ? 1 : 0);
+
+    // Не показывать подсчёт, пока не заполнены все 4 группы
     if (sum === null) {
-      panelEl.innerHTML =
-        '<div class="result-content result-incomplete">' +
-        '<div class="result-score"><div class="result-score-value">—</div><div class="result-score-label">неполная оценка</div></div>' +
-        '<div class="result-divider"></div>' +
-        '<div class="result-info"><div class="result-label">Выберите все 4 параметра</div><div class="result-description">Заполните: ' + bd.missing.join(", ") + '</div></div>' +
-        '</div>';
+      CU.renderResultPanel({
+        score: "—",
+        scoreLabel: "из 16 баллов",
+        color: "incomplete",
+        title: "Оцените все параметры",
+        description: "Заполнено: " + filledCount + " из 4",
+        extraDescription: "",
+        onReset: resetAll
+      });
       return;
     }
+
     var r = getRange(sum);
     if (!r) return;
-    panelEl.innerHTML =
-      '<div class="result-content result-' + r.color + '">' +
-      '<div class="result-score"><div class="result-score-value">' + sum + '</div><div class="result-score-label">из 16 (' + bd.formula + ')</div></div>' +
-      '<div class="result-divider"></div>' +
-      '<div class="result-info"><div class="result-label">' + r.label + '</div><div class="result-description">' + r.description + '</div></div>' +
-      '</div>';
+
+    CU.renderResultPanel({
+      score: sum,
+      scoreLabel: "из 16 баллов",
+      color: r.color,
+      title: r.label,
+      description: "",
+      extraDescription: getExtra(sum),
+      onReset: resetAll
+    });
+  }
+
+  function resetAll() {
+    selections = { E: null, M: null, B: null, R: null };
+    renderGroups();
+    renderResult();
   }
 
   function init() {
@@ -126,11 +167,20 @@
     renderResult();
 
     groupsEl.addEventListener("click", function (e) {
-      var item = e.target.closest(".gcs-radio-item");
+      var item = e.target.closest(".geneva-radio-item");
       if (!item) return;
-      var g = item.getAttribute("data-group");
-      var v = parseInt(item.getAttribute("data-value"), 10);
-      selections[g] = v;
+      selections[item.getAttribute("data-group")] = parseInt(item.getAttribute("data-value"), 10);
+      renderGroups();
+      renderResult();
+    });
+
+    // Поддержка клавиатуры (Enter / Space)
+    groupsEl.addEventListener("keydown", function (e) {
+      if (e.key !== "Enter" && e.key !== " ") return;
+      var item = e.target.closest(".geneva-radio-item");
+      if (!item) return;
+      e.preventDefault();
+      selections[item.getAttribute("data-group")] = parseInt(item.getAttribute("data-value"), 10);
       renderGroups();
       renderResult();
     });
@@ -141,6 +191,7 @@
     });
   }
 
+  CU.autoPersist("smp-calc-four-v1");
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
   else init();
 })();

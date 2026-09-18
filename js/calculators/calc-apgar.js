@@ -107,6 +107,7 @@
         '<div class="result-score"><div class="result-score-value">—</div><div class="result-score-label">нет данных</div></div>' +
         '<div class="result-divider"></div>' +
         '<div class="result-info"><div class="result-label">Оцените новорождённого</div><div class="result-description">Заполните параметры на 1-й и 5-й минутах</div></div>' +
+        resetButtonHtml() +
         "</div>";
       return;
     }
@@ -123,15 +124,16 @@
     var range = rangeFor(last);
 
     panelEl.innerHTML =
-      '<div class="result-content result-' + range.color + '">' +
-      '<div class="apgar-result-grid">' +
-      '<div class="apgar-result-cell ' + (r1.filled === 5 ? "filled" : "partial") + '"><div class="apgar-cell-label">1 минута</div><div class="apgar-cell-value">' + (r1.sum !== null ? r1.sum : "—") + '</div><div class="apgar-cell-range">' + r1.filled + "/5</div></div>" +
-      '<div class="apgar-result-divider">→</div>' +
-      '<div class="apgar-result-cell ' + (r5.filled === 5 ? "filled" : "partial") + '"><div class="apgar-cell-label">5 минут</div><div class="apgar-cell-value">' + (r5.sum !== null ? r5.sum : "—") + '</div><div class="apgar-cell-range">' + r5.filled + "/5</div></div>" +
-      "</div>" +
-      trend +
-      '<div class="apgar-interpretation"><strong>' + range.label + ":</strong> " + range.description + "</div>" +
-      "</div>";
+        '<div class="result-content result-' + range.color + '">' +
+        '<div class="apgar-result-grid">' +
+        '<div class="apgar-result-cell ' + (r1.filled === 5 ? "filled" : "partial") + '"><div class="apgar-cell-label">1 минута</div><div class="apgar-cell-value">' + (r1.sum !== null ? r1.sum : "—") + '</div><div class="apgar-cell-range">' + r1.filled + "/5</div></div>" +
+        '<div class="apgar-result-divider">→</div>' +
+        '<div class="apgar-result-cell ' + (r5.filled === 5 ? "filled" : "partial") + '"><div class="apgar-cell-label">5 минут</div><div class="apgar-cell-value">' + (r5.sum !== null ? r5.sum : "—") + '</div><div class="apgar-cell-range">' + r5.filled + "/5</div></div>" +
+        "</div>" +
+        trend +
+        '<div class="apgar-interpretation"><strong>' + range.label + ":</strong> " + range.description + "</div>" +
+        resetButtonHtml() +
+        "</div>";
   }
 
   function updateAll() {
@@ -139,6 +141,19 @@
     renderGroups();
     renderResult();
   }
+
+  function resetButtonHtml() {
+        return '<button type="button" class="result-reset-big" aria-label="Сбросить" title="Сбросить">↺</button>';
+    }
+
+    function resetAll() {
+        scores = {
+            "1min": { A: null, P: null, G: null, T: null, R: null },
+            "5min": { A: null, P: null, G: null, T: null, R: null }
+        };
+        currentTime = "1min";
+        updateAll();
+    }
 
   function init() {
     switcherEl = document.getElementById("apgarSwitcher");
@@ -164,6 +179,10 @@
       updateAll();
     });
 
+    panelEl.addEventListener("click", function (e) {
+        if (e.target.closest(".result-reset-big")) resetAll();
+    });
+
     var infoBtn = document.getElementById("calcInfoBtn");
     if (infoBtn && window.SMP && window.SMP.calcUtils) {
       infoBtn.addEventListener("click", function () {
@@ -172,6 +191,7 @@
     }
   }
 
+  CU.autoPersist("smp-calc-apgar-v1");
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
   else init();
 })();

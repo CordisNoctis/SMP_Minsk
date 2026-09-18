@@ -68,6 +68,16 @@
     return { formula: parts.join("+") || "—", missing: missing };
   }
 
+  function resetButtonHtml() {
+      return '<button type="button" class="result-reset-big" aria-label="Сбросить" title="Сбросить">↺</button>';
+  }
+
+  function resetAll() {
+      selections = { F: null, A: null, S: null, T: null, E: null };
+      renderGroups();
+      renderResult();
+  }
+
   function renderGroups() {
     groupsEl.innerHTML = GROUPS.map(function (g) {
       var sel = selections[g.id];
@@ -95,19 +105,22 @@
         '<div class="result-score"><div class="result-score-value">—</div><div class="result-score-label">неполная оценка</div></div>' +
         '<div class="result-divider"></div>' +
         '<div class="result-info"><div class="result-label">Заполните все 5 параметров</div><div class="result-description">Осталось: ' + bd.missing.join(", ") + '</div></div>' +
+        resetButtonHtml() +
         '</div>';
       return;
     }
     var r = getRange(sum);
     panelEl.innerHTML =
-      '<div class="result-content result-' + r.color + '">' +
-      '<div class="result-score"><div class="result-score-value">' + sum + '</div><div class="result-score-label">из 9 (' + bd.formula + ')</div></div>' +
-      '<div class="result-divider"></div>' +
-      '<div class="result-info">' +
-        '<div class="result-label">' + r.label + '</div>' +
-        '<div class="result-therapy" style="font-weight:700;margin-bottom:4px;">' + r.triage + '</div>' +
-        '<div class="result-description">' + r.description + '</div>' +
-      '</div></div>';
+        '<div class="result-content result-' + r.color + '">' +
+        '<div class="result-score"><div class="result-score-value">' + sum + '</div><div class="result-score-label">из 9 (' + bd.formula + ')</div></div>' +
+        '<div class="result-divider"></div>' +
+        '<div class="result-info">' +
+            '<div class="result-label">' + r.label + '</div>' +
+            '<div class="result-therapy" style="font-weight:700;margin-bottom:4px;">' + r.triage + '</div>' +
+            '<div class="result-description">' + r.description + '</div>' +
+        '</div>' +
+        resetButtonHtml() +
+        '</div>';
   }
 
   function init() {
@@ -128,12 +141,17 @@
       renderResult();
     });
 
+    panelEl.addEventListener("click", function (e) {
+        if (e.target.closest(".result-reset-big")) resetAll();
+    });
+
     var infoBtn = document.getElementById("calcInfoBtn");
     if (infoBtn) infoBtn.addEventListener("click", function () {
       CU.openReferenceModal({ reference: REFERENCE });
     });
   }
-
+  
+  CU.autoPersist("smp-calc-fast-ed-v1");
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
   else init();
 })();

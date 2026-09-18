@@ -1,0 +1,167 @@
+/* ===== Инфузомат ===== */
+.infusomat-section {
+  padding: 12px 14px;
+  margin-bottom: 12px;
+}
+.infusomat-section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  margin-bottom: 10px;
+}
+
+.infusomat-drug-info {
+  margin-top: 10px;
+  padding: 12px;
+  background: var(--menu-icon-bg);
+  border-radius: 10px;
+}
+.drug-info-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.drug-info-header span { font-size: 24px; }
+.drug-info-name { font-weight: 800; font-size: 1.05rem; }
+.drug-info-details { font-size: 0.85rem; }
+.drug-info-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 3px;
+}
+.drug-info-label { color: var(--muted); }
+.drug-info-value { font-weight: 700; text-align: right; }
+.drug-info-warning {
+  margin-top: 8px;
+  padding: 6px 10px;
+  background: #c77700;
+  color: #fff;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.infusomat-forms-grid,
+.infusomat-dilution-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: 6px;
+}
+.infusomat-form-btn,
+.infusomat-dilution-btn {
+  padding: 10px 6px;
+  background: var(--menu-icon-bg);
+  border: 1px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: center;
+  transition: all .15s ease;
+  color: var(--text);
+}
+.infusomat-form-btn:hover,
+.infusomat-dilution-btn:hover { border-color: var(--accent); }
+.infusomat-form-btn.active,
+.infusomat-dilution-btn.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.form-btn-label,
+.dilution-btn-label { font-weight: 700; font-size: 0.88rem; }
+.form-btn-details,
+.dilution-btn-total { font-size: 0.75rem; opacity: 0.85; margin-top: 2px; }
+
+.infusomat-dose-inputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.dose-input-group { display: flex; flex-direction: column; gap: 4px; }
+.dose-input-label { font-size: 0.82rem; color: var(--muted); font-weight: 600; }
+
+.infusomat-dose-presets {
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+.presets-label {
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+.presets-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
+  gap: 4px;
+}
+.preset-btn {
+  padding: 8px 4px;
+  background: var(--menu-icon-bg);
+  border: 1px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--text);
+}
+.preset-btn:hover { border-color: var(--accent); }
+.preset-btn.active { background: var(--accent); color: #fff; }
+
+.infusomat-result {
+  flex-direction: column;
+  align-items: stretch;
+  padding: 14px !important;
+}
+.infusomat-result-main {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255,255,255,0.2);
+}
+.infusomat-result-speed { display: flex; align-items: baseline; gap: 6px; }
+.speed-value { font-size: 2.4rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+.speed-unit { font-size: 1rem; opacity: 0.85; }
+.infusomat-result-alt { font-size: 0.95rem; opacity: 0.85; }
+
+.infusomat-result-details { width: 100%; }
+.result-detail-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 3px 0;
+  font-size: 0.85rem;
+}
+.result-detail-label { opacity: 0.85; }
+.result-detail-value { font-weight: 700; text-align: right; }
+.result-detail-highlight {
+  margin-top: 6px;
+  padding: 6px 10px;
+  background: rgba(255,255,255,0.12);
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.mode-btn {
+  padding: 12px 8px;
+  background: var(--menu-icon-bg);
+  border: 2px solid transparent;
+  border-radius: 10px;
+  cursor: pointer;
+  text-align: center;
+  transition: all .15s ease;
+  color: var(--text);
+}
+.mode-btn:hover { border-color: var(--accent); }
+.mode-btn.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.mode-btn span { font-size: 24px; display: block; margin-bottom: 4px; }

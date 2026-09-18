@@ -58,7 +58,6 @@
 
   <script src="../js/core/theme.js"></script>
   <script src="../js/core/back.js"></script>
-  <script src="../js/cheats/drugs-data.js"></script>
   <script src="../js/cheats/drugs-db.js"></script>
   <script>
     (function () {
@@ -67,57 +66,79 @@
       var listEl = document.getElementById("drugsList");
       var emptyEl = document.getElementById("drugsEmpty");
       var searchEl = document.getElementById("drugsSearch");
-      if (!listEl) return;
-
-      var drugs = (window.SMP && window.SMP.drugs && window.SMP.drugs.list) || {};
-      var allIds = Object.keys(drugs).sort(function (a, b) {
-        return (drugs[a].title || "").localeCompare(drugs[b].title || "", "ru", { sensitivity: "base" });
-      });
-
       var emptyStateEl = document.getElementById("drugsEmptyState");
       var searchWrapEl = document.getElementById("drugsSearchWrap");
 
-      // Если база пустая — показываем заглушку и скрываем поиск
-      if (allIds.length === 0) {
+      if (!listEl) return;
+
+      // Проверяем доступность drugsDB
+      if (!window.SMP || !window.SMP.drugsDB) {
+        console.error("drugsDB не загружен");
         if (emptyStateEl) emptyStateEl.hidden = false;
         if (searchWrapEl) searchWrapEl.hidden = true;
         if (listEl) listEl.hidden = true;
         return;
       }
 
-      // Сохраняем список элементов для быстрого скрытия/показа
-      var items = [];
+      // Загружаем список препаратов асинхронно
+      window.SMP.drugsDB.list().then(function (drugs) {
+        if (!drugs || drugs.length === 0) {
+          // База пустая — показываем заглушку
+          if (emptyStateEl) emptyStateEl.hidden = false;
+          if (searchWrapEl) searchWrapEl.hidden = true;
+          if (listEl) listEl.hidden = true;
+          return;
+        }
 
-      allIds.forEach(function (id) {
-        var drug = drugs[id];
-        var a = document.createElement("a");
-        a.className = "submenu-link large";
-        a.href = "drug.html?id=" + encodeURIComponent(id);
-        a.textContent = drug.title || id;
-        a.dataset.searchText = (drug.title || "").toLowerCase();
-        listEl.appendChild(a);
-        items.push(a);
-      });
-
-      function applyFilter(q) {
-        q = (q || "").trim().toLowerCase();
-        var visibleCount = 0;
-        items.forEach(function (a) {
-          var match = !q || a.dataset.searchText.indexOf(q) !== -1;
-          a.style.display = match ? "" : "none";
-          if (match) visibleCount++;
+        // Сортируем по алфавиту
+        drugs.sort(function (a, b) {
+          return (a.title || "").localeCompare(b.title || "", "ru", { sensitivity: "base" });
         });
-        if (emptyEl) emptyEl.hidden = visibleCount > 0;
-      }
 
-      if (searchEl) {
-        searchEl.addEventListener("input", function () { applyFilter(this.value); });
-        // Очистка по крестику
-        searchEl.addEventListener("search", function () { applyFilter(this.value); });
-      }
+        // Рендерим список
+        var items = [];
+        drugs.forEach(function (drug) {
+          var a = document.createElement("a");
+          a.className = "submenu-link large";
+          a.href = "drug.html?id=" + encodeURIComponent(drug.id);
+          a.textContent = drug.title || drug.id;
+          a.dataset.searchText = (drug.title || "").toLowerCase();
+          
+          // Добавляем информацию о группе (если есть)
+          if (drug.group) {
+            a.dataset.group = drug.group;
+          }
+          
+          listEl.appendChild(a);
+          items.push(a);
+        });
 
-      // Первоначальное состояние (на случай, если браузер вставил предыдущее значение)
-      applyFilter(searchEl ? searchEl.value : "");
+        // Функция фильтрации (локальный поиск по уже отрендеренным элементам)
+        function applyFilter(q) {
+          q = (q || "").trim().toLowerCase();
+          var visibleCount = 0;
+          items.forEach(function (a) {
+            var match = !q || a.dataset.searchText.indexOf(q) !== -1;
+            a.style.display = match ? "" : "none";
+            if (match) visibleCount++;
+          });
+          if (emptyEl) emptyEl.hidden = visibleCount > 0;
+        }
+
+        // Привязываем поиск
+        if (searchEl) {
+          searchEl.addEventListener("input", function () { applyFilter(this.value); });
+          searchEl.addEventListener("search", function () { applyFilter(this.value); });
+        }
+
+        // Первоначальное состояние
+        applyFilter(searchEl ? searchEl.value : "");
+      }).catch(function (err) {
+        console.error("Ошибка загрузки списка препаратов:", err);
+        if (emptyStateEl) emptyStateEl.hidden = false;
+        if (searchWrapEl) searchWrapEl.hidden = true;
+        if (listEl) listEl.hidden = true;
+      });
     })();
   </script>
   <script src="../js/core/sw-register.js"></script>

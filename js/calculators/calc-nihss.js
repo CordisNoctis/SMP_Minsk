@@ -220,6 +220,16 @@
     return RANGES[RANGES.length - 1];
   }
 
+  function resetButtonHtml() {
+        return '<button type="button" class="result-reset-big" aria-label="Сбросить" title="Сбросить">↺</button>';
+    }
+
+    function resetAll() {
+        selections = {};
+        renderGroups();
+        renderResult();
+    }
+
   function renderGroups() {
     groupsEl.innerHTML = GROUPS.map(function (g) {
       var groupScore = calculateGroupScore(g.id);
@@ -257,17 +267,19 @@
         '<div class="result-score"><div class="result-score-value">—</div><div class="result-score-label">неполная оценка</div></div>' +
         '<div class="result-divider"></div>' +
         '<div class="result-info"><div class="result-label">Заполните все параметры</div><div class="result-description">Осталось: ' + (totalSG - filled) + ' из ' + totalSG + '</div></div>' +
+        resetButtonHtml() +
         '</div>';
       return;
     }
     var s = total();
     var r = getRange(s);
     panelEl.innerHTML =
-      '<div class="result-content result-' + r.color + '">' +
-      '<div class="result-score"><div class="result-score-value">' + s + '</div><div class="result-score-label">из 42 баллов</div></div>' +
-      '<div class="result-divider"></div>' +
-      '<div class="result-info"><div class="result-label">' + r.label + '</div><div class="result-description">' + r.description + '</div></div>' +
-      '</div>';
+        '<div class="result-content result-' + r.color + '">' +
+        '<div class="result-score"><div class="result-score-value">' + s + '</div><div class="result-score-label">из 42 баллов</div></div>' +
+        '<div class="result-divider"></div>' +
+        '<div class="result-info"><div class="result-label">' + r.label + '</div><div class="result-description">' + r.description + '</div></div>' +
+        resetButtonHtml() +
+        '</div>';
   }
 
   function init() {
@@ -288,12 +300,17 @@
       renderResult();
     });
 
+    panelEl.addEventListener("click", function (e) {
+        if (e.target.closest(".result-reset-big")) resetAll();
+    });
+
     var infoBtn = document.getElementById("calcInfoBtn");
     if (infoBtn) infoBtn.addEventListener("click", function () {
       CU.openReferenceModal({ reference: REFERENCE });
     });
   }
-
+  
+  CU.autoPersist("smp-calc-nihss-v1");
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
   else init();
 })();

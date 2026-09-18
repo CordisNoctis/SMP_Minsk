@@ -1,0 +1,32 @@
+/* ===== Критерии Sgarbossa ===== */
+.sgarbossa-probability-card {
+  padding: 0;
+  margin-bottom: 14px;
+  overflow: hidden;
+}
+.sgarbossa-probability-table {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--border);
+}
+.sgarbossa-prob-row {
+  padding: 8px 4px;
+  background: var(--card);
+  text-align: center;
+  transition: all .15s ease;
+  font-size: 0.82rem;
+}
+.sgarbossa-prob-row.active {
+  background: var(--accent);
+  color: #fff;
+  font-weight: 700;
+}
+.sgarbossa-prob-score {
+  display: block;
+  font-weight: 800;
+  font-size: 0.95rem;
+  margin-bottom: 2px;
+  font-variant-numeric: tabular-nums;
+}
+.sgarbossa-prob-value { opacity: 0.85; }

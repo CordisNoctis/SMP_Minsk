@@ -2,7 +2,7 @@
   "use strict";
   var CU = window.SMP.calcUtils;
 
-  var DRUGS = {
+  var INFUSOMAT_DRUGS = {
     norepinephrine: {
       name: "Норадреналин", cat: "Кардиотоники", icon: "🫀", unit: "mcg_kg_min",
       forms: [
@@ -97,19 +97,47 @@
     }
   };
 
+  var CATHETERS = [
+    { gauge: "G24", color: "жёлтый", maxMlMin: 20, maxMlHour: 1200, desc: "Новорождённые, дети, мелкие вены" },
+    { gauge: "G22", color: "голубой", maxMlMin: 35, maxMlHour: 2100, desc: "Дети, пожилые, стандартные инфузии" },
+    { gauge: "G20", color: "розовый", maxMlMin: 60, maxMlHour: 3600, desc: "Стандартный, большинство взрослых" },
+    { gauge: "G18", color: "зелёный", maxMlMin: 100, maxMlHour: 6000, desc: "Быстрые инфузии, травматология" },
+    { gauge: "G16", color: "серый", maxMlMin: 200, maxMlHour: 12000, desc: "Массивные инфузии, реанимация" }
+  ];
+
   var REFERENCE = {
-    title: "О калькуляторе инфузомата",
+    title: "О калькуляторе скорости инфузии",
     paragraphs: [
-      "Инфузомат (шприцевой насос) обеспечивает точное дозирование препаратов с постоянной скоростью. Формулы:",
-      "мкг/кг/мин → мл/ч: (доза × вес × 60) / (концентрация × 1000)",
-      "мг/кг/ч → мл/ч: (доза × вес) / концентрация"
+      "Калькулятор объединяет два инструмента:",
+      "1. Инфузомат — для точного дозирования критических препаратов (вазопрессоры, седативные) через шприцевой насос.",
+      "2. Капельница — для расчёта скорости обычных инфузий (кристаллоиды, растворы) через стандартную систему."
     ],
-    importantNote: "Калькулятор для врачей ОРИТ. Всегда проверяйте расчёт вручную перед началом инфузии. Учитывайте мёртвый объём инфузионной линии. Мониторируйте витальные функции пациента."
+    importantNote: "Всегда проверяйте расчёт вручную перед началом инфузии. Учитывайте мёртвый объём инфузионной линии. Мониторируйте витальные функции пациента.",
+    indicationsTitle: "💧 Формулы расчёта:",
+    indications: [
+      "ИНФУЗОМАТ (шприцевой насос):",
+      "мкг/кг/мин → мл/ч: (доза × вес × 60) / (концентрация × 1000)",
+      "мг/кг/ч → мл/ч: (доза × вес) / концентрация",
+      "",
+      "КАПЕЛЬНИЦА (стандартная система 20 капель/мл):",
+      "Капли/мин = (Объём мл × 20) ÷ Время (мин)",
+      "мл/ч = (Объём мл ÷ Время мин) × 60",
+      "",
+      "ПОДБОР КАТЕТЕРА (максимальные скорости):",
+      "G24 (жёлтый) — 20 мл/мин (1200 мл/ч) — новорождённые, дети",
+      "G22 (голубой) — 35 мл/мин (2100 мл/ч) — дети, пожилые",
+      "G20 (розовый) — 60 мл/мин (3600 мл/ч) — стандарт для взрослых",
+      "G18 (зелёный) — 100 мл/мин (6000 мл/ч) — быстрые инфузии",
+      "G16 (серый) — 200 мл/мин (12000 мл/ч) — массивные инфузии",
+      "",
+      "⚠️ Превышение максимальной скорости катетера может привести к повреждению вены и экстравазации"
+    ]
   };
 
   var state = {
-    drug: null, form: null, dilution: 0,
-    dose: null, weight: null
+    mode: "infusomat",
+    infusomat: { drug: null, form: null, dilution: 0, dose: null, weight: null },
+    drip: { volume: 250, timeValue: 60, timeUnit: "minutes" }
   };
   var bodyEl, panelEl;
 
@@ -121,10 +149,32 @@
   function round2(x) { return Math.round(x * 100) / 100; }
   function round3(x) { return Math.round(x * 1000) / 1000; }
 
-  function renderDrugOptions() {
+  function resetButtonHtml() {
+    return '<button type="button" class="result-reset-big" aria-label="Сбросить" title="Сбросить">↺</button>';
+  }
+
+  // ===== РЕНДЕРИНГ РЕЖИМОВ =====
+
+  function renderModeSwitcher() {
+    return '<div class="infusomat-section card">' +
+      '<div class="infusomat-mode-switcher">' +
+        '<button type="button" class="mode-btn' + (state.mode === "infusomat" ? ' active' : '') + '" data-mode="infusomat">' +
+          '<span>💊</span><div class="mode-btn-label">Инфузомат</div>' +
+          '<div class="mode-btn-desc">Шприцевой насос</div>' +
+        '</button>' +
+        '<button type="button" class="mode-btn' + (state.mode === "drip" ? ' active' : '') + '" data-mode="drip">' +
+          '<span>💧</span><div class="mode-btn-label">Капельница</div>' +
+          '<div class="mode-btn-desc">Стандартная система</div>' +
+        '</button>' +
+      '</div></div>';
+  }
+
+  // ===== ИНФУЗОМАТ =====
+
+  function renderInfusomatDrugOptions() {
     var cats = {};
-    for (var id in DRUGS) {
-      var d = DRUGS[id];
+    for (var id in INFUSOMAT_DRUGS) {
+      var d = INFUSOMAT_DRUGS[id];
       if (!cats[d.cat]) cats[d.cat] = [];
       cats[d.cat].push({ id: id, name: d.name, icon: d.icon });
     }
@@ -132,7 +182,7 @@
     for (var cat in cats) {
       html += '<optgroup label="' + CU.escapeHtml(cat) + '">';
       cats[cat].forEach(function (d) {
-        html += '<option value="' + d.id + '"' + (state.drug === d.id ? ' selected' : '') + '>' +
+        html += '<option value="' + d.id + '"' + (state.infusomat.drug === d.id ? ' selected' : '') + '>' +
           d.icon + ' ' + CU.escapeHtml(d.name) + '</option>';
       });
       html += '</optgroup>';
@@ -140,9 +190,10 @@
     return html;
   }
 
-  function renderDrugInfo() {
-    if (!state.drug) return "";
-    var d = DRUGS[state.drug];
+  function renderInfusomatDrugInfo() {
+    var s = state.infusomat;
+    if (!s.drug) return "";
+    var d = INFUSOMAT_DRUGS[s.drug];
     var unitLabel = d.unit === "mcg_kg_min" ? "мкг/кг/мин" : "мг/кг/ч";
     var warning = d.warning ? '<div class="drug-info-warning">⚠️ ' + CU.escapeHtml(d.warning) + '</div>' : "";
     return '<div class="infusomat-drug-info">' +
@@ -154,14 +205,15 @@
     '</div>';
   }
 
-  function renderForms() {
-    if (!state.drug) return "";
-    var d = DRUGS[state.drug];
+  function renderInfusomatForms() {
+    var s = state.infusomat;
+    if (!s.drug) return "";
+    var d = INFUSOMAT_DRUGS[s.drug];
     var html = '<div class="infusomat-section card">' +
       '<div class="infusomat-section-title">💊 Форма выпуска</div>' +
       '<div class="infusomat-forms-grid">';
     d.forms.forEach(function (f, idx) {
-      var active = state.form === idx ? " active" : "";
+      var active = s.form === idx ? " active" : "";
       html += '<button type="button" class="infusomat-form-btn' + active + '" data-form="' + idx + '">' +
         '<div class="form-btn-label">' + CU.escapeHtml(f.label) + '</div>' +
         '<div class="form-btn-details">' + f.totalMg + ' мг в ' + f.volume + ' мл</div></button>';
@@ -169,10 +221,11 @@
     return html + '</div></div>';
   }
 
-  function renderDilution() {
-    if (state.form === null) return "";
-    var d = DRUGS[state.drug];
-    var form = d.forms[state.form];
+  function renderInfusomatDilution() {
+    var s = state.infusomat;
+    if (s.form === null) return "";
+    var d = INFUSOMAT_DRUGS[s.drug];
+    var form = d.forms[s.form];
     var options = [
       { v: 0,   label: "Без разведения", total: form.volume },
       { v: 10,  label: "До 10 мл",       total: 10 },
@@ -184,7 +237,7 @@
       '<div class="infusomat-section-title">💧 Объём растворителя</div>' +
       '<div class="infusomat-dilution-grid">';
     options.forEach(function (o) {
-      var active = state.dilution === o.v ? " active" : "";
+      var active = s.dilution === o.v ? " active" : "";
       html += '<button type="button" class="infusomat-dilution-btn' + active + '" data-dilution="' + o.v + '">' +
         '<div class="dilution-btn-label">' + o.label + '</div>' +
         '<div class="dilution-btn-total">Итого: ' + o.total + ' мл</div></button>';
@@ -192,12 +245,13 @@
     return html + '</div></div>';
   }
 
-  function renderDose() {
-    if (state.form === null) return "";
-    var d = DRUGS[state.drug];
+  function renderInfusomatDose() {
+    var s = state.infusomat;
+    if (s.form === null) return "";
+    var d = INFUSOMAT_DRUGS[s.drug];
     var unitLabel = d.unit === "mcg_kg_min" ? "мкг/кг/мин" : "мг/кг/ч";
     var presetsHtml = d.presets.map(function (p) {
-      var active = state.dose === p ? " active" : "";
+      var active = s.dose === p ? " active" : "";
       return '<button type="button" class="preset-btn' + active + '" data-preset="' + p + '">' + p + '</button>';
     }).join("");
 
@@ -205,9 +259,9 @@
       '<div class="infusomat-section-title">💉 Дозировка и вес пациента</div>' +
       '<div class="infusomat-dose-inputs">' +
         '<div class="dose-input-group"><label class="dose-input-label">Доза (' + unitLabel + ')</label>' +
-          '<input type="text" id="doseInput" class="infusomat-field" inputmode="decimal" placeholder="—" value="' + (state.dose !== null ? state.dose : "") + '"></div>' +
+          '<input type="text" id="doseInput" class="infusomat-field" inputmode="decimal" placeholder="—" value="' + (s.dose !== null ? s.dose : "") + '"></div>' +
         '<div class="dose-input-group"><label class="dose-input-label">Вес пациента (кг)</label>' +
-          '<input type="text" id="weightInput" class="infusomat-field" inputmode="decimal" placeholder="—" value="' + (state.weight !== null ? state.weight : "") + '"></div>' +
+          '<input type="text" id="weightInput" class="infusomat-field" inputmode="decimal" placeholder="—" value="' + (s.weight !== null ? s.weight : "") + '"></div>' +
       '</div>' +
       '<div class="infusomat-dose-presets">' +
         '<div class="presets-label">Быстрый выбор дозы:</div>' +
@@ -215,29 +269,27 @@
       '</div></div>';
   }
 
-  function renderResult() {
-    if (!state.drug) return empty("Выберите препарат", "Начните с выбора препарата из списка выше");
-    if (state.form === null) return empty("Выберите форму выпуска", "Укажите ампулу или флакон препарата");
-    if (state.dose === null || state.weight === null) {
+  function renderInfusomatResult() {
+    var s = state.infusomat;
+    if (!s.drug) return empty("Выберите препарат", "Начните с выбора препарата из списка выше");
+    if (s.form === null) return empty("Выберите форму выпуска", "Укажите ампулу или флакон препарата");
+    if (s.dose === null || s.weight === null) {
       var missing = [];
-      if (state.dose === null) missing.push("дозу");
-      if (state.weight === null) missing.push("вес пациента");
+      if (s.dose === null) missing.push("дозу");
+      if (s.weight === null) missing.push("вес пациента");
       return empty("Введите " + missing.join(" и "), "Заполните оба поля для расчёта скорости");
     }
 
-    var d = DRUGS[state.drug];
-    var f = d.forms[state.form];
-    var totalVol = state.dilution === 0 ? f.volume : state.dilution;
-    var conc = f.totalMg / totalVol; // мг/мл
+    var d = INFUSOMAT_DRUGS[s.drug];
+    var f = d.forms[s.form];
+    var totalVol = s.dilution === 0 ? f.volume : s.dilution;
+    var conc = f.totalMg / totalVol;
 
-    var speedH;
-    if (d.unit === "mcg_kg_min") {
-      speedH = (state.dose * state.weight * 60) / (conc * 1000);
-    } else {
-      speedH = (state.dose * state.weight) / conc;
-    }
+    var speedH = d.unit === "mcg_kg_min"
+      ? (s.dose * s.weight * 60) / (conc * 1000)
+      : (s.dose * s.weight) / conc;
     var speedM = speedH / 60;
-    var daily = state.dose * state.weight * (d.unit === "mcg_kg_min" ? 60 * 24 / 1000 : 24);
+    var daily = s.dose * s.weight * (d.unit === "mcg_kg_min" ? 60 * 24 / 1000 : 24);
     var hours = totalVol / speedH;
 
     var warnings = [];
@@ -247,7 +299,7 @@
     if (totalVol < 5 && speedH > 0.5 && hours < 2) warnings.push("⚠️ Объём " + totalVol + " мл закончится через " + hours.toFixed(1) + " ч.");
 
     var unitLabel = d.unit === "mcg_kg_min" ? "мкг/кг/мин" : "мг/кг/ч";
-    var dilLabel = state.dilution === 0 ? "без разведения" : "до " + state.dilution + " мл";
+    var dilLabel = s.dilution === 0 ? "без разведения" : "до " + s.dilution + " мл";
     var warningsHtml = warnings.map(function (w) { return '<div class="result-warning">' + w + '</div>'; }).join("");
 
     return '<div class="result-content result-success infusomat-result">' +
@@ -261,58 +313,228 @@
         '<div class="result-detail-row"><span class="result-detail-label">Растворитель:</span><span class="result-detail-value">' + dilLabel + '</span></div>' +
         '<div class="result-detail-row"><span class="result-detail-label">Общий объём:</span><span class="result-detail-value">' + totalVol + ' мл</span></div>' +
         '<div class="result-detail-row"><span class="result-detail-label">Концентрация:</span><span class="result-detail-value">' + round3(conc) + ' мг/мл</span></div>' +
-        '<div class="result-detail-row"><span class="result-detail-label">Доза:</span><span class="result-detail-value">' + state.dose + ' ' + unitLabel + '</span></div>' +
-        '<div class="result-detail-row"><span class="result-detail-label">Вес пациента:</span><span class="result-detail-value">' + state.weight + ' кг</span></div>' +
+        '<div class="result-detail-row"><span class="result-detail-label">Доза:</span><span class="result-detail-value">' + s.dose + ' ' + unitLabel + '</span></div>' +
+        '<div class="result-detail-row"><span class="result-detail-label">Вес пациента:</span><span class="result-detail-value">' + s.weight + ' кг</span></div>' +
         '<div class="result-detail-row result-detail-highlight"><span class="result-detail-label">Суточная доза:</span><span class="result-detail-value">' + round2(daily) + ' мг/сут</span></div>' +
         '<div class="result-detail-row result-detail-highlight"><span class="result-detail-label">Хватит на:</span><span class="result-detail-value">' + round2(hours) + ' ч</span></div>' +
       '</div>' + warningsHtml +
+      resetButtonHtml() +
     '</div>';
   }
+
+  // ===== КАПЕЛЬНИЦА =====
+
+  function renderDripForm() {
+    var d = state.drip;
+    return '<div class="infusomat-section card">' +
+      '<div class="infusomat-section-title">💧 Параметры инфузии</div>' +
+      '<div class="drip-input-group">' +
+        '<label class="drip-input-label">Объём раствора (мл)</label>' +
+        '<input type="text" id="dripVolume" class="infusomat-field" inputmode="decimal" placeholder="250" value="' + (d.volume !== null ? d.volume : "") + '">' +
+      '</div>' +
+      '<div class="drip-input-row">' +
+        '<div class="drip-input-group" style="flex:2;">' +
+          '<label class="drip-input-label">⏱️ Время введения</label>' +
+          '<input type="text" id="dripTimeValue" class="infusomat-field" inputmode="decimal" placeholder="60" value="' + (d.timeValue !== null ? d.timeValue : "") + '">' +
+        '</div>' +
+        '<div class="drip-input-group" style="flex:1;">' +
+          '<label class="drip-input-label">📅 Единица</label>' +
+          '<select id="dripTimeUnit" class="infusomat-field">' +
+            '<option value="minutes"' + (d.timeUnit === "minutes" ? ' selected' : '') + '>минуты</option>' +
+            '<option value="hours"' + (d.timeUnit === "hours" ? ' selected' : '') + '>часы</option>' +
+          '</select>' +
+        '</div>' +
+      '</div></div>';
+  }
+
+  function calculateDrip() {
+    var d = state.drip;
+    var volume = d.volume;
+    var timeValue = d.timeValue;
+    var timeUnit = d.timeUnit;
+
+    if (volume === null || timeValue === null || timeValue === 0) return null;
+
+    var timeInMinutes = timeUnit === "hours" ? timeValue * 60 : timeValue;
+    var dropsPerMin = (volume * 20) / timeInMinutes;
+    var mlPerHour = (volume / timeInMinutes) * 60;
+    var mlPerMin = volume / timeInMinutes;
+
+    return { dropsPerMin: dropsPerMin, mlPerHour: mlPerHour, mlPerMin: mlPerMin, timeInMinutes: timeInMinutes };
+  }
+
+  function renderDripResult() {
+    var d = state.drip;
+    if (d.volume === null || d.timeValue === null) {
+      return empty("Введите объём и время", "Укажите объём раствора и время введения");
+    }
+
+    var calc = calculateDrip();
+    if (!calc) return empty("Ошибка расчёта", "Проверьте введённые данные");
+
+    var dropsRounded = calc.dropsPerMin >= 1 ? Math.round(calc.dropsPerMin) : calc.dropsPerMin.toFixed(2);
+    var dropsPerSec = calc.dropsPerMin / 60;
+    var dropsSecRounded = dropsPerSec < 0.1 ? dropsPerSec.toFixed(3) : dropsPerSec.toFixed(1);
+
+    var speedDisplay = calc.mlPerHour >= 1
+      ? calc.mlPerHour.toFixed(1) + ' мл/ч (' + calc.mlPerMin.toFixed(1) + ' мл/мин)'
+      : calc.mlPerMin.toFixed(2) + ' мл/мин (' + calc.mlPerHour.toFixed(2) + ' мл/ч)';
+
+    var warnings = [];
+    if (calc.dropsPerMin > 200) warnings.push("⚠️ Очень высокая скорость капель!");
+
+    // Подбор катетера
+    var suitableCatheters = CATHETERS.filter(function (c) { return calc.mlPerMin <= c.maxMlMin; });
+    var catheterHtml = '<div class="catheters-section">' +
+      '<div class="catheters-title">🩸 Рекомендации по выбору катетера:</div>' +
+      '<div class="catheters-grid">';
+
+    CATHETERS.forEach(function (c) {
+      var isSuitable = suitableCatheters.indexOf(c) !== -1;
+      var exceeded = calc.mlPerMin > c.maxMlMin && calc.mlPerMin > 0;
+      var cls = isSuitable ? 'catheter-card suitable' : 'catheter-card';
+      if (exceeded) cls += ' exceeded';
+
+      var maxDrops = Math.round(c.maxMlMin * 20);
+      var warningText = exceeded ? '<div class="catheter-warning">⚠️ Превышение!</div>' : '';
+
+      catheterHtml +=
+        '<div class="' + cls + '">' +
+          '<div class="catheter-gauge">' + c.gauge + ' (' + c.color + ')</div>' +
+          '<div class="catheter-desc">' + c.desc + '</div>' +
+          '<div class="catheter-flow">📈 Макс: ' + c.maxMlMin + ' мл/мин</div>' +
+          '<div class="catheter-max">⚡ ' + c.maxMlMin + ' мл/мин (' + c.maxMlHour + ' мл/ч)</div>' +
+          '<div class="catheter-drops"><div class="catheter-drops-value">' + maxDrops + '</div><div class="catheter-drops-label">макс. капель/мин</div></div>' +
+          warningText +
+        '</div>';
+    });
+
+    catheterHtml += '</div>';
+    if (suitableCatheters.length === 0 && calc.mlPerMin > 0) {
+      catheterHtml += '<div class="result-warning">⚠️ Ни один катетер не подходит! Скорость слишком высокая.</div>';
+    }
+    catheterHtml += '</div>';
+
+    var warningsHtml = warnings.map(function (w) { return '<div class="result-warning">' + w + '</div>'; }).join("");
+
+    return '<div class="result-content result-success drip-result">' +
+      '<div class="drip-result-main">' +
+        '<div class="drip-result-item">' +
+          '<div class="drip-result-value">' + dropsRounded + '</div>' +
+          '<div class="drip-result-unit">капель/мин</div>' +
+        '</div>' +
+        '<div class="drip-result-item">' +
+          '<div class="drip-result-value">' + dropsSecRounded + '</div>' +
+          '<div class="drip-result-unit">капель/сек</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="drip-result-details">' +
+        '<div class="result-detail-row"><span class="result-detail-label">💧 Скорость инфузии:</span><span class="result-detail-value">' + speedDisplay + '</span></div>' +
+        '<div class="result-detail-row"><span class="result-detail-label">Объём:</span><span class="result-detail-value">' + d.volume + ' мл</span></div>' +
+        '<div class="result-detail-row"><span class="result-detail-label">Время:</span><span class="result-detail-value">' + d.timeValue + ' ' + (d.timeUnit === "hours" ? "ч" : "мин") + '</span></div>' +
+      '</div>' +
+      catheterHtml +
+      warningsHtml +
+      resetButtonHtml() +
+    '</div>';
+  }
+
+  // ===== ОБЩИЕ ФУНКЦИИ =====
 
   function empty(label, desc) {
     return '<div class="result-content result-incomplete">' +
       '<div class="result-score"><div class="result-score-value">—</div><div class="result-score-label">нет данных</div></div>' +
       '<div class="result-divider"></div>' +
       '<div class="result-info"><div class="result-label">' + label + '</div><div class="result-description">' + desc + '</div></div>' +
+      resetButtonHtml() +
     '</div>';
   }
 
-  function fullRender() {
-    bodyEl.innerHTML =
-      '<div class="infusomat-section card">' +
+  function renderBody() {
+    var html = renderModeSwitcher();
+
+    if (state.mode === "infusomat") {
+      html += '<div class="infusomat-section card">' +
         '<div class="infusomat-section-title">💊 Выбор препарата</div>' +
-        '<select id="drugSelect" class="infusomat-select">' + renderDrugOptions() + '</select>' +
-        '<div id="drugInfoBox">' + renderDrugInfo() + '</div>' +
+        '<select id="drugSelect" class="infusomat-select">' + renderInfusomatDrugOptions() + '</select>' +
+        '<div id="drugInfoBox">' + renderInfusomatDrugInfo() + '</div>' +
       '</div>' +
-      '<div id="formsBox">' + renderForms() + '</div>' +
-      '<div id="dilutionBox">' + renderDilution() + '</div>' +
-      '<div id="doseBox">' + renderDose() + '</div>';
-    panelEl.innerHTML = renderResult();
+      '<div id="formsBox">' + renderInfusomatForms() + '</div>' +
+      '<div id="dilutionBox">' + renderInfusomatDilution() + '</div>' +
+      '<div id="doseBox">' + renderInfusomatDose() + '</div>';
+    } else {
+      html += renderDripForm();
+    }
+
+    bodyEl.innerHTML = html;
+  }
+
+  function renderResult() {
+    if (state.mode === "infusomat") {
+      panelEl.innerHTML = renderInfusomatResult();
+    } else {
+      panelEl.innerHTML = renderDripResult();
+    }
+  }
+
+  function fullRender() {
+    renderBody();
+    renderResult();
     bindListeners();
   }
 
   function bindListeners() {
-    var sel = document.getElementById("drugSelect");
-    if (sel) sel.addEventListener("change", function () {
-      state.drug = sel.value || null;
-      state.form = null; state.dilution = 0; state.dose = null; state.weight = null;
-      fullRender();
-    });
-
-    var doseEl = document.getElementById("doseInput");
-    var weightEl = document.getElementById("weightInput");
-    if (doseEl) doseEl.addEventListener("input", function () {
-      state.dose = parseNum(doseEl.value);
-      // обновить активный пресет
-      document.querySelectorAll(".preset-btn").forEach(function (b) {
-        b.classList.toggle("active", parseFloat(b.getAttribute("data-preset")) === state.dose);
+    if (state.mode === "infusomat") {
+      var sel = document.getElementById("drugSelect");
+      if (sel) sel.addEventListener("change", function () {
+        state.infusomat.drug = sel.value || null;
+        state.infusomat.form = null;
+        state.infusomat.dilution = 0;
+        state.infusomat.dose = null;
+        state.infusomat.weight = null;
+        fullRender();
       });
-      panelEl.innerHTML = renderResult();
-    });
-    if (weightEl) weightEl.addEventListener("input", function () {
-      state.weight = parseNum(weightEl.value);
-      panelEl.innerHTML = renderResult();
-    });
+
+      var doseEl = document.getElementById("doseInput");
+      var weightEl = document.getElementById("weightInput");
+      if (doseEl) doseEl.addEventListener("input", function () {
+        state.infusomat.dose = parseNum(doseEl.value);
+        document.querySelectorAll(".preset-btn").forEach(function (b) {
+          b.classList.toggle("active", parseFloat(b.getAttribute("data-preset")) === state.infusomat.dose);
+        });
+        renderResult();
+      });
+      if (weightEl) weightEl.addEventListener("input", function () {
+        state.infusomat.weight = parseNum(weightEl.value);
+        renderResult();
+      });
+    } else {
+      var volEl = document.getElementById("dripVolume");
+      var timeValEl = document.getElementById("dripTimeValue");
+      var timeUnitEl = document.getElementById("dripTimeUnit");
+
+      if (volEl) volEl.addEventListener("input", function () {
+        state.drip.volume = parseNum(volEl.value);
+        renderResult();
+      });
+      if (timeValEl) timeValEl.addEventListener("input", function () {
+        state.drip.timeValue = parseNum(timeValEl.value);
+        renderResult();
+      });
+      if (timeUnitEl) timeUnitEl.addEventListener("change", function () {
+        state.drip.timeUnit = timeUnitEl.value;
+        renderResult();
+      });
+    }
+  }
+
+  function resetAll() {
+    if (state.mode === "infusomat") {
+      state.infusomat = { drug: null, form: null, dilution: 0, dose: null, weight: null };
+    } else {
+      state.drip = { volume: 250, timeValue: 60, timeUnit: "minutes" };
+    }
+    fullRender();
   }
 
   function init() {
@@ -323,25 +545,38 @@
     fullRender();
 
     bodyEl.addEventListener("click", function (e) {
-      var formBtn = e.target.closest(".infusomat-form-btn");
-      if (formBtn) {
-        state.form = parseInt(formBtn.getAttribute("data-form"), 10);
-        state.dilution = 0;
+      var modeBtn = e.target.closest(".mode-btn");
+      if (modeBtn) {
+        state.mode = modeBtn.getAttribute("data-mode");
         fullRender();
         return;
       }
-      var dilBtn = e.target.closest(".infusomat-dilution-btn");
-      if (dilBtn) {
-        state.dilution = parseInt(dilBtn.getAttribute("data-dilution"), 10);
-        fullRender();
-        return;
+
+      if (state.mode === "infusomat") {
+        var formBtn = e.target.closest(".infusomat-form-btn");
+        if (formBtn) {
+          state.infusomat.form = parseInt(formBtn.getAttribute("data-form"), 10);
+          state.infusomat.dilution = 0;
+          fullRender();
+          return;
+        }
+        var dilBtn = e.target.closest(".infusomat-dilution-btn");
+        if (dilBtn) {
+          state.infusomat.dilution = parseInt(dilBtn.getAttribute("data-dilution"), 10);
+          fullRender();
+          return;
+        }
+        var presetBtn = e.target.closest(".preset-btn");
+        if (presetBtn) {
+          state.infusomat.dose = parseFloat(presetBtn.getAttribute("data-preset"));
+          fullRender();
+          return;
+        }
       }
-      var presetBtn = e.target.closest(".preset-btn");
-      if (presetBtn) {
-        state.dose = parseFloat(presetBtn.getAttribute("data-preset"));
-        fullRender();
-        return;
-      }
+    });
+
+    panelEl.addEventListener("click", function (e) {
+      if (e.target.closest(".result-reset-big")) resetAll();
     });
 
     var infoBtn = document.getElementById("calcInfoBtn");
@@ -350,6 +585,7 @@
     });
   }
 
+  CU.autoPersist("smp-calc-infusomat-v1");
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
   else init();
 })();

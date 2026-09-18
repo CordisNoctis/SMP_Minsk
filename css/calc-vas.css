@@ -1,0 +1,117 @@
+/* ===== Визуальная аналоговая шкала ===== */
+.vas-slider-card {
+  padding: 16px;
+  margin-bottom: 12px;
+}
+.vas-current-display {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 0 14px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 14px;
+}
+.vas-face {
+  font-size: 3rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.vas-score {
+  font-size: 2.5rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+  line-height: 1;
+}
+.vas-label {
+  font-size: 1rem;
+  color: var(--muted);
+  font-weight: 600;
+}
+.vas-slider-wrapper {
+  position: relative;
+  margin-bottom: 12px;
+}
+.vas-slider {
+  width: 100%;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 8px;
+  background: transparent;
+  outline: none;
+  position: relative;
+  z-index: 2;
+}
+.vas-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+  border: 3px solid #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+.vas-slider::-moz-range-thumb {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+  border: 3px solid #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+.vas-slider-track {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 8px;
+  background: var(--border);
+  border-radius: 4px;
+  transform: translateY(-50%);
+  overflow: hidden;
+  z-index: 1;
+}
+.vas-slider-fill {
+  height: 100%;
+  background: linear-gradient(to right, #1a7a3e 0%, #b08900 50%, #b42323 100%);
+  border-radius: 4px;
+  transition: width .1s ease;
+}
+.vas-scale-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-bottom: 14px;
+  text-align: center;
+}
+.vas-scale-labels small { display: block; font-size: 0.7rem; opacity: 0.7; }
+
+.vas-quick-buttons {
+  display: grid;
+  grid-template-columns: repeat(11, 1fr);
+  gap: 4px;
+}
+@media (max-width: 480px) {
+  .vas-quick-buttons { grid-template-columns: repeat(6, 1fr); }
+}
+.vas-quick-btn {
+  padding: 8px 0;
+  background: var(--menu-icon-bg);
+  border: 1px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--text);
+  transition: all .15s ease;
+}
+.vas-quick-btn:hover { border-color: var(--accent); }
+.vas-quick-btn.active {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}

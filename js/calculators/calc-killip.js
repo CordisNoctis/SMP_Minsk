@@ -124,6 +124,16 @@
     }).join('');
   }
 
+  function resetButtonHtml() {
+      return '<button type="button" class="result-reset-big" aria-label="Сбросить" title="Сбросить">↺</button>';
+  }
+
+  function resetAll() {
+      selected = null;
+      renderClasses();
+      renderResult();
+  }
+
   function renderResult() {
     if (!selected) {
       panelEl.innerHTML =
@@ -131,20 +141,23 @@
         '<div class="result-score"><div class="result-score-value">—</div><div class="result-score-label">не выбрано</div></div>' +
         '<div class="result-divider"></div>' +
         '<div class="result-info"><div class="result-label">Выберите класс Killip</div><div class="result-description">Нажмите на карточку, соответствующую состоянию пациента</div></div>' +
+        resetButtonHtml() +
         '</div>';
       return;
     }
     var c = CLASSES.find(function (x) { return x.id === selected; });
     panelEl.innerHTML =
-      '<div class="result-content result-' + c.color + '">' +
-      '<div class="result-score"><div class="result-score-value">' + c.id + '</div><div class="result-score-label">класс</div></div>' +
-      '<div class="result-divider"></div>' +
-      '<div class="result-info">' +
-        '<div class="result-label">' + c.title + '</div>' +
-        '<div class="result-description">' + c.description +
-          '<div style="margin-top:6px;font-weight:600;">Летальность: ' + c.mortality + ' (истор.) → ' + c.mortalityModern + ' (совр.)</div>' +
+        '<div class="result-content result-' + c.color + '">' +
+        '<div class="result-score"><div class="result-score-value">' + c.id + '</div><div class="result-score-label">класс</div></div>' +
+        '<div class="result-divider"></div>' +
+        '<div class="result-info">' +
+            '<div class="result-label">' + c.title + '</div>' +
+            '<div class="result-description">' + c.description +
+                '<div style="margin-top:6px;font-weight:600;">Летальность: ' + c.mortality + ' (истор.) → ' + c.mortalityModern + ' (совр.)</div>' +
+            '</div>' +
         '</div>' +
-      '</div></div>';
+        resetButtonHtml() +
+        '</div>';
   }
 
   function init() {
@@ -164,12 +177,17 @@
       renderResult();
     });
 
+    panelEl.addEventListener("click", function (e) {
+        if (e.target.closest(".result-reset-big")) resetAll();
+    });
+
     var infoBtn = document.getElementById("calcInfoBtn");
     if (infoBtn) infoBtn.addEventListener("click", function () {
       CU.openReferenceModal({ reference: REFERENCE });
     });
   }
 
+  CU.autoPersist("smp-calc-killip-v1");
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
   else init();
 })();

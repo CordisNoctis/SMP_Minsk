@@ -122,8 +122,6 @@
     <div id="ucList" class="uc-list"></div>
   </main>
 
-  <button type="button" class="uc-top-btn" id="ucTopBtn" aria-label="Наверх">↑</button>
-
   <script src="../js/core/theme.js"></script>
   <script src="../js/core/back.js"></script>
   <script src="../js/core/sw-register.js"></script>
@@ -174,16 +172,6 @@
 
         listEl.appendChild(card);
       });
-
-      var topBtn = document.getElementById("ucTopBtn");
-      if (topBtn) {
-        topBtn.addEventListener("click", function () {
-          window.scrollTo({ top: 0, behavior: "smooth" });
-        });
-        window.addEventListener("scroll", function () {
-          topBtn.classList.toggle("show", window.scrollY > 400);
-        }, { passive: true });
-      }
     })();
   </script>
 </body>

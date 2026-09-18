@@ -1,0 +1,96 @@
+/* ===== Killip ===== */
+.killip-classes { display: grid; gap: 10px; margin-bottom: 14px; }
+.killip-class {
+  position: relative;
+  padding: 14px 16px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  cursor: pointer;
+  transition: background .15s ease, border-color .15s ease;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.killip-class:hover {
+  background: color-mix(in srgb, var(--accent) 4%, var(--card));
+  border-color: var(--border-accent, var(--border));
+}
+.killip-class.selected {
+  background: color-mix(in srgb, var(--accent) 8%, var(--card));
+  border-color: var(--accent);
+}
+.killip-class.selected::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: var(--accent);
+}
+.killip-class-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.killip-class-badge {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  font-size: 0.95rem;
+  flex-shrink: 0;
+  color: #fff;
+}
+.killip-class-badge.gcs-15 { background: #1a7a3e; }
+.killip-class-badge.gcs-11-12 { background: #b08900; }
+.killip-class-badge.gcs-8-10 { background: #d2401e; }
+.killip-class-badge.gcs-3 { background: #b42323; }
+.killip-class-title { font-weight: 700; font-size: 0.98rem; }
+.killip-class-description {
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+.killip-section { margin-bottom: 10px; }
+.killip-section-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  margin-bottom: 6px;
+}
+.killip-list {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+.killip-list li { margin-bottom: 3px; }
+.killip-list-management { color: var(--accent-strong, var(--accent)); }
+.killip-mortality {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--border);
+}
+.killip-mortality-item { text-align: center; }
+.killip-mortality-label {
+  font-size: 0.72rem;
+  color: var(--muted);
+  margin-bottom: 2px;
+}
+.killip-mortality-value {
+  font-weight: 800;
+  font-size: 1.05rem;
+  font-variant-numeric: tabular-nums;
+}

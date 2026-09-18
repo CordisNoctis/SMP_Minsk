@@ -16,12 +16,38 @@ const APP_SHELL = [
   "./css/components.css",
   "./css/schedule.css",
   "./css/checklist.css",
-  "./css/calculators.css",
   "./css/medical-picker.css",
   "./css/changelog.css",
   "./css/cheatsheet.css",
+  "./css/result-panel.css",
 
-  // === JS: core ===
+  // === CSS: калькуляторы (общий + страница списка) ===
+  "./css/calculators-common.css",
+  "./css/calculators-list.css",
+
+  // === CSS: калькуляторы (персональные) ===
+  "./css/calc-algover.css",
+  "./css/calc-apgar.css",
+  "./css/calc-ciwa.css",
+  "./css/calc-drug-converter.css",
+  "./css/calc-ett-size.css",
+  "./css/calc-fast-ed.css",
+  "./css/calc-four.css",
+  "./css/calc-geneva.css",
+  "./css/calc-glasgow.css",
+  "./css/calc-killip.css",
+  "./css/calc-qtc.css",
+  "./css/calc-sgarbossa.css",
+  "./css/calc-pesi.css",
+  "./css/calc-nihss.css",
+  "./css/calc-vas.css",
+  "./css/calc-sad-persons.css",
+  "./css/calc-shsn.css",
+  "./css/calc-infusomat.css",
+  "./css/calc-odn.css",
+  "./css/calc-pediatric.css",
+
+ // === JS: core ===
   "./js/core/version.js",
   "./js/core/theme-init.js",
   "./js/core/theme.js",
@@ -68,7 +94,6 @@ const APP_SHELL = [
   "./js/calculators/calc-four.js",
   "./js/calculators/calc-geneva.js",
   "./js/calculators/calc-glasgow.js",
-  "./js/calculators/calc-glasgow-pediatric.js",
   "./js/calculators/calc-killip.js",
   "./js/calculators/calc-qtc.js",
   "./js/calculators/calc-sgarbossa.js",
@@ -92,7 +117,6 @@ const APP_SHELL = [
   "./pages/calc-four.html",
   "./pages/calc-geneva.html",
   "./pages/calc-glasgow.html",
-  "./pages/calc-glasgow-pediatric.html",
   "./pages/cheatsheets.html",
   "./pages/settings.html",
   "./pages/shift-schedule.html",
@@ -140,23 +164,23 @@ const DATA_ASSETS = [
   "./data/content.json"              // ← добавьте, если используется в приложении
 ];
 
-self.addEventListener("install", (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then((cache) => {
-        return Promise.all([
-          cache.addAll(APP_SHELL).catch((err) => {
-            console.error("APP_SHELL cache failed:", err);
-          }),
-          Promise.allSettled(
-            OPTIONAL_ASSETS.map((url) => cache.add(url))
-          ),
-          Promise.allSettled(
-            DATA_ASSETS.map((url) => cache.add(url))
-          )
-        ]);
+caches.open(CACHE_NAME).then(function (cache) {
+  return Promise.all(APP_SHELL.map(function (url) {
+    return fetch(url, { cache: "no-cache" })
+      .then(function (resp) {
+        if (!resp.ok) {
+          console.warn("[SW] APP_SHELL пропущен (HTTP " + resp.status + "):", url);
+          return null;
+        }
+        return cache.put(url, resp);
       })
-  );
+      .catch(function (err) {
+        console.warn("[SW] APP_SHELL пропущен (fetch error):", url, err);
+        return null;
+      });
+  }));
+}).catch(function (err) {
+  console.error("APP_SHELL cache failed:", err);
 });
 
 self.addEventListener("activate", (event) => {
@@ -221,21 +245,16 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // Остальные ресурсы — cache-first с fallback на сеть
+  // Остальные ресурсы — network-first с fallback на кэш (всегда свежие CSS/JS при сети, офлайн — из кэша)
   event.respondWith(
-    caches.match(request)
-      .then((cached) => {
-        const network = fetch(request)
-          .then((response) => {
-            if (response.ok && response.type === "basic") {
-              const copy = response.clone();
-              caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
-            }
-            return response;
-          })
-          .catch(() => cached);
-
-        return cached || network;
+    fetch(request)
+      .then((response) => {
+        if (response.ok && response.type === "basic") {
+          const copy = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
+        }
+        return response;
       })
+      .catch(() => caches.match(request))
   );
 });

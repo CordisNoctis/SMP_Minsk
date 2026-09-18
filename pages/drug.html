@@ -55,32 +55,82 @@
   <script src="../js/core/theme.js"></script>
   <script src="../js/core/back.js"></script>
   <script src="../js/cheats/markdown.js"></script>
-  <script src="../js/cheats/drugs-data.js"></script>
-    <script>
+  <script src="../js/cheats/drugs-db.js"></script>
+  <script>
     (function () {
       "use strict";
 
       var params = new URLSearchParams(window.location.search);
       var id = params.get("id");
-      var drug = (window.SMP && window.SMP.drugs && window.SMP.drugs.get)
-        ? window.SMP.drugs.get(id)
-        : null;
 
-      // Если препарат не найден — показываем заглушку и скрываем остальные блоки
-      if (!drug) {
-        var notFoundEl = document.getElementById("drugNotFound");
-        var tabsEl = document.getElementById("drugTabs");
-        var specEl = document.getElementById("specContent");
-        var patEl = document.getElementById("patContent");
-
-        if (notFoundEl) notFoundEl.hidden = false;
-        if (tabsEl) tabsEl.hidden = true;
-        if (specEl) specEl.hidden = true;
-        if (patEl) patEl.hidden = true;
-
-        // Отключаем дальнейшую обработку cheatsheet.js
-        window.__SMP_DRUG_NOT_FOUND__ = true;
+      if (!id) {
+        window.location.href = "drugs.html";
+        return;
       }
+
+      // Используем новую асинхронную систему drugsDB
+      if (!window.SMP || !window.SMP.drugsDB) {
+        console.error("drugsDB не загружен");
+        var notFoundEl = document.getElementById("drugNotFound");
+        if (notFoundEl) notFoundEl.hidden = false;
+        return;
+      }
+
+      window.SMP.drugsDB.get(id).then(function (drug) {
+        if (!drug) {
+          // Препарат не найден — показываем заглушку
+          var notFoundEl = document.getElementById("drugNotFound");
+          var tabsEl = document.getElementById("drugTabs");
+          var specEl = document.getElementById("specContent");
+          var patEl = document.getElementById("patContent");
+
+          if (notFoundEl) notFoundEl.hidden = false;
+          if (tabsEl) tabsEl.hidden = true;
+          if (specEl) specEl.hidden = true;
+          if (patEl) patEl.hidden = true;
+
+          window.__SMP_DRUG_NOT_FOUND__ = true;
+          return;
+        }
+
+        // Препарат найден — загружаем инструкции
+        var titleEl = document.getElementById("drugTitle");
+        if (titleEl) titleEl.textContent = drug.title;
+
+        var specPromise = window.SMP.drugsDB.loadInstruction(id, "specialist");
+        var patPromise = drug.hasPatient ? window.SMP.drugsDB.loadInstruction(id, "patient") : Promise.resolve(null);
+
+        Promise.all([specPromise, patPromise]).then(function (results) {
+          var specialistMd = results[0] || "";
+          var patientMd = results[1];
+
+          var tabsEl = document.getElementById("drugTabs");
+          var specEl = document.getElementById("specContent");
+          var patEl = document.getElementById("patContent");
+
+          if (specialistMd && patientMd) {
+            if (tabsEl) tabsEl.hidden = false;
+            if (specEl) specEl.innerHTML = window.SMP.markdown.parse(specialistMd);
+            if (patEl) {
+              patEl.innerHTML = window.SMP.markdown.parse(patientMd);
+              patEl.hidden = true;
+            }
+          } else {
+            if (tabsEl) tabsEl.hidden = true;
+            var content = specialistMd || patientMd || "";
+            if (specEl) specEl.innerHTML = window.SMP.markdown.parse(content);
+            if (patEl) patEl.hidden = true;
+          }
+        }).catch(function (err) {
+          console.error("Ошибка загрузки инструкций:", err);
+          var specEl = document.getElementById("specContent");
+          if (specEl) specEl.innerHTML = "<p>Не удалось загрузить инструкцию.</p>";
+        });
+      }).catch(function (err) {
+        console.error("Ошибка получения препарата:", err);
+        var notFoundEl = document.getElementById("drugNotFound");
+        if (notFoundEl) notFoundEl.hidden = false;
+      });
     })();
   </script>
   <script src="../js/cheats/cheatsheet.js"></script>

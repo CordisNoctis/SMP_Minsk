@@ -1,0 +1,98 @@
+/* ===== Шкала Альговера ===== */
+.algover-inputs { margin-bottom: 14px; }
+.algover-input-group { margin-bottom: 12px; }
+.algover-input-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: var(--text);
+}
+.algover-input-label .material-symbols-rounded {
+  font-size: 18px;
+  color: var(--accent);
+}
+.algover-input-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.algover-unit { min-width: 70px; }
+
+.algover-scale-card { margin-bottom: 14px; padding: 16px 14px; }
+.algover-scale {
+  position: relative;
+  height: 56px;
+  display: flex;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+.algover-scale-segment {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  padding: 4px;
+}
+.seg-normal { background: #1a7a3e; }
+.seg-sub { background: #8ba82a; }
+.seg-mod { background: #c77700; }
+.seg-sev { background: #b42323; }
+.seg-crit { background: #7a0e1c; }
+.seg-label {
+  font-size: 0.72rem;
+  opacity: 0.9;
+  font-weight: 700;
+}
+.seg-title {
+  font-size: 0.82rem;
+  font-weight: 750;
+}
+.algover-scale-marker {
+  position: absolute;
+  top: -6px;
+  width: 4px;
+  height: calc(100% + 12px);
+  background: #fff;
+  border: 2px solid #000;
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.5), 0 2px 6px rgba(0,0,0,0.4);
+  transition: left .2s ease;
+  pointer-events: none;
+}
+
+.algover-big-number {
+  font-size: 2.6rem;
+  font-weight: 800;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.algover-big-label {
+  font-size: 0.75rem;
+  opacity: 0.85;
+  margin-top: 2px;
+}
+.algover-details { flex: 1; min-width: 0; }
+.algover-detail-row {
+  font-size: 0.85rem;
+  margin-bottom: 2px;
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.algover-detail-label { opacity: 0.85; }
+.algover-detail-value { font-weight: 700; }
+.algover-therapy {
+  margin-top: 8px;
+  padding: 8px 10px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 8px;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  font-weight: 600;
+}

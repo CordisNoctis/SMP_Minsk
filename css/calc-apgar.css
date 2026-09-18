@@ -1,0 +1,85 @@
+/* ===== Шкала Апгар ===== */
+.apgar-time-btn {
+  padding: 12px 14px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: all .15s ease;
+  color: var(--text);
+}
+.apgar-time-btn.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.apgar-time-btn .material-symbols-rounded { font-size: 22px; }
+.apgar-time-content { flex: 1; text-align: left; }
+.apgar-time-label {
+  font-size: 0.85rem;
+  opacity: 0.85;
+  display: block;
+}
+.apgar-time-score {
+  font-size: 1.1rem;
+  font-weight: 800;
+  display: block;
+  font-variant-numeric: tabular-nums;
+}
+
+.apgar-result-grid {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 10px;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 10px;
+}
+.apgar-result-cell {
+  text-align: center;
+  padding: 10px;
+  background: rgba(255,255,255,0.12);
+  border-radius: 10px;
+}
+.apgar-result-cell.filled { background: rgba(255,255,255,0.22); }
+.apgar-cell-label {
+  font-size: 0.78rem;
+  opacity: 0.85;
+  margin-bottom: 4px;
+}
+.apgar-cell-value {
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.apgar-cell-range {
+  font-size: 0.78rem;
+  opacity: 0.8;
+  margin-top: 2px;
+}
+.apgar-result-divider {
+  font-size: 1.2rem;
+  font-weight: 800;
+  opacity: 0.6;
+}
+.apgar-trend {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.apgar-trend .material-symbols-rounded { font-size: 18px; }
+.apgar-interpretation {
+  font-size: 0.88rem;
+  line-height: 1.45;
+  text-align: justify;
+}

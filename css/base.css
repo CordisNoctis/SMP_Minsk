@@ -38,6 +38,10 @@
   --shadow-hover: 0 6px 18px rgba(0, 0, 0, 0.08);
 
   --radius: 18px;
+
+    /* Дополнительные переменные для Женевской шкалы */
+  --border-light: rgba(0, 0, 0, 0.06);
+  --border-strong: #bbb;
 }
 
 [data-theme="dark"] {
@@ -74,6 +78,10 @@
 
   --shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
   --shadow-hover: 0 8px 22px rgba(0, 0, 0, 0.3);
+
+    /* Дополнительные переменные для Женевской шкалы */
+  --border-light: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.3);
 }
 
 * {
@@ -179,4 +187,14 @@ input:disabled {
     transition: none !important;
     animation: none !important;
   }
+}
+
+/* ===== Глобальное скрытие полосы прокрутки на всех устройствах ===== */
+* {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE и старый Edge */
+}
+
+*::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera, мобильные браузеры */
 }

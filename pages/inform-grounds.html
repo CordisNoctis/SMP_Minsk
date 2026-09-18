@@ -111,8 +111,6 @@
     <div id="igList" class="ig-list"></div>
   </main>
 
-  <button type="button" class="ig-top-btn" id="igTopBtn" aria-label="Наверх">↑</button>
-
   <script src="../js/core/theme.js"></script>
   <script src="../js/core/back.js"></script>
   <script src="../js/core/sw-register.js"></script>
@@ -218,16 +216,6 @@
         listEl.appendChild(card);
         markWord(card, "немедленно", "ig-urgent-word");
       });
-
-      var topBtn = document.getElementById("igTopBtn");
-      if (topBtn) {
-        topBtn.addEventListener("click", function () {
-          window.scrollTo({ top: 0, behavior: "smooth" });
-        });
-        window.addEventListener("scroll", function () {
-          topBtn.classList.toggle("show", window.scrollY > 400);
-        }, { passive: true });
-      }
     })();
   </script>
 </body>

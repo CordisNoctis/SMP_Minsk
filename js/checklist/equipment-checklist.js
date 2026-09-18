@@ -659,11 +659,17 @@
   }
 
   function resetCheck() {
-      SMP.confirm("Сбросить все отметки проверки для этой бригады?").then(function (ok) {
+    if (!window.SMP || !window.SMP.confirm) {
+      alert("Не загружен модуль подтверждения. Проверьте подключение js/core/confirm.js.");
+      return;
+    }
+
+    window.SMP.confirm("Сбросить все отметки проверки для этой бригады?").then(function (ok) {
       if (!ok) return;
       try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
       render();
     });
+  }
 
   function bindUI() {
     var reportBtn = document.getElementById("refillReportBtn");

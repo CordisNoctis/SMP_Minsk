@@ -3,18 +3,32 @@
   var CU = window.SMP.calcUtils;
 
   var PRESETS = [
-    { name: "Адреналин 0.1%",       percent: 0.1, icon: "❤️",  warning: "В/в медленно! Критический препарат" },
-    { name: "Атропин 0.1%",          percent: 0.1, icon: "💊" },
-    { name: "Димедрол 1%",           percent: 1,   icon: "🧠" },
-    { name: "Супрастин 2%",          percent: 2,   icon: "🤧" },
-    { name: "Диазепам 0.5%",         percent: 0.5, icon: "😴", warning: "Медленно в/в, риск угнетения дыхания" },
-    { name: "Фуросемид 1%",          percent: 1,   icon: "💧" },
-    { name: "Дексаметазон 4 мг/мл",  mgMl: 4,     icon: "💉" },
-    { name: "Преднизолон 30 мг/мл",  mgMl: 30,    icon: "💉" },
-    { name: "Анальгин 50%",          percent: 50,  icon: "💊", warning: "Риск анафилаксии!" },
-    { name: "Глюкоза 40%",           percent: 40,  icon: "🩸", warning: "Только в центральную вену!" },
-    { name: "Глюкоза 5%",            percent: 5,   icon: "💧" },
-    { name: "NaCl 0.9%",             percent: 0.9, icon: "💧" }
+    { name: "Адреналин 0.1%",       percent: 0.1,   icon: "❤️",  warning: "В/в медленно! Критический препарат" },
+    { name: "Анальгин 50%",          percent: 50,    icon: "💊",  warning: "Риск анафилаксии!" },
+    { name: "Атропин 0.1%",          percent: 0.1,   icon: "💊" },
+    { name: "Дексаметазон 0.4%",     percent: 0.4,   icon: "💉" },
+    { name: "Димедрол 1%",           percent: 1,     icon: "🧠" },
+    { name: "Диазепам 0.5%",         percent: 0.5,   icon: "😴",  warning: "Медленно в/в, риск угнетения дыхания" },
+    { name: "Допамин 4%",            percent: 4,     icon: "💓",  warning: "Только через инфузомат!" },
+    { name: "Кальция глюконат 10%",  percent: 10,    icon: "🦴" },
+    { name: "Кетамин 5%",            percent: 5,     icon: "😴",  warning: "Диссоциативная анестезия" },
+    { name: "Лидокаин 2%",           percent: 2,     icon: "💊" },
+    { name: "Лидокаин 10%",          percent: 10,    icon: "💊",  warning: "Для аритмий!" },
+    { name: "Магния сульфат 25%",    percent: 25,    icon: "🧪" },
+    { name: "Мидазолам 0.5%",        percent: 0.5,   icon: "😴" },
+    { name: "Морфин 1%",             percent: 1,     icon: "💊",  warning: "Наркотический анальгетик!" },
+    { name: "Нитроглицерин 0.1%",    percent: 0.1,   icon: "💓",  warning: "Только через инфузомат!" },
+    { name: "Норэпинефрин 0.2%",     percent: 0.2,   icon: "📈",  warning: "Только через ЦВК!" },
+    { name: "Новокаин 0.5%",         percent: 0.5,   icon: "💊" },
+    { name: "Преднизолон 3%",        percent: 3,     icon: "💉" },
+    { name: "Супрастин 2%",          percent: 2,     icon: "🤧" },
+    { name: "Трамадол 5%",           percent: 5,     icon: "💊" },
+    { name: "Фентанил 0.005%",       percent: 0.005, icon: "💊",  warning: "Сильный опиоид! 50 мкг/мл" },
+    { name: "Фуросемид 1%",          percent: 1,     icon: "💧" },
+    { name: "Эуфиллин 2.4%",         percent: 2.4,   icon: "🫁" },
+    { name: "Глюкоза 40%",           percent: 40,    icon: "🩸",  warning: "Только в центральную вену!" },
+    { name: "Глюкоза 5%",            percent: 5,     icon: "💧" },
+    { name: "NaCl 0.9%",             percent: 0.9,   icon: "💧" }
   ];
 
   var MODES = [
@@ -26,10 +40,33 @@
   var REFERENCE = {
     title: "О калькуляторе",
     paragraphs: [
-      "1% раствор = 1 г вещества в 100 мл = 10 мг/мл. Формула: концентрация (мг/мл) = % × 10.",
+      "Процентная концентрация (% масс/объём) означает количество граммов вещества в 100 мл раствора.",
+      "Формула: 1% = 1 г на 100 мл = 1000 мг на 100 мл = 10 мг на 1 мл. Следовательно: концентрация (мг/мл) = % × 10.",
       "Объём (мл) = доза (мг) / концентрация (мг/мл). При дозировании по массе тела: объём = (доза мг/кг × вес кг) / концентрация."
     ],
-    importantNote: "Расчётный объём ориентировочный. Перед введением всегда проверяйте концентрацию на ампуле, срок годности, прозрачность раствора и совместимость."
+    importantNote: "Расчётный объём ориентировочный. Перед введением всегда проверяйте концентрацию на ампуле, срок годности, прозрачность раствора и совместимость.",
+    indicationsTitle: "💊 Часто используемые концентрации препаратов:",
+    indications: [
+      "Адреналин — 0.1% (1 мг/мл)",
+      "Анальгин — 50% (500 мг/мл)",
+      "Атропин — 0.1% (1 мг/мл)",
+      "Дексаметазон — 0.4% (4 мг/мл)",
+      "Допамин — 0.5% (5 мг/мл), 4% (40 мг/мл)",
+      "Кальция глюконат — 10% (100 мг/мл)",
+      "Кетамин — 5% (50 мг/мл)",
+      "Лидокаин — 1% (10 мг/мл), 2% (20 мг/мл), 10% (100 мг/мл)",
+      "Магния сульфат — 25% (250 мг/мл)",
+      "Мидазолам — 0.5% (5 мг/мл)",
+      "Морфин — 1% (10 мг/мл)",
+      "Нитроглицерин — 0.1% (1 мг/мл)",
+      "Новокаин — 0.5% (5 мг/мл), 2% (20 мг/мл)",
+      "Норэпинефрин — 0.2% (2 мг/мл)",
+      "Преднизолон — 3% (30 мг/мл)",
+      "Сибазон (диазепам) — 0.5% (5 мг/мл)",
+      "Трамадол — 5% (50 мг/мл)",
+      "Фентанил — 0.005% (0.05 мг/мл = 50 мкг/мл)",
+      "Эуфиллин — 2.4% (24 мг/мл)"
+    ]
   };
 
   var state = {
@@ -42,6 +79,10 @@
   function parseNum(el) {
     var v = parseFloat(String(el.value).replace(",", "."));
     return isNaN(v) ? null : v;
+  }
+
+  function resetButtonHtml() {
+    return '<button type="button" class="result-reset-big" aria-label="Сбросить" title="Сбросить">↺</button>';
   }
 
   function renderBody() {
@@ -117,7 +158,9 @@
           '<div class="drug-result-big">' + p + '%</div>' +
           '<div class="drug-result-eq">=</div>' +
           '<div class="drug-result-big">' + m + ' мг/мл</div>' +
-        '</div></div>';
+        '</div>' +
+        resetButtonHtml() +
+        '</div>';
       return;
     }
 
@@ -143,6 +186,7 @@
       '<div class="result-score"><div class="result-score-value">—</div><div class="result-score-label">нет данных</div></div>' +
       '<div class="result-divider"></div>' +
       '<div class="result-info"><div class="result-label">' + label + '</div><div class="result-description">' + desc + '</div></div>' +
+      resetButtonHtml() +
       '</div>';
   }
 
@@ -176,6 +220,7 @@
         '<div class="drug-ampoules-grid">' + ampoules + '</div>' +
       '</div>' +
       warnings.map(function (w) { return '<div class="result-warning" style="margin-top:8px;">' + w + '</div>'; }).join("") +
+      resetButtonHtml() +
       '</div>';
   }
 
@@ -209,7 +254,6 @@
     if (dpkEl) dpkEl.addEventListener("input", function () { state.dosePerKg = parseNum(dpkEl); renderResult(); });
     if (wEl) wEl.addEventListener("input", function () { state.weightKg = parseNum(wEl); renderResult(); });
 
-    // Восстановить значения
     if (cpEl && state.concPercent !== null) cpEl.value = state.concPercent;
     if (cmEl && state.concMgMl !== null) cmEl.value = state.concMgMl;
     if (dmEl && state.doseMg !== null) dmEl.value = state.doseMg;
@@ -221,6 +265,15 @@
     renderBody();
     bindInputs();
     renderResult();
+  }
+
+  function resetAll() {
+    state = {
+      mode: "dose",
+      concPercent: null, concMgMl: null,
+      doseMg: null, dosePerKg: null, weightKg: null
+    };
+    fullRender();
   }
 
   function init() {
@@ -253,12 +306,17 @@
       }
     });
 
+    panelEl.addEventListener("click", function (e) {
+      if (e.target.closest(".result-reset-big")) resetAll();
+    });
+
     var infoBtn = document.getElementById("calcInfoBtn");
     if (infoBtn) infoBtn.addEventListener("click", function () {
       CU.openReferenceModal({ reference: REFERENCE });
     });
   }
 
+  CU.autoPersist("smp-calc-converter-v1");
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
   else init();
 })();

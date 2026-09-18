@@ -8,7 +8,6 @@
 
   <script src="../js/core/theme-init.js"></script>
   <link rel="stylesheet" href="../css/styles.css">
-
   <link rel="icon" href="../icons/favicon.ico" sizes="any">
   <link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -114,22 +113,6 @@
       line-height: 1.45;
       text-align: justify;
     }
-
-    .cc-top-btn {
-      position: fixed;
-      right: 16px;
-      bottom: calc(16px + env(safe-area-inset-bottom));
-      width: 48px; height: 48px;
-      border: 0; border-radius: 50%;
-      background: var(--accent); color: #fff;
-      font-size: 1.3rem; font-weight: 800;
-      cursor: pointer;
-      box-shadow: var(--shadow-hover);
-      opacity: 0; pointer-events: none; transform: translateY(10px);
-      transition: opacity .2s ease, transform .2s ease;
-      z-index: 60;
-    }
-    .cc-top-btn.show { opacity: 1; pointer-events: auto; transform: none; }
   </style>
 </head>
 
@@ -147,8 +130,6 @@
   <main class="page">
     <div id="ccList" class="cc-list"></div>
   </main>
-
-  <button type="button" class="cc-top-btn" id="ccTopBtn" aria-label="Наверх">↑</button>
 
   <script src="../js/core/theme.js"></script>
   <script src="../js/core/back.js"></script>
@@ -393,16 +374,6 @@
         el.innerHTML = inner;
         listEl.appendChild(el);
       });
-
-      var topBtn = document.getElementById("ccTopBtn");
-      if (topBtn) {
-        topBtn.addEventListener("click", function () {
-          window.scrollTo({ top: 0, behavior: "smooth" });
-        });
-        window.addEventListener("scroll", function () {
-          topBtn.classList.toggle("show", window.scrollY > 400);
-        }, { passive: true });
-      }
     })();
   </script>
 </body>

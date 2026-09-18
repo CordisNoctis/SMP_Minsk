@@ -59,6 +59,17 @@
     return "баллов";
   }
 
+  function resetButtonHtml() {
+      return '<button type="button" class="result-reset-big" aria-label="Сбросить" title="Сбросить">↺</button>';
+  }
+
+  function resetAll() {
+      checked = {};
+      renderItems();
+      renderProbTable();
+      renderResult();
+  }
+
   function renderItems() {
     itemsEl.innerHTML = ITEMS.map(function (it) {
       var cls = checked[it.id] ? " checked" : "";
@@ -89,11 +100,12 @@
       : "<3 баллов — низкая чувствительность. ИМ не исключён! Оцените тропонин, ЭхоКГ.";
 
     panelEl.innerHTML =
-      '<div class="result-content result-' + color + '">' +
-      '<div class="result-score"><div class="result-score-value">' + sum + '</div><div class="result-score-label">' + pluralize(sum) + '</div></div>' +
-      '<div class="result-divider"></div>' +
-      '<div class="result-info"><div class="result-label">Вероятность ИМ: ' + prob + '</div><div class="result-description">' + desc + '</div></div>' +
-      '</div>';
+        '<div class="result-content result-' + color + '">' +
+        '<div class="result-score"><div class="result-score-value">' + sum + '</div><div class="result-score-label">' + pluralize(sum) + '</div></div>' +
+        '<div class="result-divider"></div>' +
+        '<div class="result-info"><div class="result-label">Вероятность ИМ: ' + prob + '</div><div class="result-description">' + desc + '</div></div>' +
+        resetButtonHtml() +
+        '</div>';
   }
 
   function init() {
@@ -116,6 +128,10 @@
       renderResult();
     });
 
+    panelEl.addEventListener("click", function (e) {
+        if (e.target.closest(".result-reset-big")) resetAll();
+    });
+
     var infoBtn = document.getElementById("calcInfoBtn");
     if (infoBtn) infoBtn.addEventListener("click", function () {
       CU.openReferenceModal({ reference: REFERENCE });
@@ -124,4 +140,5 @@
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
   else init();
+  CU.autoPersist("smp-calc-sgarbossa-v1");
 })();

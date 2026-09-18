@@ -1,0 +1,281 @@
+/* ===== ПЛАШКА РЕЗУЛЬТАТА =====
+   Все стили плашки собраны в этом файле.
+   Порядок подключения в HTML:
+   calculators-common.css → calc-*.css → result-panel.css */
+
+/* ===== Контейнер плашки ===== */
+.result-panel {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 50;
+  padding: 8px 16px calc(8px + env(safe-area-inset-bottom));
+  background: linear-gradient(to top, var(--bg) 75%, transparent);
+  pointer-events: none;
+}
+
+.result-panel > .result-content {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  border-radius: 16px;
+  max-height: 46vh;
+  overflow-y: auto;
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.18);
+  box-sizing: border-box;
+  pointer-events: auto;
+  min-height: 86px;
+}
+
+@media (min-width: 768px) {
+  .result-panel {
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 1080px;
+    padding: 0 16px calc(12px + env(safe-area-inset-bottom));
+    background: none;
+  }
+  .result-panel > .result-content {
+    width: 100%;
+    max-width: 100%;
+    border-radius: 16px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.22);
+  }
+}
+
+/* контент страницы не прячется под плашкой */
+main.page:has(.result-panel) {
+  padding-bottom: calc(var(--result-panel-h, 120px) + 28px + env(safe-area-inset-bottom));
+}
+
+/* ===== Сама плашка ===== */
+.result-content {
+  position: relative;
+  padding: 14px 64px 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  box-shadow: var(--shadow-hover);
+  min-height: 86px;
+  box-sizing: border-box;
+  border: 1px solid transparent; /* единая рамка у всех состояний — без скачков */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Скрываем полосу прокрутки внутри плашки */
+.result-content::-webkit-scrollbar { width: 0; background: transparent; }
+
+/* ===== Блок баллов (фиксированный) ===== */
+.result-score {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 72px;
+  min-width: 72px;
+  max-width: 72px;
+  flex-shrink: 0;
+  text-align: center;
+}
+.result-score-value {
+  font-size: 2.2rem;
+  font-weight: 800;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  width: 100%;
+}
+.result-score-label {
+  font-size: 0.75rem;
+  opacity: 0.85;
+  margin-top: 2px;
+  text-align: center;
+  width: 100%;
+}
+
+/* ===== Разделитель (фиксированный) ===== */
+.result-divider {
+  width: 1px;
+  min-width: 1px;
+  max-width: 1px;
+  height: 44px;
+  background: currentColor;
+  opacity: 0.3;
+  flex-shrink: 0;
+  margin: 0 4px;
+}
+
+/* ===== Текстовая часть ===== */
+.result-info {
+  flex: 1;
+  min-width: 0;
+  max-width: calc(100% - 140px);
+}
+.result-label {
+  font-weight: 750;
+  font-size: 0.95rem;
+  margin-bottom: 2px;
+}
+.result-description {
+  font-size: 0.85rem;
+  opacity: 0.9;
+  line-height: 1.4;
+}
+.result-description-extra {
+  font-size: 0.78rem;
+  opacity: 0.8;
+  margin-top: 4px;
+  line-height: 1.3;
+}
+.result-therapy {
+  font-weight: 700;
+  font-size: 0.88rem;
+  margin-bottom: 4px;
+}
+
+/* Предупреждение ВНУТРИ плашки (не затрагивает саму плашку!) */
+.result-info .result-warning {
+  margin-top: 10px;
+  padding: 8px 12px;
+  background: rgba(255,255,255,0.18);
+  border: none;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.result-mortality {
+  font-weight: 700;
+  font-size: 0.9rem;
+  margin: 4px 0;
+  opacity: 0.95;
+}
+.result-action {
+  margin-top: 6px;
+  padding: 6px 10px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 0.88rem;
+}
+
+/* ===== Кнопка сброса (с анимацией) ===== */
+.result-reset-big {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  color: inherit;
+  opacity: 0.7;
+  cursor: pointer;
+  font-size: 2.2rem;
+  line-height: 1;
+  padding: 0;
+  border-radius: 50%;
+  transition:
+    opacity .2s ease,
+    transform .3s cubic-bezier(.34, 1.56, .64, 1),
+    background .2s ease,
+    box-shadow .2s ease;
+  z-index: 2;
+}
+
+/* Наведение: поворот + увеличение + мягкое свечение */
+.result-reset-big:hover {
+  opacity: 1;
+  transform: translateY(-50%) rotate(-90deg) scale(1.12);
+  background: color-mix(in srgb, currentColor 15%, transparent);
+  box-shadow: 0 0 0 4px color-mix(in srgb, currentColor 10%, transparent);
+}
+
+/* Нажатие: сжатие */
+.result-reset-big:active {
+  opacity: 1;
+  transform: translateY(-50%) rotate(-140deg) scale(0.9);
+}
+
+.result-content.result-incomplete .result-reset-big {
+  opacity: 0.4;
+}
+
+/* ===== Цвета плашек ===== */
+.result-content.result-incomplete {
+  background: var(--card);
+  border-color: var(--border);
+  color: var(--muted);
+}
+.result-content.result-success,
+.result-content.result-gcs-15 { background: #1a7a3e; color: #fff; }
+.result-content.result-gcs-14 { background: #8ba82a; color: #fff; }
+.result-content.result-warning,
+.result-content.result-gcs-11-12,
+.result-content.result-warning-strong { background: #c77700; color: #fff; }
+.result-content.result-gcs-8-10 { background: #d2401e; color: #fff; }
+.result-content.result-gcs-6-7 { background: #c22f22; color: #fff; }
+.result-content.result-error,
+.result-content.result-gcs-4-5 { background: #b42323; color: #fff; }
+.result-content.result-critical,
+.result-content.result-gcs-3 { background: #7a0e1c; color: #fff; }
+.result-content.result-pesi-1 { background: #1a7a3e; color: #fff; }
+.result-content.result-pesi-2 { background: #4a8c2a; color: #fff; }
+.result-content.result-pesi-3 { background: #b08900; color: #fff; }
+.result-content.result-pesi-4 { background: #d2401e; color: #fff; }
+.result-content.result-pesi-5 { background: #b42323; color: #fff; }
+.result-content.result-vas-0 { background: #1a7a3e; color: #fff; }
+.result-content.result-vas-1-3 { background: #4a8c2a; color: #fff; }
+.result-content.result-vas-4-6 { background: #b08900; color: #fff; }
+.result-content.result-vas-7-10 { background: #b42323; color: #fff; }
+/* ===== Тач-устройства (мобильные / планшеты) ===== */
+@media (hover: none) {
+  .result-reset-big {
+    -webkit-tap-highlight-color: transparent; /* убирает серую вспышку тапа */
+    touch-action: manipulation;               /* убирает задержку двойного тапа */
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  /* Выраженный эффект нажатия пальцем */
+  .result-reset-big:active {
+    opacity: 1;
+    transform: translateY(-50%) rotate(-140deg) scale(0.85);
+    background: color-mix(in srgb, currentColor 22%, transparent);
+    box-shadow: 0 0 0 5px color-mix(in srgb, currentColor 12%, transparent);
+  }
+}
+
+/* ===== «Призрак» кнопки сброса (анимация поверх плашки) ===== */
+.reset-ghost {
+  position: fixed;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.2rem;
+  line-height: 1;
+  pointer-events: none;
+  /* Усиленная тень для читаемости на светлом фоне */
+  text-shadow:
+    0 0 20px rgba(0, 0, 0, 0.5),
+    0 0 10px rgba(0, 0, 0, 0.3),
+    0 2px 8px rgba(0, 0, 0, 0.25);
+  /* Полупрозрачная подложка для контраста */
+  background: rgba(0, 0, 0, 0.08);
+  border-radius: 50%;
+  animation: reset-spin-ghost .65s cubic-bezier(.45, .05, .35, 1) forwards;
+}
+@keyframes reset-spin-ghost {
+  0%   { transform: rotate(0deg)    scale(1);    opacity: 1; }
+  60%  { transform: rotate(-300deg) scale(1.25); opacity: 1; }
+  100% { transform: rotate(-360deg) scale(1);    opacity: 0; }
+}
