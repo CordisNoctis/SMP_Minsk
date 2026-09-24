@@ -757,3 +757,910 @@
     font-size: 0.95rem;
   }
 }
+
+/* ===== Двухстрочный заголовок параметров ребёнка ===== */
+.pediatric-category-left {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.pediatric-category-left .geneva-category-icon {
+  margin-right: 10px !important;
+}
+
+.pediatric-category-title {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+}
+
+.pediatric-category-title-main {
+  display: block;
+  font-size: 1em;
+  font-weight: inherit;
+  color: inherit;
+  line-height: 1.25;
+}
+
+.pediatric-category-title-sub {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--muted);
+  white-space: normal;
+}
+
+/* ===== Сворачиваемые группы препаратов ===== */
+.drug-group-spoiler {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--card);
+  box-shadow: var(--shadow);
+}
+
+.drug-group-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  cursor: pointer;
+  list-style: none;
+  background: linear-gradient(
+    to right,
+    color-mix(in srgb, var(--cat-color) 15%, transparent),
+    color-mix(in srgb, var(--cat-color) 5%, transparent)
+  );
+  border-bottom: 1px solid transparent;
+  transition: background 0.15s ease;
+}
+
+.drug-group-summary::-webkit-details-marker { display: none; }
+
+.drug-group-summary:hover {
+  background: color-mix(in srgb, var(--cat-color) 20%, transparent);
+}
+
+.drug-group-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.drug-group-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.drug-group-spoiler[open] .drug-group-summary {
+  border-bottom-color: var(--border);
+}
+
+.drug-group-spoiler[open] .spoiler-arrow {
+  transform: rotate(180deg);
+}
+
+.drug-group-content {
+  background: var(--card);
+}
+
+.drug-group-empty {
+  padding: 16px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+/* ===== Кнопка информации о препарате ===== */
+.drug-info-btn {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  border: 1px solid var(--border);
+  background: var(--menu-icon-bg);
+  border-radius: 50%;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  font-size: 1rem;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+.drug-info-btn:hover {
+  background: var(--accent);
+  transform: scale(1.1);
+}
+.drug-info-btn:active {
+  transform: scale(0.9);
+}
+
+/* ===== Модальное окно препарата ===== */
+.drug-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+.drug-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+}
+.drug-modal-panel {
+  position: relative;
+  background: var(--card);
+  border-radius: 16px;
+  width: 100%;
+  max-width: 460px;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+  animation: drugModalIn 0.2s ease;
+}
+@keyframes drugModalIn {
+  from { opacity: 0; transform: translateY(20px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.drug-modal-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--border);
+  background: var(--menu-icon-bg);
+  border-radius: 16px 16px 0 0;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+.drug-modal-icon { font-size: 1.4rem; }
+.drug-modal-title {
+  flex: 1;
+  font-size: 1.05rem;
+  font-weight: 800;
+  margin: 0;
+  color: var(--text);
+}
+.drug-modal-close {
+  width: 34px;
+  height: 34px;
+  min-width: 34px;
+  border: none;
+  background: var(--border);
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.3rem;
+  color: var(--text);
+  display: grid;
+  place-items: center;
+  transition: background 0.15s ease;
+}
+.drug-modal-close:hover { background: var(--accent); color: #fff; }
+
+.drug-modal-body {
+  padding: 16px 18px;
+}
+.drug-modal-section-title {
+  font-size: 0.82rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--accent);
+  margin: 14px 0 8px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--border);
+}
+.drug-modal-section-title:first-child { margin-top: 0; }
+
+.drug-modal-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 5px 0;
+  font-size: 0.88rem;
+  border-bottom: 1px dashed var(--border-light, rgba(0,0,0,0.06));
+}
+.drug-modal-row:last-child { border-bottom: none; }
+.drug-modal-label { color: var(--muted); flex-shrink: 0; }
+.drug-modal-value {
+  font-weight: 700;
+  text-align: right;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+.drug-modal-protocol {
+  margin-top: 8px;
+  padding: 12px 14px;
+  background: var(--menu-icon-bg);
+  border-radius: 10px;
+  border-left: 3px solid var(--accent);
+}
+.drug-modal-protocol p {
+  margin: 0 0 6px;
+  font-size: 0.84rem;
+  line-height: 1.45;
+  color: var(--text);
+}
+.drug-modal-protocol p:last-child { margin-bottom: 0; }
+
+/* Адаптивность */
+@media (max-width: 480px) {
+  .drug-modal-panel {
+    max-width: 100%;
+    max-height: 90vh;
+  }
+}
+
+/* ===== Бикарбонат: два варианта в одной карточке ===== */
+.bicarbonate-variant {
+  margin-top: 10px;
+  padding: 10px 12px;
+  background: var(--menu-icon-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+.bicarbonate-variant:first-child { margin-top: 0; }
+.bicarbonate-variant-title {
+  font-weight: 800;
+  font-size: 0.92rem;
+  color: var(--accent);
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border-light, rgba(0,0,0,0.06));
+}
+.bicarbonate-formula {
+  margin-top: 6px;
+  padding: 6px 10px;
+  background: var(--card);
+  border-radius: 6px;
+  font-size: 0.78rem;
+  color: var(--muted);
+  font-style: italic;
+  line-height: 1.4;
+}
+
+/* ===== Состав разведения в основной карточке ===== */
+.drug-dilution-composition {
+  margin-top: 8px;
+  padding: 8px 12px;
+  background: var(--menu-icon-bg);
+  border-left: 3px solid var(--accent);
+  border-radius: 6px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.4;
+}
+
+/* ===== ИНСТРУМЕНТАЛЬНАЯ ПОМОЩЬ ===== */
+.instrumental-section {
+  margin-bottom: 16px;
+  padding: 14px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+}
+.instrumental-title {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--accent);
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--accent);
+}
+
+/* ===== Дефибрилляция: блок показаний ===== */
+.defib-indications {
+  margin-bottom: 14px;
+  padding: 12px 14px;
+  background: var(--menu-icon-bg);
+  border-left: 4px solid var(--accent);
+  border-radius: 8px;
+}
+.defib-indications-title {
+  font-weight: 800;
+  font-size: 0.92rem;
+  margin-bottom: 6px;
+  color: var(--text);
+}
+.defib-indications-text {
+  font-size: 0.88rem;
+  line-height: 1.45;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+.defib-indications-warning {
+  font-size: 0.85rem;
+  line-height: 1.45;
+  font-weight: 700;
+  color: var(--accent);
+  padding: 8px 10px;
+  background: color-mix(in srgb, var(--accent) 10%, var(--card));
+  border-radius: 6px;
+}
+
+/* ===== ЭТТ калькулятор ===== */
+.ett-calculator {
+  padding: 0;
+}
+.ett-section-title {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--accent);
+  margin: 16px 0 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+.ett-section-title:first-child { margin-top: 0; }
+
+.ett-result-group {
+  margin-bottom: 12px;
+  padding: 10px 12px;
+  background: var(--menu-icon-bg);
+  border-radius: 10px;
+}
+.ett-result-title {
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+.ett-result-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+}
+.ett-result-item {
+  padding: 10px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  text-align: center;
+}
+.ett-result-item.preferred {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 8%, var(--card));
+}
+.ett-result-label {
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin-bottom: 4px;
+  font-weight: 600;
+}
+.ett-result-value {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+  margin: 4px 0;
+}
+.ett-result-formula {
+  font-size: 0.72rem;
+  color: var(--muted);
+  font-style: italic;
+  margin-top: 4px;
+}
+.ett-result-preferred-badge {
+  margin-top: 6px;
+  padding: 3px 8px;
+  background: var(--accent);
+  color: #fff;
+  border-radius: 10px;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+/* ===== Таблица размеров ЭТТ ===== */
+.ett-age-table {
+  overflow-x: auto;
+  margin-top: 8px;
+}
+.ett-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+}
+.ett-table thead {
+  background: var(--menu-icon-bg);
+}
+.ett-table th {
+  padding: 8px 6px;
+  font-weight: 800;
+  color: var(--accent);
+  border-bottom: 2px solid var(--accent);
+  text-align: center;
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+.ett-table td {
+  padding: 6px;
+  border-bottom: 1px solid var(--border-light, rgba(0,0,0,0.06));
+  text-align: center;
+  color: var(--text);
+}
+.ett-table tr.ett-table-current {
+  background: color-mix(in srgb, var(--accent) 15%, var(--card));
+  font-weight: 700;
+}
+.ett-table tr.ett-table-current td {
+  color: var(--accent);
+}
+
+/* ===== Практические правила ===== */
+.ett-rules {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.ett-rule {
+  padding: 8px 12px;
+  background: var(--menu-icon-bg);
+  border-radius: 8px;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  color: var(--text);
+}
+.ett-rule.preferred {
+  background: color-mix(in srgb, var(--accent) 10%, var(--card));
+  border-left: 3px solid var(--accent);
+  font-weight: 700;
+}
+
+/* ===== Safety notes для ЭТТ ===== */
+.ett-safety-notes {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 12px;
+}
+
+/* Адаптивность */
+@media (max-width: 600px) {
+  .ett-result-row {
+    grid-template-columns: 1fr;
+  }
+  .ett-table {
+    font-size: 0.75rem;
+  }
+  .ett-table th, .ett-table td {
+    padding: 4px 3px;
+  }
+}
+
+/* ===== Компактная дефибрилляция (в свёрнутой плашке) ===== */
+.defib-compact {
+  padding: 4px 0;
+}
+.defib-compact-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 10px;
+  text-align: center;
+}
+.defib-compact-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+}
+.defib-compact-item {
+  padding: 8px 4px;
+  background: var(--menu-icon-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  text-align: center;
+  position: relative;
+}
+.defib-compact-shock {
+  border-color: #b42323;
+  background: color-mix(in srgb, #b42323 8%, var(--card));
+}
+.defib-compact-drug {
+  border-color: #c77700;
+  background: color-mix(in srgb, #c77700 8%, var(--card));
+}
+.defib-compact-max-shock {
+  border-color: #7a1f1f;
+  background: color-mix(in srgb, #7a1f1f 10%, var(--card));
+}
+.defib-compact-step {
+  font-size: 0.7rem;
+  color: var(--muted);
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+.defib-compact-value {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+}
+.defib-compact-dose {
+  font-size: 0.7rem;
+  color: var(--text);
+  font-weight: 700;
+  margin-top: 2px;
+}
+.defib-compact-after {
+  font-size: 0.68rem;
+  color: var(--muted);
+  margin-top: 3px;
+  font-style: italic;
+  line-height: 1.2;
+}
+.defib-compact-max {
+  font-size: 0.65rem;
+  color: #b42323;
+  font-weight: 800;
+  margin-top: 3px;
+}
+.defib-compact-footer {
+  margin-top: 10px;
+  padding: 6px 10px;
+  background: var(--menu-icon-bg);
+  border-radius: 8px;
+  font-size: 0.78rem;
+  color: var(--muted);
+  text-align: center;
+  line-height: 1.4;
+}
+
+/* Адаптивность для узких экранов */
+@media (max-width: 500px) {
+  .defib-compact-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+@media (max-width: 360px) {
+  .defib-compact-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Кнопка ℹ️ в шапке блока ИНСТРУМЕНТАЛЬНАЯ ПОМОЩЬ */
+.defib-info-btn {
+  margin-left: 6px;
+  background: var(--card) !important;
+}
+
+/* ===== Модалка дефибрилляции ===== */
+.defib-modal-panel {
+  max-width: 520px;
+}
+.defib-modal-indications {
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+.defib-modal-warning {
+  margin-top: 8px;
+  padding: 10px 12px;
+  background: color-mix(in srgb, var(--accent) 12%, var(--card));
+  border-left: 3px solid var(--accent);
+  border-radius: 6px;
+  font-size: 0.84rem;
+  line-height: 1.45;
+  color: var(--text);
+  font-weight: 600;
+}
+.defib-modal-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 8px;
+}
+.defib-modal-step {
+  display: flex;
+  gap: 10px;
+  padding: 8px 10px;
+  background: var(--menu-icon-bg);
+  border-radius: 8px;
+}
+.defib-modal-step-num {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  font-size: 0.9rem;
+  color: #fff;
+  flex-shrink: 0;
+}
+.defib-modal-step-num.shock { background: #b42323; }
+.defib-modal-step-num.cpr { background: var(--accent); }
+.defib-modal-step-num.drug { background: #c77700; }
+.defib-modal-step-num.max-shock { background: #7a1f1f; }
+.defib-modal-step-body { flex: 1; min-width: 0; }
+.defib-modal-step-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 2px;
+  line-height: 1.3;
+}
+.defib-modal-step-desc {
+  font-size: 0.8rem;
+  color: var(--muted);
+  line-height: 1.4;
+}
+.defib-modal-step-note {
+  margin-top: 4px;
+  font-size: 0.78rem;
+  color: #b42323;
+  font-weight: 700;
+}
+.defib-modal-footer {
+  padding: 8px 12px;
+  background: var(--menu-icon-bg);
+  border-radius: 8px;
+  font-size: 0.84rem;
+  line-height: 1.4;
+  color: var(--text);
+}
+
+/* ===== Заголовок с кнопкой ℹ️ ===== */
+.instrumental-title-with-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--accent);
+}
+.instrumental-title-with-btn .instrumental-title {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+  flex: 1;
+}
+
+/* ===== ЭТТ: одна плашка с 5 плитками ===== */
+.ett-single-card {
+  padding: 12px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+}
+.ett-single-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.ett-single-title {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+/* Сетка из 5 плиток */
+.ett-single-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+}
+
+/* Каждая плитка */
+.ett-single-item {
+  padding: 8px 4px;
+  background: var(--menu-icon-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 90px;
+}
+
+/* Рекомендуемый размер (главная плитка) */
+.ett-recommended {
+  border-color: var(--accent) !important;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 12%, var(--card)), color-mix(in srgb, var(--accent) 5%, var(--card))) !important;
+}
+.ett-recommended .ett-single-value {
+  font-size: 1.6rem !important;
+}
+
+/* Плитки с правилами */
+.ett-rule {
+  border-color: var(--accent) !important;
+  background: color-mix(in srgb, var(--accent) 8%, var(--card)) !important;
+}
+
+/* Альтернативный расчёт */
+.ett-alternative {
+  background: var(--menu-icon-bg) !important;
+}
+
+/* Элементы плитки */
+.ett-single-step {
+  font-size: 0.7rem;
+  color: var(--muted);
+  font-weight: 600;
+  margin-bottom: 2px;
+  line-height: 1.3;
+  text-align: center;
+}
+.ett-single-value {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+  margin: 2px 0;
+}
+.ett-single-unit {
+  font-size: 0.7rem;
+  color: var(--text);
+  font-weight: 700;
+  margin-top: 2px;
+}
+.ett-single-note {
+  font-size: 0.65rem;
+  color: var(--muted);
+  font-weight: 600;
+  margin-top: 3px;
+  line-height: 1.2;
+}
+
+/* Адаптивность: на узких экранах 3 плитки в ряд */
+@media (max-width: 600px) {
+  .ett-single-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+@media (max-width: 380px) {
+  .ett-single-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ===== Модалка ЭТТ ===== */
+.ett-modal-panel {
+  max-width: 560px;
+}
+.ett-modal-formulas {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+}
+.ett-modal-formula {
+  padding: 10px 12px;
+  background: var(--menu-icon-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+.ett-modal-formula.preferred {
+  background: color-mix(in srgb, var(--accent) 10%, var(--card));
+  border-color: var(--accent);
+}
+.ett-modal-formula-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+.ett-modal-formula-eq {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--accent);
+  font-family: 'Courier New', monospace;
+  margin: 4px 0;
+}
+.ett-modal-formula-note {
+  font-size: 0.78rem;
+  color: var(--muted);
+  font-style: italic;
+  margin-top: 4px;
+}
+
+/* Таблицы в модалке */
+.ett-modal-table-wrap {
+  overflow-x: auto;
+  margin-top: 8px;
+}
+.ett-modal-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+}
+.ett-modal-table thead {
+  background: var(--menu-icon-bg);
+}
+.ett-modal-table th {
+  padding: 8px 6px;
+  font-weight: 800;
+  color: var(--accent);
+  border-bottom: 2px solid var(--accent);
+  text-align: center;
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+.ett-modal-table td {
+  padding: 6px;
+  border-bottom: 1px solid var(--border-light, rgba(0,0,0,0.06));
+  text-align: center;
+  color: var(--text);
+}
+.ett-modal-table tr.ett-table-current {
+  background: color-mix(in srgb, var(--accent) 15%, var(--card));
+  font-weight: 700;
+}
+.ett-modal-table tr.ett-table-current td {
+  color: var(--accent);
+}
+
+/* Практические правила в модалке */
+.ett-modal-rules {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 8px;
+}
+.ett-modal-rule {
+  padding: 10px 12px;
+  background: var(--menu-icon-bg);
+  border-radius: 8px;
+  font-size: 0.85rem;
+  line-height: 1.45;
+  color: var(--text);
+}
+.ett-modal-rule.preferred {
+  background: color-mix(in srgb, var(--accent) 10%, var(--card));
+  border-left: 3px solid var(--accent);
+  font-weight: 600;
+}
+
+/* Safety notes в модалке */
+.ett-modal-safety {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 8px;
+}
+.ett-modal-safety-item {
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  line-height: 1.45;
+}
+.ett-modal-safety-item.warning {
+  background: color-mix(in srgb, #ff8c00 15%, var(--card));
+  border-left: 3px solid #ff8c00;
+  color: var(--text);
+}
+.ett-modal-safety-item.info {
+  background: var(--menu-icon-bg);
+  border-left: 3px solid var(--accent);
+  color: var(--text);
+}
+
+/* Адаптивность */
+@media (max-width: 500px) {
+  .ett-compact-alternatives {
+    grid-template-columns: 1fr;
+  }
+  .ett-modal-table {
+    font-size: 0.75rem;
+  }
+}

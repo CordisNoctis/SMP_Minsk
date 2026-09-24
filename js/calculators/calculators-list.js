@@ -8,7 +8,7 @@
     { id: "glasgow-coma",   title: "Шкала комы Глазго (ШКГ)",                                emoji: "🧠", categories: ["Неврология", "Реанимация и ИТ", "Хирургия и травматология", "Педиатрия"], page: "calc-glasgow.html" },
     { id: "four-score",     title: "Шкала комы FOUR",                                        emoji: "🧠", categories: ["Неврология", "Реанимация и ИТ"], page: "calc-four.html" },
     { id: "sad-persons",    title: "Шкала оценки риска суицида (SAD PERSONS)",                emoji: "💭", categories: ["Психиатрия", "Реанимация и ИТ"], page: "calc-sad-persons.html" },
-    { id: "pediatric",      title: "Педиатрические калькуляторы (лента Брослоу)",            emoji: "👶", categories: ["Педиатрия", "Реанимация и ИТ"], page: "calc-pediatric.html" },
+    { id: "pediatric",      title: "Педиатрические калькуляторы (основаны на ленте Broselow)",            emoji: "👶", categories: ["Педиатрия", "Реанимация и ИТ"], page: "calc-pediatric.html" },
     { id: "apgar",          title: "Шкала Апгар",                                            emoji: "👶", categories: ["Педиатрия", "Акушерство и гинекология", "Реанимация и ИТ"], page: "calc-apgar.html" },
     { id: "ciwa-ar",        title: "Шкала оценки отмены алкоголя (CIWA-Ar)",                  emoji: "💭", categories: ["Психиатрия", "Реанимация и ИТ"], page: "calc-ciwa.html" },
     { id: "nihss",          title: "Шкала инсульта NIHSS",                                   emoji: "🧠", categories: ["Неврология", "Реанимация и ИТ"], page: "calc-nihss.html" },
