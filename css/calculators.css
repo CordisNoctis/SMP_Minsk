@@ -103,20 +103,6 @@
   inset: 0;
   background: rgba(0, 0, 0, 0.5);
 }
-.reference-modal-content {
-  position: relative;
-  background: var(--card);
-  border-radius: 16px;
-  width: 100%;
-  max-width: 420px;
-  max-height: 85vh;
-  overflow-y: auto;
-  transform: scale(.96);
-  transition: transform .18s ease;
-  padding: 20px;
-  overscroll-behavior: contain;
-  -webkit-overflow-scrolling: touch;
-}
 .reference-modal.open .reference-modal-content {
   transform: scale(1);
 }

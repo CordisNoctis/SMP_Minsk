@@ -642,38 +642,8 @@
 
 /* ===== 8. Модалка: панель и секции ===== */
 
-.schedule-modal-panel {
-  width: min(560px, 100%);
-}
-
-.bulk-modal-panel {
-  width: min(680px, 100%);
-}
-
-.template-picker-panel {
-  width: min(520px, 100%);
-}
-
 .template-picker-panel .template-list {
   grid-template-columns: repeat(2, 1fr);
-}
-
-/* Фикс обрезки и прокрутки модалки */
-.modal-panel {
-  overflow: visible;
-  overscroll-behavior: contain;
-}
-
-.modal-body {
-  overflow-y: auto;
-  flex: 1;
-  min-height: 0;
-  overscroll-behavior: contain;
-}
-
-/* Блокировка жестов: фон под модалкой не скроллится */
-.modal-backdrop {
-  touch-action: none;
 }
 
 .day-view-mode,
@@ -1352,11 +1322,6 @@
   }
 }
 
-/* Модалка выбора шаблона должна быть поверх bulk-модалки и модалки дня */
-#template-picker-modal {
-  z-index: 120;
-}
-
 /* ===== Увеличение чисел и значков на широких экранах ===== */
 
 /* Планшеты и ПК */
@@ -1761,32 +1726,16 @@
   animation: wheel-slide-down 0.25s ease;
 }
 
-/* Bulk-модалка: естественная высота, но не больше 92vh */
-.bulk-modal-panel {
-  max-height: 92vh;
-}
-
-.bulk-modal-panel .modal-body {
-  overflow-y: auto;
-}
-
 /* Запрет скролла при свайпе по барабанам времени */
 #dayEditMode .wheel-triple {
   touch-action: none;
 }
 
 /* Модалка дня: меньше пустого пространства */
-#day-modal .modal-body {
-  padding: 12px 16px;
-}
 
 #day-modal .events-empty {
   padding: 4px 0;
   margin: 0;
-}
-
-#day-modal .modal-header {
-  padding: 12px 16px;
 }
 
 #day-modal .day-view-mode .modal-body {
@@ -2025,9 +1974,6 @@
   }
 
   /* ===== Модалки: компактнее ===== */
-  .schedule-modal-panel {
-    width: min(100vw - 16px, 520px);
-  }
 
   .modal-header {
     padding: 12px 16px;
@@ -2234,9 +2180,6 @@
   }
 
   /* ===== Модалка массового добавления ===== */
-  .bulk-modal-panel {
-    width: min(100vw - 16px, 640px);
-  }
 
   .bulk-hint {
     font-size: 0.78rem;
@@ -2247,9 +2190,6 @@
   }
 
   /* ===== Модалка выбора шаблона ===== */
-  .template-picker-panel {
-    width: min(100vw - 16px, 480px);
-  }
 
   .template-chip {
     min-height: 52px;
@@ -2410,40 +2350,6 @@
 
   .calendar-grid {
     gap: 2px;
-  }
-}
-
-/* =========================================
-   ФИКС ЦЕНТРИРОВАНИЯ МОДАЛОК
-   ========================================= */
-
-.modal {
-  position: fixed;
-  inset: 0;
-  z-index: 100;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  padding: 16px;
-}
-
-.modal-panel {
-  margin: 0 auto;
-  max-height: calc(100vh - 32px);
-  max-height: calc(100dvh - 32px);
-}
-
-/* На малых экранах модалка занимает почти всю ширину */
-@media (max-width: 480px) {
-  .modal {
-    padding: 8px;
-  }
-
-  .modal-panel {
-    max-height: calc(100vh - 16px);
-    max-height: calc(100dvh - 16px);
   }
 }
 

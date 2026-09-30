@@ -1,0 +1,595 @@
+/* =========================================
+   modals.css — ЕДИНЫЙ стиль всех модальных окон
+   приложения. Единственный файл, где живёт
+   "хром" модалок: оверлей, подложка, панель,
+   шапка, кнопка закрытия, скролл, анимации
+   и ширины вариантов.
+   Содержимое тел остаётся в тематических css.
+   ========================================= */
+
+/* ----- 1. База ----- */
+
+body.modal-open {
+  overflow: hidden;
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 16px;
+
+  opacity: 1;
+  transition: opacity 0.25s ease;
+}
+
+.modal-backdrop {
+  position: absolute;
+  inset: 0;
+
+  background: var(--modal-backdrop);
+
+  -webkit-backdrop-filter: blur(7px);
+  backdrop-filter: blur(7px);
+
+  /* фон под модалкой не скроллится жестами */
+  touch-action: none;
+}
+
+.modal-panel {
+  position: relative;
+  margin: 0 auto;
+
+  width: min(600px, 100%);
+  max-height: calc(100vh - 32px);
+  max-height: calc(100dvh - 32px);
+
+  display: flex;
+  flex-direction: column;
+
+  overflow: hidden;
+
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 22px;
+
+  box-shadow: var(--shadow-hover);
+
+  animation: modal-in 0.18s ease;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  padding: 18px;
+
+  border-bottom: 1px solid var(--border);
+}
+
+.modal-header h2,
+.modal-title {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 800;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.modal-title-icon {
+  flex: 0 0 auto;
+  font-size: 1.4rem;
+}
+
+.modal-close {
+  width: 44px;
+  height: 44px;
+  flex: 0 0 auto;
+
+  border: 0;
+  border-radius: 12px;
+
+  background: var(--menu-icon-bg);
+  color: var(--text);
+
+  font-size: 1.4rem;
+  line-height: 1;
+
+  cursor: pointer;
+}
+
+.modal-body {
+  padding: 18px;
+
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+
+  overscroll-behavior: contain;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+
+  padding: 16px 18px;
+
+  border-top: 1px solid var(--border);
+}
+
+.modal-footer-spacer {
+  min-width: 0;
+}
+
+/* ----- 2. Закрытие: плавное затухание ----- */
+/* Оверлей гаснет ~250 мс и всё это время ловит
+   случайные клики, чтобы они не достались
+   элементам под модалкой (фикс "сквозного клика") */
+
+.modal.modal-closing {
+  opacity: 0;
+}
+
+@keyframes modal-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ----- 3. Варианты ширины по назначению ----- */
+
+.filters-modal-panel,
+.modal-panel--drug {
+  width: min(460px, 100%);
+}
+
+/* Модалка справки «О калькуляторе» */
+.reference-modal-content {
+  position: relative;
+  background: var(--card);
+  border-radius: 16px;
+  width: min(460px, 100%);
+  max-height: 85vh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.template-picker-panel,
+.modal-panel--defib {
+  width: min(520px, 100%);
+}
+
+.schedule-modal-panel,
+.modal-panel--ett {
+  width: min(560px, 100%);
+}
+
+.bulk-modal-panel {
+  width: min(680px, 100%);
+  max-height: 92vh;
+}
+
+/* ----- 4. Особенности панелей расписания ----- */
+/* панель не режет содержимое, скролл живёт в body */
+
+.schedule-modal-panel,
+.bulk-modal-panel,
+.template-picker-panel {
+  overflow: visible;
+}
+
+/* модалка выбора шаблона поверх bulk-модалки и модалки дня */
+#template-picker-modal {
+  z-index: 120;
+}
+
+/* модалка дня: меньше пустого пространства */
+#day-modal .modal-header {
+  padding: 12px 16px;
+}
+
+#day-modal .modal-body {
+  padding: 12px 16px;
+}
+
+/* ----- 5. Узкие экраны: модалка почти во всю ширину ----- */
+
+@media (max-width: 480px) {
+  .modal {
+    padding: 8px;
+  }
+
+  .modal-panel {
+    max-height: calc(100vh - 16px);
+    max-height: calc(100dvh - 16px);
+  }
+}
+
+/* ----- 6. Широкие экраны: модалки шире ----- */
+
+@media (min-width: 700px) {
+  .modal-panel {
+    width: min(760px, 100%);
+    max-height: min(85vh, 860px);
+  }
+
+  .filters-modal-panel,
+  .modal-panel--drug {
+    width: min(640px, 100%);
+  }
+
+  .reference-modal-content {
+    width: min(620px, 100%);
+  }
+
+  .schedule-modal-panel,
+  .modal-panel--defib {
+    width: min(720px, 100%);
+  }
+
+  .template-picker-panel {
+    width: min(680px, 100%);
+  }
+
+  .modal-panel--ett {
+    width: min(820px, 100%);
+  }
+
+  .bulk-modal-panel {
+    width: min(880px, 100%);
+  }
+}
+
+/* =========================================
+   Справка «О калькуляторе»: приводим к единому
+   формату модальных окон (как дефибрилляция)
+   ========================================= */
+
+.reference-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 16px;
+
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+
+.reference-modal.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.reference-modal-backdrop {
+  position: absolute;
+  inset: 0;
+
+  background: var(--modal-backdrop);
+
+  -webkit-backdrop-filter: blur(7px);
+  backdrop-filter: blur(7px);
+
+  touch-action: none;
+}
+
+.reference-modal-content {
+  position: relative;
+  margin: 0 auto;
+
+  width: min(520px, 100%);
+  max-height: calc(100vh - 32px);
+  max-height: calc(100dvh - 32px);
+
+  display: flex;
+  flex-direction: column;
+
+  overflow: hidden;
+
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 22px;
+
+  box-shadow: var(--shadow-hover);
+
+  padding: 0;
+  transform: none;
+}
+
+.reference-modal.open .reference-modal-content {
+  transform: none;
+}
+
+.reference-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  padding: 18px;
+
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 0;
+}
+
+.reference-modal-title {
+  flex: 1;
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 800;
+}
+
+.reference-modal-close {
+  width: 44px;
+  height: 44px;
+  flex: 0 0 auto;
+
+  border: 0;
+  border-radius: 12px;
+
+  background: var(--menu-icon-bg);
+  color: var(--text);
+
+  font-size: 1.4rem;
+  line-height: 1;
+
+  cursor: pointer;
+}
+
+.reference-modal-body {
+  padding: 18px;
+
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+
+  overscroll-behavior: contain;
+}
+
+/* Узкие экраны */
+@media (max-width: 480px) {
+  .reference-modal {
+    padding: 8px;
+  }
+
+  .reference-modal-content {
+    max-height: calc(100vh - 16px);
+    max-height: calc(100dvh - 16px);
+  }
+}
+
+/* Широкие экраны: та же ширина, что у модалки дефибрилляции */
+@media (min-width: 700px) {
+  .reference-modal-content {
+    width: min(720px, 100%);
+    max-height: min(85vh, 860px);
+  }
+}
+
+/* =========================================
+   Единый стандарт медицинских справок (medref)
+   Классы для содержимого справок: карточка
+   пациента, таблицы, шаги, предупреждения,
+   списки верификации. Используются в модалках
+   по всей программе.
+   ========================================= */
+
+/* ----- Карточка пациента (расчёт для текущего) ----- */
+
+.medref-patient-card {
+  background: linear-gradient(135deg, #a71d3a, #6a0017);
+  color: #fff;
+  padding: 18px 20px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 10px rgba(106, 0, 23, 0.15);
+}
+
+.medref-patient-title {
+  color: #fff;
+  font-size: 1.05rem;
+  font-weight: 800;
+  margin: 0 0 12px;
+}
+
+.medref-patient-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+}
+
+.medref-metric {
+  background: rgba(255, 255, 255, 0.15);
+  padding: 10px 16px;
+  border-radius: 8px;
+  flex: 1;
+  min-width: 140px;
+  max-width: 220px;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.medref-metric-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  opacity: 0.9;
+}
+
+.medref-metric-value {
+  font-size: 1.3rem;
+  font-weight: 800;
+  margin-top: 2px;
+}
+
+.medref-patient-footer {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.25);
+  font-size: 0.85rem;
+  opacity: 0.95;
+}
+
+/* ----- Таблицы справки ----- */
+
+.medref-table-wrap {
+  overflow-x: auto;
+  margin: 12px 0;
+}
+
+.medref-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.9rem;
+}
+
+.medref-table th {
+  background: var(--menu-icon-bg);
+  color: var(--accent, #800020);
+  padding: 10px 12px;
+  font-weight: 700;
+  border-bottom: 2px solid var(--border);
+  white-space: nowrap;
+}
+
+.medref-table td {
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ----- Текст, списки, шаги ----- */
+
+.medref-p {
+  margin: 8px 0;
+  font-size: 0.95rem;
+}
+
+.medref-list {
+  padding-left: 20px;
+  margin: 10px 0;
+}
+
+.medref-list li {
+  margin-bottom: 8px;
+}
+
+.medref-step-info {
+  background: var(--menu-icon-bg);
+  border-left: 4px solid var(--accent, #800020);
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin: 12px 0;
+  font-size: 0.9rem;
+}
+
+.medref-sub-title {
+  font-weight: 700;
+  color: var(--accent, #800020);
+  font-size: 0.95rem;
+  margin: 14px 0 6px;
+}
+
+/* ----- Предупреждения (alert) ----- */
+
+.medref-alert {
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin: 14px 0;
+  font-size: 0.9rem;
+}
+
+.medref-alert ul {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.medref-alert li {
+  margin-bottom: 6px;
+}
+
+.medref-alert li:last-child {
+  margin-bottom: 0;
+}
+
+.medref-alert-danger {
+  background: rgba(155, 44, 44, 0.10);
+  border-left: 4px solid #9b2c2c;
+  color: var(--text);
+}
+
+.medref-alert-warning {
+  background: rgba(183, 121, 31, 0.10);
+  border-left: 4px solid #b7791f;
+  color: var(--text);
+}
+
+/* ----- Список верификации ----- */
+
+.medref-verify-list {
+  list-style: none;
+  margin: 12px 0;
+  padding: 0;
+}
+
+.medref-verify-list li {
+  padding: 10px 12px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.medref-verify-success {
+  background: rgba(47, 133, 90, 0.12);
+  border-left: 4px solid #2f855a;
+  color: var(--text);
+}
+
+.medref-verify-danger {
+  background: rgba(155, 44, 44, 0.10);
+  border-left: 4px solid #9b2c2c;
+  color: var(--text);
+}
+
+/* ----- Ширина модалки НГЗ (широкие таблицы) ----- */
+
+.modal-panel--ng-tube {
+  width: min(560px, 100%);
+}
+
+@media (min-width: 700px) {
+  .modal-panel--ng-tube {
+    width: min(820px, 100%);
+  }
+}
+
+/* ----- Подсветка текущей строки в таблицах справок ----- */
+
+.medref-table tr.medref-row-current td {
+  background: rgba(128, 0, 32, 0.10);
+  font-weight: 700;
+  color: var(--accent, #800020);
+}

@@ -13,18 +13,35 @@
     if (existing) existing.remove();
 
     var ref = data.reference || {};
+
     var paragraphs = (ref.paragraphs || []).map(function (p) {
-      return "<p>" + escapeHtml(p) + "</p>";
+      return '<p class="medref-p">' + escapeHtml(p) + '</p>';
     }).join("");
 
+    // ===== Карточка пациента (если калькулятор передал метрики) =====
+    var metricsHtml = '';
+    if (ref.metrics && ref.metrics.length) {
+      var tiles = ref.metrics.map(function (m) {
+        return '<div class="medref-metric">' +
+          '<div class="medref-metric-label">' + escapeHtml(m.label || '') + '</div>' +
+          '<div class="medref-metric-value">' + escapeHtml(String(m.value || '—')) + '</div>' +
+        '</div>';
+      }).join("");
+      metricsHtml =
+        '<div class="medref-patient-card">' +
+          '<div class="medref-patient-title">' + escapeHtml(ref.metricsTitle || '📊 Расчёт для текущего пациента') + '</div>' +
+          '<div class="medref-patient-grid">' + tiles + '</div>' +
+          (ref.metricsFooter ? '<div class="medref-patient-footer">' + ref.metricsFooter + '</div>' : '') +
+        '</div>';
+    }
+
     var importantNote = ref.importantNote ?
-      '<div class="calc-important-note">' +
-        '<span style="font-size:20px;">⚠️</span>' +
-        '<strong>' + escapeHtml(ref.importantNote) + '</strong>' +
+      '<div class="medref-alert medref-alert-warning">' +
+        '<strong>⚠️ ' + escapeHtml(ref.importantNote) + '</strong>' +
       '</div>' : '';
 
     var legalReference = ref.legalReference ?
-      '<div class="calc-legal-reference" style="margin-top:12px;padding:10px 12px;background:var(--menu-icon-bg);border-radius:8px;font-size:0.85rem;">' +
+      '<div class="medref-step-info">' +
         '<span style="font-size:16px;">⚖️</span> ' +
         '<em>' + escapeHtml(ref.legalReference) + '</em>' +
       '</div>' : '';
@@ -32,12 +49,12 @@
     var indicationsHtml = '';
     if (ref.indications && ref.indications.length) {
       var items = ref.indications.map(function (x) {
-        return '<li style="margin-bottom:4px;">' + escapeHtml(x) + '</li>';
+        return '<li>' + escapeHtml(x) + '</li>';
       }).join("");
       indicationsHtml =
-        '<div style="margin-top:14px;padding:12px 14px;background:var(--menu-icon-bg);border-radius:8px;border-left:3px solid var(--accent);">' +
-          '<div style="font-weight:700;margin-bottom:8px;font-size:1rem;">' + escapeHtml(ref.indicationsTitle || "Показания:") + '</div>' +
-          '<ul style="margin:0;padding-left:20px;font-size:0.95rem;line-height:1.5;list-style-type:disc;">' + items + '</ul>' +
+        '<div class="medref-step-info">' +
+          '<div class="medref-sub-title" style="margin-top:0;">' + escapeHtml(ref.indicationsTitle || "Показания:") + '</div>' +
+          '<ul class="medref-list" style="margin-bottom:0;">' + items + '</ul>' +
         '</div>';
     }
 
@@ -52,7 +69,7 @@
           '<button class="reference-modal-close" aria-label="Закрыть">✕</button>' +
         '</div>' +
         '<div class="reference-modal-body">' +
-          paragraphs + importantNote + indicationsHtml + legalReference +
+          metricsHtml + paragraphs + importantNote + indicationsHtml + legalReference +
         '</div>' +
       '</div>';
 
@@ -60,11 +77,7 @@
     requestAnimationFrame(function () { modal.classList.add("open"); });
     
     // Блокируем прокрутку фона
-    var scrollY = window.scrollY;
     document.body.style.overflow = "hidden";
-    document.body.style.position = "fixed";
-    document.body.style.top = -scrollY + "px";
-    document.body.style.width = "100%";
 
     var isClosed = false;
 
@@ -73,14 +86,8 @@
       isClosed = true;
       
       modal.classList.remove("open");
-      var savedScrollY = document.body.style.top;
       document.body.style.overflow = "";
-      document.body.style.position = "";
-      document.body.style.top = "";
-      document.body.style.width = "";
-      if (savedScrollY) {
-        window.scrollTo(0, parseInt(savedScrollY || "0") * -1);
-      }
+      
       setTimeout(function () { modal.remove(); }, 250);
 
       // Убираем запись модалки из истории браузера, если она там есть

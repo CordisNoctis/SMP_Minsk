@@ -110,53 +110,6 @@ a.back-button {
 .calc-description { margin-bottom: 16px; }
 
 /* ----- Модальное окно информации ----- */
-.reference-modal {
-  position: fixed;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  z-index: 300;
-  opacity: 0;
-  transition: opacity .2s ease;
-  pointer-events: none;
-}
-.reference-modal.open {
-  opacity: 1;
-  pointer-events: auto;
-}
-.reference-modal-backdrop {
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.5);
-}
-.reference-modal-content {
-  position: relative;
-  background: var(--card);
-  border-radius: 16px;
-  width: 100%;
-  max-width: 420px;
-  max-height: 85vh;
-  overflow-y: auto;
-  transform: scale(.96);
-  transition: transform .18s ease;
-  padding: 20px;
-  overscroll-behavior: contain;
-  -webkit-overflow-scrolling: touch;
-}
-.reference-modal.open .reference-modal-content { transform: scale(1); }
-.reference-modal-content::-webkit-scrollbar { width: 6px; }
-.reference-modal-content::-webkit-scrollbar-thumb {
-  background: var(--border);
-  border-radius: 3px;
-}
-.reference-modal-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 16px;
-}
 .reference-modal-header-icon {
   width: 40px;
   height: 40px;
@@ -165,23 +118,6 @@ a.back-button {
   display: grid;
   place-items: center;
   color: var(--accent);
-}
-.reference-modal-title {
-  flex: 1;
-  font-size: 1.1rem;
-  font-weight: 750;
-  margin: 0;
-}
-.reference-modal-close {
-  width: 36px;
-  height: 36px;
-  border: 0;
-  background: var(--menu-icon-bg);
-  border-radius: 50%;
-  cursor: pointer;
-  display: grid;
-  place-items: center;
-  color: var(--muted);
 }
 .reference-modal-body p {
   font-size: 0.93rem;

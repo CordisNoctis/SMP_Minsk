@@ -507,20 +507,30 @@
   box-shadow: var(--shadow);
 }
 .pediatric-equip-card.equip-wide { grid-column: 1 / -1; }
-.equip-icon {
+
+/* Иконка и название в одну строку */
+.equip-header {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 6px;
   margin-bottom: 4px;
 }
-.equip-icon .material-symbols-rounded {
-  font-size: 20px;
-  color: var(--accent);
+.equip-icon {
+  flex-shrink: 0;
+  font-size: 0.85rem;
+  line-height: 1.25;
 }
 .equip-name {
+  flex: 1;
+  min-width: 0;
   font-weight: 700;
   font-size: 0.88rem;
   line-height: 1.25;
+}
+
+.equip-content {
+  display: flex;
+  flex-direction: column;
 }
 .equip-value {
   font-size: 1.3rem;
@@ -557,7 +567,6 @@
   font-size: 0.82rem;
   color: var(--muted);
 }
-
 /* Инфузионная терапия */
 .pediatric-infusion-card { padding: 14px; }
 .infusion-bolus,
@@ -858,98 +867,36 @@
   font-size: 0.88rem;
 }
 
-/* ===== Кнопка информации о препарате ===== */
+/* ===== Кнопка информации (мини-копия header-alert-btn, 36px) ===== */
 .drug-info-btn {
   flex-shrink: 0;
+
   width: 36px;
   height: 36px;
   min-width: 36px;
-  border: 1px solid var(--border);
-  background: var(--menu-icon-bg);
+
+  border: 1px solid var(--border-accent);
   border-radius: 50%;
-  cursor: pointer;
+
+  background: #ffffff;
+  color: var(--accent);
+
+  font-size: 1.15rem;
+  font-weight: 900;
+  line-height: 1;
+
   display: grid;
   place-items: center;
-  font-size: 1rem;
-  transition: background 0.15s ease, transform 0.15s ease;
-}
-.drug-info-btn:hover {
-  background: var(--accent);
-  transform: scale(1.1);
-}
-.drug-info-btn:active {
-  transform: scale(0.9);
+
+  cursor: pointer;
+  padding: 0;
+
+  transition: transform 0.12s ease, filter 0.15s ease;
 }
 
 /* ===== Модальное окно препарата ===== */
-.drug-modal-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 500;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 16px;
-}
-.drug-modal-backdrop {
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.55);
-}
-.drug-modal-panel {
-  position: relative;
-  background: var(--card);
-  border-radius: 16px;
-  width: 100%;
-  max-width: 460px;
-  max-height: 85vh;
-  overflow-y: auto;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
-  animation: drugModalIn 0.2s ease;
-}
-@keyframes drugModalIn {
-  from { opacity: 0; transform: translateY(20px) scale(0.97); }
-  to   { opacity: 1; transform: translateY(0) scale(1); }
-}
-.drug-modal-header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 16px 18px;
-  border-bottom: 1px solid var(--border);
-  background: var(--menu-icon-bg);
-  border-radius: 16px 16px 0 0;
-  position: sticky;
-  top: 0;
-  z-index: 1;
-}
-.drug-modal-icon { font-size: 1.4rem; }
-.drug-modal-title {
-  flex: 1;
-  font-size: 1.05rem;
-  font-weight: 800;
-  margin: 0;
-  color: var(--text);
-}
-.drug-modal-close {
-  width: 34px;
-  height: 34px;
-  min-width: 34px;
-  border: none;
-  background: var(--border);
-  border-radius: 50%;
-  cursor: pointer;
-  font-size: 1.3rem;
-  color: var(--text);
-  display: grid;
-  place-items: center;
-  transition: background 0.15s ease;
-}
-.drug-modal-close:hover { background: var(--accent); color: #fff; }
 
-.drug-modal-body {
-  padding: 16px 18px;
-}
+/* Модалка закрывается: гаснет, но клики всё ещё ловит сама */
 .drug-modal-section-title {
   font-size: 0.82rem;
   font-weight: 800;
@@ -993,14 +940,6 @@
   color: var(--text);
 }
 .drug-modal-protocol p:last-child { margin-bottom: 0; }
-
-/* Адаптивность */
-@media (max-width: 480px) {
-  .drug-modal-panel {
-    max-width: 100%;
-    max-height: 90vh;
-  }
-}
 
 /* ===== Бикарбонат: два варианта в одной карточке ===== */
 .bicarbonate-variant {
@@ -1262,18 +1201,17 @@
   border-radius: 10px;
   text-align: center;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 90px;
 }
-.defib-compact-shock {
-  border-color: #b42323;
-  background: color-mix(in srgb, #b42323 8%, var(--card));
-}
-.defib-compact-drug {
-  border-color: #c77700;
-  background: color-mix(in srgb, #c77700 8%, var(--card));
-}
+.defib-compact-shock,
+.defib-compact-drug,
 .defib-compact-max-shock {
-  border-color: #7a1f1f;
-  background: color-mix(in srgb, #7a1f1f 10%, var(--card));
+  border-color: var(--border);
+  background: var(--menu-icon-bg);
 }
 .defib-compact-step {
   font-size: 0.7rem;
@@ -1333,13 +1271,9 @@
 /* Кнопка ℹ️ в шапке блока ИНСТРУМЕНТАЛЬНАЯ ПОМОЩЬ */
 .defib-info-btn {
   margin-left: 6px;
-  background: var(--card) !important;
 }
 
 /* ===== Модалка дефибрилляции ===== */
-.defib-modal-panel {
-  max-width: 520px;
-}
 .defib-modal-indications {
   font-size: 0.88rem;
   line-height: 1.5;
@@ -1471,24 +1405,12 @@
   min-height: 90px;
 }
 
-/* Рекомендуемый размер (главная плитка) */
-.ett-recommended {
-  border-color: var(--accent) !important;
-  background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 12%, var(--card)), color-mix(in srgb, var(--accent) 5%, var(--card))) !important;
-}
-.ett-recommended .ett-single-value {
-  font-size: 1.6rem !important;
-}
-
-/* Плитки с правилами */
-.ett-rule {
-  border-color: var(--accent) !important;
-  background: color-mix(in srgb, var(--accent) 8%, var(--card)) !important;
-}
-
-/* Альтернативный расчёт */
+/* Все варианты плиток — одинаковые */
+.ett-recommended,
+.ett-rule,
 .ett-alternative {
-  background: var(--menu-icon-bg) !important;
+  border-color: var(--border);
+  background: var(--menu-icon-bg);
 }
 
 /* Элементы плитки */
@@ -1535,9 +1457,6 @@
 }
 
 /* ===== Модалка ЭТТ ===== */
-.ett-modal-panel {
-  max-width: 560px;
-}
 .ett-modal-formulas {
   display: flex;
   flex-direction: column;
@@ -1663,4 +1582,326 @@
   .ett-modal-table {
     font-size: 0.75rem;
   }
+}
+
+/* ----- Карточки «Прочее оборудование»: содержимое по центру ----- */
+
+.pediatric-equip-card {
+  text-align: center;
+}
+
+.pediatric-equip-card .equip-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.pediatric-equip-card .equip-name {
+  text-align: left;
+  font-weight: 700;
+}
+
+.pediatric-equip-card .equip-value,
+.pediatric-equip-card .equip-details,
+.pediatric-equip-card .equip-route {
+  text-align: center;
+}
+
+/* Кнопка «i» — не сжимается и не прыгает */
+.pediatric-equip-card .equip-header .drug-info-btn {
+  flex-shrink: 0;
+  margin: 0;
+}
+
+/* ----- «Прочее оборудование»: 3 колонки на широких экранах ----- */
+
+@media (min-width: 1000px) {
+  .pediatric-equipment-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* ----- «Прочее оборудование»: плашки в одну строку, 3 зоны ----- */
+
+.pediatric-equipment-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+@media (min-width: 1000px) {
+  .pediatric-equipment-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.pediatric-equip-card {
+  text-align: left;
+  padding: 0;
+}
+
+.equip-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+}
+
+/* Зона 1: название + подпись */
+.equip-zone-name {
+  flex: 1;
+  min-width: 0;
+}
+
+.equip-zone-name .equip-name {
+  font-weight: 700;
+  font-size: 0.95rem;
+  line-height: 1.3;
+}
+
+.equip-zone-name .equip-sub {
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-top: 2px;
+  line-height: 1.3;
+}
+
+/* Зона 2: значение */
+.equip-zone-value {
+  flex: 0 0 auto;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--accent, #800020);
+  white-space: nowrap;
+}
+
+/* Зона 3: кнопка i */
+.equip-row .drug-info-btn {
+  flex: 0 0 auto;
+  margin: 0;
+}
+
+/* ----- Интубация: 4 плашки на всю ширину ----- */
+
+.ett-single-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.ett-single-item {
+  width: auto;
+  max-width: none;
+  flex: 1 1 0;
+}
+
+@media (min-width: 700px) {
+  .ett-single-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* ----- Плашка, разделённая пополам (две дозировки) ----- */
+
+.split-card {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.split-half {
+  background: var(--menu-icon-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 10px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+}
+
+.split-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.split-value {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--accent, #800020);
+}
+
+.split-sub {
+  font-size: 0.78rem;
+  color: var(--muted);
+  line-height: 1.3;
+}
+
+@media (max-width: 420px) {
+  .split-card {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ----- Путь введения второй строкой под дозой ----- */
+
+.drug-route-line {
+  margin-top: 6px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--muted);
+  line-height: 1.35;
+}
+
+/* ----- Вторая строка внутри блока дозы (капли, кратность) ----- */
+
+.drug-doses {
+  flex-wrap: wrap;
+}
+
+.drug-dose-extra {
+  flex-basis: 100%;
+  margin-top: 4px;
+  font-size: 0.78rem;
+  font-weight: 400;
+  color: var(--muted);
+  line-height: 1.3;
+  text-align: center;
+}
+
+/* ----- Препараты плитками ----- */
+
+.pediatric-drugs-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+@media (max-width: 600px) {
+  .pediatric-drugs-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.pediatric-drug-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.drug-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.drug-title {
+  min-width: 0;
+}
+
+.drug-name {
+  font-size: 0.95rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.drug-form {
+  margin-top: 2px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--muted);
+  line-height: 1.2;
+}
+
+.pediatric-drug-card .drug-dose-main,
+.pediatric-drug-card .drug-dose-volume {
+  font-size: 1.15rem;
+}
+
+/* половинки внутри карточки препарата — в столбик */
+.pediatric-drug-card .split-card {
+  grid-template-columns: 1fr;
+  gap: 6px;
+}
+
+/* ----- Доза одной строкой + разведения ----- */
+
+.drug-dose-row {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.drug-dose-label-inline {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.drug-dose-val {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--accent, #800020);
+}
+
+.drug-dose-eq {
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.drug-dilute-row {
+  margin-top: 2px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--muted);
+  line-height: 1.35;
+}
+
+/* ----- Единые подписи и результаты на фоне ----- */
+
+.drug-name {
+  font-size: 1.05rem;
+}
+
+.drug-line-label {
+  margin-top: 5px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.drug-line-label:first-child {
+  margin-top: 0;
+}
+
+.drug-doses {
+  margin-top: 2px;
+  justify-content: center;
+}
+
+.drug-dose-val {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--accent, #800020);
+}
+
+.drug-dose-eq {
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.drug-dose-val-sm {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--accent, #800020);
 }

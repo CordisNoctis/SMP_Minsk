@@ -215,7 +215,6 @@
 .calc-empty-desc { font-size: 0.9rem; margin-bottom: 14px; }
 
 /* ----- Модалка фильтров ----- */
-.filters-modal-panel { max-width: 460px; }
 .filters-section { margin-bottom: 18px; }
 .filters-section-title {
   display: flex;
