@@ -36,9 +36,8 @@ var DRUGS = {
   epinephrine: {
     name: "Адреналин 0.182% - 1,0 мл",
     icon: "❤️", group: "resuscitation", order: 1,
-    ampouleConc: 1.82, ampouleConcNote: "эпинефрина гидротартрат",
-    ampouleVol: 1,
-    baseConcMgMl: 1,
+    ampouleConc: 1, ampouleVol: 1,
+    ampouleConcNote: "1 мг чистого эпинефрина в 1 мл (0,182% гидротартрат эквивалентен 0,1% по чистому веществу)",    baseConcMgMl: 1,
     baseConcNote: "= 1 мг/мл эпинефрина",
     dosePerKg: 0.01, doseUnit: "мг/кг",
     dosePerKgText: "10 мкг/кг массы тела",
@@ -50,6 +49,7 @@ var DRUGS = {
     repeatInterval: "Каждые 3–5 мин в течение всего времени СЛР",
     warning: "Более высокие разовые дозы НЕ рекомендуются. Не рекомендуются «возрастающие» дозы.",
     protocolInfo: [
+      "Расчёт ведётся по чистому эпинефрину: 1 мл ампулы 0,182% гидротартрата содержит 1 мг активного вещества. Разведение 1:10000 (1 мл + 9 мл NaCl) даёт 100 мкг/мл; доза 10 мкг/кг = 0,1 мл/кг разведённого раствора.",
       "Играет центральную роль в алгоритме терапии и должен вводиться как можно быстрее.",
       "Разовая доза для первого и последующих введений – 10 мкг/кг массы тела.",
       "Максимальная однократная доза – 1 мг (пациенты с массой тела более 40 кг).",
@@ -92,17 +92,18 @@ var DRUGS = {
     dilutionTo: null,
     dilutionDesc: "Разводить только в глюкозе 5%",
     dosePerKg: 5, doseUnit: "мг/кг",
+    maxAgeForMgKg: 10, maxDoseMg: 300, maxDoseNote: "старше 10 лет — 300 мг",
     dosePerKgText: "5 мг/кг в/в или внутрикостно",
-    maxDoseMg: 300, maxDoseNote: "старше 10 лет – 300 мг",
     diluent: "Глюкоза 5%",
     route: "В/в, внутрикостно",
     repeatInterval: "Повторяют до максимальной дозы 15 мг/кг",
     warning: "Высокий риск полной АВ-блокады. При увеличении QT > 50% от исходного или признаках АВ-блокады – прекратить введение. Применение off-label у пациентов до 3 лет.",
     protocolInfo: [
+      "Старше 10 лет — фиксированная разовая доза 300 мг.",
       "ЛП выбора для купирования желудочковых тахиаритмий во время СЛР.",
       "Дозы: внутривенно или внутрикостно 5 мг/кг.",
+      "Максимальная однократная доза — 300 мг.",
       "Повторяют до максимальной дозы 15 мг/кг.",
-      "Старше 10 лет – 300 мг.",
       "Разводят только в глюкозе 5%.",
       "Применение off-label у пациентов до 3 лет.",
       "Нежелательная реакция – высокий риск развития полной АВ-блокады.",
@@ -121,7 +122,7 @@ var DRUGS = {
     dosePerKg: 1, doseUnit: "мг/кг",
     dosePerKgText: "1 мг/кг в/в струйно",
     maxDoseMg: 100,
-    diluent: "Глюкоза 5%; NaCl 0,9%",
+    diluent: "Глюкоза 5% или NaCl 0,9%",
     route: "В/в струйно",
     repeatInterval: "Далее титрование 20–50 мкг/кг/мин",
     warning: "Возможно применение для купирования ФЖ/ЖТ без пульса. Лидокаин и амиодарон одинаково приемлемы.",
@@ -134,18 +135,14 @@ var DRUGS = {
   },
 
   sodiumBicarbonate: {
-    name: "Бикарбонат натрия",
+    name: "Бикарбонат натрия 40 мг/мл (4%)",
     icon: "🧪", group: "resuscitation", order: 5,
-    formulaMode: "baseExcess",
-    concentrations: [
-      { label: "84 мг/мл (8.4%)", conc: 84, vol: 20, ampouleConcNote: "раствор для инфузий 84 мг/мл" },
-      { label: "40 мг/мл (4%)",   conc: 40, vol: 100, ampouleConcNote: "раствор для инфузий 40 мг/мл" }
-    ],
-    ampouleConc: 84, ampouleVol: 20,
-    ampouleConcNote: "84 мг/мл (основной)",
-    baseConcMgMl: 84,
-    dosePerKg: 1, doseUnit: "ммоль/кг",
-    dosePerKgText: "1 ммоль/кг, далее 0.5 ммоль/кг через 10 мин",
+    ampouleConc: 40, ampouleVol: 100,
+    ampouleConcNote: "раствор для инфузий 40 мг/мл (4%)",
+    baseConcMgMl: 40,
+    dosePerKg: 84, doseUnit: "мг/кг",
+    dosePerKgText: "1 ммоль/кг (84 мг/кг), далее 0.5 ммоль/кг через 10 мин",
+    noDilution: true,
     maxDoseMg: null,
     diluent: "Глюкоза 5% или вода д/ин",
     route: "В/в медленно струйно (1-я половина) + капельно (2-я половина)",
@@ -187,6 +184,7 @@ var DRUGS = {
     doseAfterDilution: 0.2, doseAfterDilutionUnit: "мл/кг",
     doseAfterDilutionText: "0.2 мл/кг",
     maxDoseMg: null,
+    noDilution: true,
     diluent: "NaCl 0,9% или Глюкоза 5%",
     route: "В/в, внутрикостно",
     repeatInterval: "Дозу можно повторить через 15 мин",
@@ -211,10 +209,9 @@ var DRUGS = {
     baseConcMgMl: 100,
     dilutionTo: null,
     dilutionDesc: "Вводится в/в без разведения",
-    dosePerKg: 0.7, doseUnit: "мл/кг",
-    dosePerKgText: "0.6–0.8 мл/кг",
-    doseAfterDilution: 0.7, doseAfterDilutionUnit: "мл/кг",
-    doseAfterDilutionText: "0.6–0.8 мл/кг",
+    dosePerKg: 70, doseUnit: "мг/кг",
+    dosePerKgText: "0.6–0.8 мл/кг (среднее 0.7 мл/кг = 70 мг/кг)",
+    noDilution: true,
     maxDoseMg: null,
     diluent: "NaCl 0,9% или Глюкоза 5%",
     route: "В/в",
@@ -543,6 +540,7 @@ var DRUGS = {
   neostigmine: {
     name: "Неостигмин 0,05% - 1 мл", icon: "💉", group: "neurology", cat: "anticholinesterase", order: 4,
     formulaMode: "ageDose",
+    hideMg: true,
     ampouleConc: 0.5, ampouleVol: 1,
     bands: [
       { maxAge: 12, mgMin: 0.2, mgMax: 0.5 },
@@ -564,11 +562,12 @@ var DRUGS = {
     dosePerKg: 0.2, doseUnit: "мг/кг",
     dosePerKgText: "0,1–0,2 мг/кг в/в или в/м (ректально 0,3–0,5 мг/кг); в/в за 2–4 мин",
     maxDoseMg: 10, maxDoseNote: "первая доза не более 10 мг",
-    diluent: "NaCl 0,9% или Глюкоза 5%",
+    noDilution: true,
     route: "В/в медленно (2–4 мин), в/м, ректально",
     repeatInterval: "Судороги продолжаются через 10–15 мин — повтор 0,2–0,4 мг/кг (макс 15 мг); при необходимости через 2–4 ч",
     warning: "Первая доза не более 10 мг! Безопасность до 6 мес не установлена.",
     protocolInfo: [
+            "Стандартная спиртовая форма разведению в инфузионных растворах не подлежит — вводить медленно болюсно без разведения. Водорастворимая эмульсионная форма (при наличии): разводят в NaCl 0,9% или глюкозе 5%.",
       "Судорожный приступ / эпилептический статус: 0,1–0,2 мг/кг в/в или в/м; ректально 0,3–0,5 мг/кг; скорость в/в введения 2–4 минуты.",
       "Первая доза не должна превышать 10 мг.",
       "Если через 10–15 минут судороги продолжаются — повторно 0,2–0,4 мг/кг (максимальная повторная доза 15 мг); при необходимости повтор через 2–4 часа.",
@@ -584,12 +583,13 @@ var DRUGS = {
   epinephrineAnaphylaxis: {
     name: "Адреналин 0,182% - 1 мл", icon: "⚡", group: "allergology", cat: "vasopressor", order: 1,
     formulaMode: "epiAnaphylaxis",
-    ampouleConc: 1.82, ampouleVol: 1,
-    dosePerKgText: "В/м 0,1–0,15 мл на 10 кг; в/в 10 мкг/кг на 10–20 мл NaCl",
+    ampouleConc: 1, ampouleVol: 1,
+    ampouleConcNote: "1 мг чистого эпинефрина в 1 мл (0,182% гидротартрат эквивалентен 0,1% по чистому веществу)",    dosePerKgText: "В/м 0,1–0,15 мл на 10 кг; в/в 10 мкг/кг на 10–20 мл NaCl",
     diluent: "NaCl 0,9%",
     route: "В/м в середину переднелатеральной поверхности бедра; в/в при наличии доступа",
     warning: "Ввести НЕМЕДЛЕННО! При отсутствии ответа через 5 мин — повторная доза. При неэффективности 2 болюсов — инфузия 0,1–1 мкг/кг/мин.",
     protocolInfo: [
+      "Расчёт ведётся по чистому эпинефрину: 1 мл ампулы 0,182% гидротартрата содержит 1 мг активного вещества. Доза 10 мкг/кг соответствует 0,1 мл/кг разведения 1:10000.",
       "Анафилаксия/АШ: немедленно в/м в середину переднелатеральной поверхности бедра.",
       "Дозы: до 6 мес — 100–150 мкг (0,1–0,15 мл); 6 мес–6 лет — 150 мкг (0,15 мл); 6–12 лет — 300 мкг (0,3 мл); старше 12 лет — 500 мкг (0,5 мл); или 0,1–0,15 мл на 10 кг.",
       "При наличии венозного доступа — в/в в разведении на 10–20 мл NaCl 9 мг/мл в дозе 10 мкг/кг.",
@@ -650,6 +650,7 @@ var DRUGS = {
   cetirizine: {
     name: "Цетиризин капли 1% - 20 мл", icon: "💧", group: "allergology", cat: "antihistamine2", order: 5,
     formulaMode: "ageDose",
+    showDrops: true,
     ampouleConc: 10,
     bands: [
       { maxAge: 1, mgMin: 2.5, mgMax: 2.5, drops: "5 капель"},
@@ -682,6 +683,7 @@ var DRUGS = {
   diphenhydramine: {
     name: "Дифенгидрамин 1% - 1 мл", icon: "💉", group: "allergology", cat: "antihistamine1", order: 8,
     formulaMode: "ageDose",
+    hideMg: true,
     ampouleConc: 10,
     bands: [
       { maxAge: 0.583, mgMin: 0, mgMax: 0},
@@ -798,6 +800,8 @@ var DRUGS = {
   budesonide: {
     name: "Будесонид 0,05% - 2 мл", icon: "🌬️", group: "infectious", cat: "inhaledSteroid", order: 8,
     formulaMode: "ageDose",
+    hideMg: true,
+    hideFreq: true,
     ampouleConc: 0.5,
     bands: [
       { maxAge: 1, mgMin: 2, mgMax: 2, freq: "однократно или 1 мг × 2 с интервалом 30 мин (до 1 года)" },
@@ -814,23 +818,6 @@ var DRUGS = {
       "Ингаляция — альтернативный вариант, особенно при рвоте и недостаточности в/в ГКС."
     ]
   },
-  epinephrineCroup: {
-    name: "Адреналин 0,182% - 1 мл", icon: "🌬️", group: "infectious", cat: "bronchodilator", order: 9,
-    formulaMode: "ageDose",
-    ampouleConc: 1.82,
-    bands: [
-      { maxAge: 999, mgMin: 1.82, mgMax: 1.82, freq: "1 мл развести в 5 мл NaCl; ингаляция 5–10 мин, ≥ 2–3 раз/сут" }
-    ],
-    diluent: "NaCl 0,9% (для небулайзера)",
-    route: "Ингаляционно через небулайзер",
-    warning: "Круп: эффект наступает раньше ГКС. Перерыв между ингаляциями разных ЛП ≥ 15 мин.",
-    protocolInfo: [
-      "Круп (стенозирующий ларинготрахеит): ампулу эпинефрина 1,82 мг/мл 1 мл развести в 5 мл NaCl.",
-      "Ингаляция через небулайзер 5–10 мин, не менее 2–3 раз в сутки, можно чаще.",
-      "Перерыв между ингаляциями разных ЛП ≥ 15 мин.",
-      "Действие ингаляционного эпинефрина наступает значительно раньше, чем ГКС."
-    ]
-  },
 };
 
 // ===== Группы препаратов по Постановлению № 118 =====
@@ -841,7 +828,6 @@ var DRUG_GROUPS = [
   { id: "neurology",       title: "НЕВРОЛОГИЯ",                    icon: "🧠", color: "#6a1b9a" },
   { id: "allergology",     title: "АЛЛЕРГОЛОГИЯ",                  icon: "🤧", color: "#e65100" },
   { id: "infectious",      title: "ИНФЕКЦИОННЫЕ ЗАБОЛЕВАНИЯ",      icon: "🦠", color: "#4e342e" },
-  { id: "toxicology",      title: "ТОКСИКОЛОГИЯ",                  icon: "☠️", color: "#37474f" }
 ];
 
   var EQUIP_COMPUTED = {};
@@ -1447,6 +1433,13 @@ var DRUG_GROUPS = [
     var calcMg = dosePerKg * w;
     var minDose = d.minDoseMg || 0;
     var isMax = d.maxDoseMg && calcMg > d.maxDoseMg;
+    if (d.maxAgeForMgKg && d.maxDoseMg) {
+      var ageYears = getEffectiveAge();
+      if (ageYears !== null && ageYears >= d.maxAgeForMgKg) {
+        calcMg = d.maxDoseMg;
+        isMax = true;
+      }
+    }
     var doseMg = d.maxDoseMg ? Math.min(Math.max(calcMg, minDose), d.maxDoseMg) : Math.max(calcMg, minDose);
 
     // Объём из ампулы
@@ -1466,25 +1459,8 @@ var DRUG_GROUPS = [
     var mainDoseLine =
       '<div class="drug-line-label">Разовая доза</div>' +
       '<div class="drug-doses">' +
-        '<span class="drug-dose-val">' + doseR + ' ' + unitLabel + '</span>' +
-        '<span class="drug-dose-eq">=</span>' +
         '<span class="drug-dose-val">' + volR + ' мл</span>' +
       '</div>';
-    if (d.route) {
-      mainDoseLine += '<div class="drug-line-label">Путь введения</div>' +
-        '<div class="drug-doses"><span class="drug-dose-val-sm">' + CU.escapeHtml(d.route) + '</span></div>';
-    }
-    if (contentMg > 0 && !d.noDilution) {
-      var diluent = d.diluent || "NaCl 0.9%";
-      mainDoseLine +=
-        '<div class="drug-line-label">Разведение</div>' +
-        '<div class="drug-doses"><span class="drug-dose-val-sm">' + CU.escapeHtml(diluent) + '</span></div>' +
-        '<div class="drug-line-label">Разведение до 10 мл</div>' +
-        '<div class="drug-doses"><span class="drug-dose-val">' + fmt(doseMg * 10 / contentMg) + ' мл</span></div>' +
-        '<div class="drug-line-label">Разведение до 20 мл</div>' +
-        '<div class="drug-doses"><span class="drug-dose-val">' + fmt(doseMg * 20 / contentMg) + ' мл</span></div>';
-    }
-
     var warning = d.warning ? '<div class="drug-warning">⚠️ ' + CU.escapeHtml(d.warning) + '</div>' : "";
     var showExtra = showExtraInfo(d);
 
@@ -1512,20 +1488,13 @@ var DRUG_GROUPS = [
     } else {
       imDose = round2(w * 0.01) + "–" + round2(w * 0.015) + " мл";
     }
-    var ivMg = round2(0.01 * w);
     var warning = d.warning ? '<div class="drug-warning">⚠️ ' + CU.escapeHtml(d.warning) + '</div>' : "";
     return '<div class="pediatric-drug-card">' +
       drugHeaderHtml(id, d) +
-      '<div class="split-card">' +
-        '<div class="split-half">' +
-          '<div class="split-title">В/м в бедро</div>' +
-          '<div class="split-value">' + imDose + '</div>' +
-          '<div class="split-sub">повтор через 5 мин при отсутствии ответа</div>' +
-        '</div>' +
-        '<div class="split-half">' +
-          '<div class="split-title">В/в (при доступе)</div>' +
-          '<div class="split-value">' + ivMg + ' мг</div>' +
-          '<div class="split-sub">10 мкг/кг на 10–20 мл NaCl 0,9%</div>' +
+      '<div class="drug-dose-section">' +
+        '<div class="drug-line-label">Разовая доза в/м в бедро</div>' +
+        '<div class="drug-doses">' +
+          '<span class="drug-dose-val">' + imDose + '</span>' +
         '</div>' +
       '</div>' +
       (d.route && showExtraInfo(d) ? '<div class="drug-dilution-composition">Способ введения: ' + CU.escapeHtml(d.route) + '</div>' : '') +
@@ -1564,19 +1533,13 @@ var DRUG_GROUPS = [
   function renderRate(id, w) {
     var d = DRUGS[id];
     var lo = round2(d.rateMin * w);
-    var hi = round2(d.rateMax * w);
     var warning = d.warning ? '<div class="drug-warning">⚠️ ' + CU.escapeHtml(d.warning) + '</div>' : "";
     return '<div class="pediatric-drug-card">' +
       drugHeaderHtml(id, d) +
-      '<div class="split-card">' +
-        '<div class="split-half">' +
-          '<div class="split-title">Старт ' + d.rateMin + ' мкг/кг/мин</div>' +
-          '<div class="split-value">' + lo + ' мкг/мин</div>' +
-        '</div>' +
-        '<div class="split-half">' +
-          '<div class="split-title">До ' + d.rateMax + ' мкг/кг/мин</div>' +
-          '<div class="split-value">' + hi + ' мкг/мин</div>' +
-          '<div class="split-sub">титровать по 0,05–0,1 мкг/кг/мин</div>' +
+      '<div class="drug-dose-section">' +
+        '<div class="drug-line-label">Старт ' + d.rateMin + ' мкг/кг/мин</div>' +
+        '<div class="drug-doses">' +
+          '<span class="drug-dose-val">' + lo + ' мкг/мин</span>' +
         '</div>' +
       '</div>' +
       (d.route && showExtraInfo(d) ? '<div class="drug-dilution-composition">Способ введения: ' + CU.escapeHtml(d.route) + '</div>' : '') +
@@ -1605,15 +1568,31 @@ var DRUG_GROUPS = [
       }
     }
     var extraParts = [];
-    if (band && band.drops) extraParts.push(band.drops);
-    if (band && band.freq) extraParts.push(band.freq);
+    if (band && band.drops && !d.showDrops) extraParts.push(band.drops);
+    if (band && band.freq && !d.hideFreq) extraParts.push(band.freq);
     var extraLine = extraParts.length ? '<div class="drug-dose-extra">' + CU.escapeHtml(extraParts.join(" · ")) + '</div>' : '';
-    var mainDoseLine = '<div class="drug-doses">' +
-      '<div class="drug-dose-item"><div class="drug-dose-main">' + mgLine + '</div><div class="drug-dose-unit">мг</div></div>' +
-      '<div class="drug-dose-separator">=</div>' +
-      '<div class="drug-dose-item"><div class="drug-dose-volume">' + mlLine + '</div><div class="drug-dose-unit">мл</div></div>' +
-      extraLine +
-    '</div>';
+    var mainDoseLine;
+    if (d.showDrops && band && band.drops) {
+      var dropsText = band.drops.replace(' капель', ' кап.').replace(' капли', ' кап.').replace(' капля', ' кап.');
+      mainDoseLine = '<div class="drug-doses">' +
+        '<div class="drug-dose-item"><div class="drug-dose-main">' + dropsText + '</div></div>' +
+        '<div class="drug-dose-separator">=</div>' +
+        '<div class="drug-dose-item"><div class="drug-dose-volume">' + mlLine + '</div><div class="drug-dose-unit">мл</div></div>' +
+        extraLine +
+      '</div>';
+    } else if (d.hideMg) {
+      mainDoseLine = '<div class="drug-doses">' +
+        '<div class="drug-dose-item"><div class="drug-dose-volume">' + mlLine + '</div><div class="drug-dose-unit">мл</div></div>' +
+        extraLine +
+      '</div>';
+    } else {
+      mainDoseLine = '<div class="drug-doses">' +
+        '<div class="drug-dose-item"><div class="drug-dose-main">' + mgLine + '</div><div class="drug-dose-unit">мг</div></div>' +
+        '<div class="drug-dose-separator">=</div>' +
+        '<div class="drug-dose-item"><div class="drug-dose-volume">' + mlLine + '</div><div class="drug-dose-unit">мл</div></div>' +
+        extraLine +
+      '</div>';
+    }
     return '<div class="pediatric-drug-card">' +
       drugHeaderHtml(id, d) +
       '<div class="drug-dose-section">' +
@@ -1628,11 +1607,8 @@ var DRUG_GROUPS = [
     var age = getEffectiveAge();
     var years = age !== null ? Math.max(1, Math.floor(age)) : null;
     var doseMl = years !== null ? Math.min(round1(d.dosePerYearMl * years), d.maxDoseMl || 999) : null;
-    var doseMg = doseMl !== null ? round2(doseMl * d.ampouleConc) : null;
     var volR = doseMl !== null ? (doseMl < 0.1 ? round3(doseMl) : round2(doseMl)) : null;
     var mainDoseLine = '<div class="drug-doses">' +
-      '<div class="drug-dose-item"><div class="drug-dose-main">' + (doseMg !== null ? doseMg : "—") + '</div><div class="drug-dose-unit">мг</div></div>' +
-      '<div class="drug-dose-separator">=</div>' +
       '<div class="drug-dose-item"><div class="drug-dose-volume">' + (volR !== null ? volR : "—") + '</div><div class="drug-dose-unit">мл</div></div>' +
     '</div>';
     return '<div class="pediatric-drug-card">' +
@@ -1649,19 +1625,14 @@ var DRUG_GROUPS = [
     var age = getEffectiveAge();
     var years = age !== null ? Math.max(1, Math.floor(age)) : null;
     var doseMl = years !== null ? Math.min(round1(d.dosePerYearMl * years), d.maxDoseMl || 999) : null;
+    var volR = doseMl !== null ? (doseMl < 0.1 ? round3(doseMl) : round2(doseMl)) : null;
     var warning = d.warning ? '<div class="drug-warning">⚠️ ' + CU.escapeHtml(d.warning) + '</div>' : "";
     return '<div class="pediatric-drug-card">' +
       drugHeaderHtml(id, d) +
-      '<div class="split-card">' +
-        '<div class="split-half">' +
-          '<div class="split-title">Доза</div>' +
-          '<div class="split-value">' + (doseMl !== null ? doseMl + ' мл' : '—') + '</div>' +
-          '<div class="split-sub">' + d.dosePerYearMl + ' мл на год жизни</div>' +
-        '</div>' +
-        '<div class="split-half">' +
-          '<div class="split-title">Возраст</div>' +
-          '<div class="split-value">' + (years !== null ? years : '—') + ' лет</div>' +
-          '<div class="split-sub">' + (d.maxDoseMl ? 'не более ' + d.maxDoseMl + ' мл на введение' : 'разовая доза по приказу') + '</div>' +
+      '<div class="drug-dose-section">' +
+        '<div class="drug-line-label">Разовая доза</div>' +
+        '<div class="drug-doses">' +
+          '<span class="drug-dose-val">' + (volR !== null ? volR : "—") + ' мл</span>' +
         '</div>' +
       '</div>' +
       (d.route && showExtraInfo(d) ? '<div class="drug-dilution-composition">Способ введения: ' + CU.escapeHtml(d.route) + '</div>' : '') +
@@ -1736,6 +1707,12 @@ var DRUG_GROUPS = [
         var yearsCalc = Math.max(1, Math.floor(ageYears));
         var mlCalc = Math.min(round1(d.dosePerYearMl * yearsCalc), d.maxDoseMl || 999);
         calcMg = mlCalc * (d.ampouleConc || 0);
+      }
+    }
+    if (d.maxAgeForMgKg && d.maxDoseMg) {
+      var ageYearsM = getEffectiveAge();
+      if (ageYearsM !== null && ageYearsM >= d.maxAgeForMgKg) {
+        calcMg = d.maxDoseMg;
       }
     }
     var minDose = d.minDoseMg || 0;
@@ -3904,439 +3881,6 @@ function openDefibModal(w) {
                 '<li>Гипотонические растворы (NaCl 0,45%, NaCl 0,225%) повышают риск гипонатриемии у госпитализированных детей — AAP рекомендует исключительно изотонические растворы для поддерживающей терапии детей ≥ 28 дней</li>' +
                 '<li>При суммарном болюсе ≥ 40–60 мл/кг без ответа на терапию — немедленная консультация реаниматолога, исключение септического шока, кардиогенной причины, геморрагии</li>' +
                 '<li>Объём поддерживающей инфузии рассчитывается по идеальной массе тела у детей с ожирением — фактическая масса приводит к значимому превышению безопасного объёма и риску гипергидратации</li>' +
-              '</ul>' +
-            '</div>' +
-          '</div>' +
-        '</section>' +
-      '</div>';
-
-    var existing = document.getElementById("drugInfoModal");
-    if (existing) existing.remove();
-
-    document.body.insertAdjacentHTML("beforeend", modalHtml);
-    document.body.classList.add("modal-open");
-
-    document.getElementById("drugInfoModalClose").addEventListener("click", closeDrugInfoModal);
-    document.querySelector("#drugInfoModal .modal-backdrop").addEventListener("click", closeDrugInfoModal);
-  }
-
-    function openInfectModal() {
-    var modalHtml =
-      '<div class="modal" id="drugInfoModal">' +
-        '<div class="modal-backdrop"></div>' +
-        '<section class="modal-panel modal-panel--ett">' +
-          '<div class="modal-header">' +
-            '<h2 class="modal-title"><span class="modal-title-icon">🦠</span>Инфекционные заболевания</h2>' +
-            '<button type="button" class="modal-close" id="drugInfoModalClose" aria-label="Закрыть">&times;</button>' +
-          '</div>' +
-          '<div class="modal-body">' +
-
-            '<div class="drug-modal-section-title">🧠 Менингококковая инфекция (п. 56)</div>' +
-            '<div class="medref-sub-title">Ранняя диагностика</div>' +
-            '<ul class="medref-list">' +
-              '<li>Острое развитие на фоне предшествующей инфекции или среди полного здоровья</li>' +
-              '<li>Общемозговая симптоматика: интенсивная головная боль, «мозговая» рвота, при тяжёлом течении — нарушения сознания, бред, галлюцинации, возбуждение, судороги</li>' +
-              '<li>Менингеальная симптоматика: кожная гиперестезия, ригидность затылочных мышц, симптомы Кернига и Брудзинского, патологические рефлексы</li>' +
-              '<li>До 1 года: родничковая триада (выбухание, напряжённость, отсутствие пульсации), симптом подвешивания (Лесажа); в тяжёлых случаях — поза «легавой собаки» / «взведённого курка»</li>' +
-              '<li>Общеинфекционная: выраженная гипертермия, озноб, интоксикация, кожные высыпания</li>' +
-            '</ul>' +
-            '<div class="medref-alert medref-alert-danger">Угрожающие синдромы: инфекционно-токсический шок (после сыпи или без неё) и отёк головного мозга с дислокацией ствола (нарушение сознания, гипертермия, судороги, относительная брадикардия и наклонность к повышению АД, в терминальной стадии — абсолютная брадикардия и аритмия дыхания). При подозрении — вызов реанимационной бригады СМП.</div>' +
-            '<div class="medref-sub-title">Неотложная помощь (алгоритм)</div>' +
-            '<ol class="medref-list">' +
-              '<li>В/в или внутрикостный доступ (при 2 неудачных пункциях вен — внутрикостный)</li>' +
-              '<li>Увлажнённый кислород через носовые катетеры или маску 1–2 л/мин (до 3 лет — 0,5 л/мин), FiO₂ до 40%</li>' +
-              '<li>Гормонотерапия: преднизолон 3–5 мг/кг или дексаметазон 0,15 мг/кг в/в медленно струйно — особенно важно ДО манифестации СШ</li>' +
-              '<li>Противошоковая инфузия (первый час): Рингер-лактат или NaCl 9 мг/мл — 10 мл/кг за 1 час (≥ 7 лет), 10–15 мл/кг за 1 час (0–6 лет); нет улучшения — повтор 10 мл/кг за 30 мин; при транспортировке &gt; 30 мин — до 3 раз (общий объём до 60 мл/кг)</li>' +
-              '<li>Гипертермия — парацетамол или ибупрофен (дозы на карточках); при невозможности приёма — парацетамол в/в 15 мг/кг</li>' +
-              '<li>Судороги — диазепам 0,1 мл/кг (макс 2 мл) в/в медленно (≤ 5 мг/мин): 1 мес–5 лет 0,1–0,3 мг/кг макс 5 мг; ≥ 5 лет 1 мг каждые 2–5 мин макс 10 мг; повтор через 2–4 ч</li>' +
-              '<li>Антибиотики: только на фоне противошоковой терапии, в/в медленно в течение часа. Транспортировка &lt; 1 часа — воздержаться; ≥ 1 часа — не ранее 60 мин от начала помощи при стабилизации гемодинамики: цефтриаксон 50 мг/кг в/в капельно ≥ 30 мин или цефотаксим 50 мг/кг в/в; при аллергии на бета-лактамы — ципрофлоксацин 10 мг/кг в/в капельно 30 мин</li>' +
-            '</ol>' +
-
-            '<div class="drug-modal-section-title">💧 ОКИ и обезвоживание (п. 57)</div>' +
-            '<div class="medref-table-wrap"><table class="medref-table">' +
-              '<thead><tr><th>Степень</th><th>Потеря массы</th><th>Признаки (2 и более)</th></tr></thead>' +
-              '<tbody>' +
-                '<tr><td>I (лёгкая)</td><td>≤ 5%</td><td>Жажда, лёгкая сухость слизистых (непостоянно); тургор и диурез нормальны</td></tr>' +
-                '<tr><td>II (средняя, IIА 6–7% / IIВ 8–9%)</td><td>6–9%</td><td>Беспокойство; запавшие глаза; пьёт жадно; складка расправляется медленно; умеренная тахикардия</td></tr>' +
-                '<tr><td>III (тяжёлая)</td><td>&gt; 10%</td><td>Заторможенность/без сознания; запавшие глаза; не может пить; складка &gt; 2 с; нестабильная гемодинамика</td></tr>' +
-              '</tbody>' +
-            '</table></div>' +
-            '<div class="medref-sub-title">Инфузионная терапия</div>' +
-            '<ul class="medref-list">' +
-              '<li>Тяжёлое обезвоживание с гипоперфузией: болюс изотонического раствора 10 мл/кг за 1 час</li>' +
-              '<li>Гиповолемический шок: 20 мл/кг за 1 час под контролем АД, ЧСС, диуреза</li>' +
-              '<li>Без шока: до 1 года — 30 мл/кг за 1 час, затем 70 мл/кг за 5 часов; старше 1 года — 30 мл/кг за 30 мин, затем 70 мл/кг за 2,5 часа</li>' +
-              '<li>Растворы: Рингер-лактат / Рингер-ацетат, при отсутствии — NaCl 9 мг/мл; гипотонические (глюкоза, NaCl 0,18%) ЗАПРЕЩЕНЫ</li>' +
-              '<li>Одновременно оральная регидратация (объёмы за первые 4 ч — на карточке регидранта); оценка состояния каждые 15–30 мин</li>' +
-            '</ul>' +
-            '<div class="medref-alert medref-alert-danger">Противопоказаны: прессорные амины (норэпинефрин) при гиповолемическом шоке (кардиотоническая терапия — только в ОРИТ) и ГКС.</div>' +
-            '<div class="medref-sub-title">Показания к госпитализации</div>' +
-            '<ul class="medref-list">' +
-              '<li>Выраженный токсикоз (лихорадка, судороги, нарушение сознания)</li>' +
-              '<li>Признаки эксикоза у детей раннего возраста</li>' +
-              '<li>Снижение диуреза или отсутствие сведений о нём</li>' +
-              '<li>Повторная рвота за последние 8–12 ч, мешающая оральной регидратации</li>' +
-              '<li>Обильный жидкий стул более 5 раз за последние 12 ч</li>' +
-            '</ul>' +
-
-            '<div class="drug-modal-section-title">🌬️ Острый стенозирующий ларинготрахеит (круп, п. 58)</div>' +
-            '<div class="medref-alert medref-alert-warning">Не провоцировать дополнительный стресс — возможна рефлекторная остановка сердца при инвазивных мероприятиях (осмотр зева, в/в доступ). Седативные ЛП ПРОТИВОПОКАЗАНЫ.</div>' +
-            '<div class="medref-table-wrap"><table class="medref-table">' +
-              '<thead><tr><th>Степень стеноза</th><th>Баллы</th><th>Клиника</th></tr></thead>' +
-              '<tbody>' +
-                '<tr><td>I (компенсация)</td><td>&lt; 2</td><td>Редкий лающий кашель, нет стридора в покое, слабое участие вспомогательной мускулатуры</td></tr>' +
-                '<tr><td>II (субкомпенсация)</td><td>3–7</td><td>Частый лающий кашель, стридор в покое, умеренное участие вспомогательной мускулатуры, беспокойство, цианоз носогубного треугольника, тахикардия</td></tr>' +
-                '<tr><td>III (декомпенсация)</td><td>8–11</td><td>Резкое беспокойство, бледность, стойкий цианоз, ДН в покое, западение податливых мест, потливость, пульс слабого наполнения</td></tr>' +
-                '<tr><td>IV (асфиксия)</td><td>&gt; 12</td><td>Вялость, снижение ЧД или апноэ, нарушение сознания, бледно-серые кожные покровы, брадикардия, непроизвольные дефекация и мочеиспускание</td></tr>' +
-              '</tbody>' +
-            '</table></div>' +
-            '<div class="medref-sub-title">Тактика</div>' +
-            '<ul class="medref-list">' +
-              '<li><strong>Стеноз I–II:</strong> оксигенотерапия (цель SpO₂ &gt; 91%); холодный влажный воздух; дексаметазон 0,2 мг/кг в/в медленно (или внутрь/в/м 0,2–0,4 мг/кг/сут); эпинефрин через небулайзер 1 мл + 5 мл NaCl, 5–10 мин, ≥ 2–3 раз/сут</li>' +
-              '<li><strong>Стеноз II–III:</strong> оксигенотерапия; преднизолон 2–3 мг/кг в/м или в/в ИЛИ дексаметазон 0,5–0,6 мг/кг в/м или в/в; будесонид ингаляционно 2 мг (до 1 года) однократно или 1 мг × 2 с интервалом 30 мин; 2–7 лет 200–400 мкг/сут, &gt; 7 лет 200–800 мкг/сут (макс 800 мкг/сут), повтор каждые 12 ч до 36 ч</li>' +
-              '<li>Госпитализация обязательна: I–II степень — инфекционное отделение; II–III — ОРИТ</li>' +
-            '</ul>' +
-
-            '<div class="drug-modal-section-title">🌡️ Лихорадка (п. 59)</div>' +
-            '<div class="medref-sub-title">Критерии лихорадки по месту измерения</div>' +
-            '<p class="medref-p">Ректально &gt; 38,0 °C; орально &gt; 37,6 °C; аксиллярно &gt; 37,5 °C. До 3 мес — только ректально (противопоказано при нейтропении); 3 мес–3 года — ректально или аксиллярно; 4–5 лет — ректально, орально или аксиллярно; старше 5 лет — орально или аксиллярно.</p>' +
-            '<div class="medref-table-wrap"><table class="medref-table">' +
-              '<thead><tr><th>Зона «светофора»</th><th>Ключевые признаки</th><th>Действия</th></tr></thead>' +
-              '<tbody>' +
-                '<tr><td>🟢 Зелёная (низкий риск)</td><td>Нормальный цвет кожи, активен, дыхание нормальное, влажные слизистые</td><td>Помощь амбулаторно / стационарно / вне организации</td></tr>' +
-                '<tr><td>🟡 Жёлтая (средний риск)</td><td>Бледность, снижение активности, тахипноэ (&gt; 50/мин 6–12 мес, &gt; 40/мин &gt; 12 мес), тахикардия по возрастам, капиллярный тест 3 с, возраст 3–6 мес + T 39 °C, лихорадка &gt; 5 сут</td><td>Доставить в больничную организацию</td></tr>' +
-                '<tr><td>🔴 Красная (высокий риск)</td><td>Мраморность/цианоз, не реагирует, тахипноэ ≥ 60/мин, втяжение межреберий, &lt; 3 мес + T 38 °C, не бледнеющая сыпь, выбухающий родничок, ригидность затылка, статус/фокальные судороги</td><td>Опасность для жизни — неотложная помощь; без опасности — госпитализация в течение 2 часов</td></tr>' +
-              '</tbody>' +
-            '</table></div>' +
-            '<div class="medref-sub-title">Показания к жаропонижающей терапии</div>' +
-            '<ul class="medref-list">' +
-              '<li>Аксиллярная температура выше 39,0 °C; все случаи лихорадки от 39 °C вне зависимости от возраста</li>' +
-              '<li>До 38 °C: фебрильные судороги в анамнезе, ВПС, перинатальные поражения ЦНС, эпилепсия, онкопатология, внутричерепная и артериальная гипертензия, гидроцефалия, пороки сердца</li>' +
-              '<li>Умеренная лихорадка у пациентов первых 3 месяцев жизни и до 3 лет с последствиями перинатального повреждения ЦНС</li>' +
-              '<li>Все случаи «белой» лихорадки</li>' +
-            '</ul>' +
-            '<div class="medref-sub-title">Терапия</div>' +
-            '<ul class="medref-list">' +
-              '<li>Раскрыть пациента; парацетамол 10–15 мг/кг внутрь/ректально или ибупрофен 5–10 мг/кг (старше 6 мес); при невозможности — парацетамол в/в 15 мг/кг (с 12 мес)</li>' +
-              '<li>Повторно не ранее чем через 4–5 ч; при неэффективности — комбинация парацетамол + ибупрофен с 3 лет</li>' +
-              '<li>Ацетилсалициловая кислота и нимесулид у детей НЕ рекомендуются; метамизол — по возрастным дозам в/м или в/в</li>' +
-              '<li>Судорожный синдром — диазепам 0,1 мл/кг (макс 2 мл) в/в медленно; ректально 0,5 мг/кг; при продолжающихся судорогах через 10 мин — повтор (макс повторная 15 мг)</li>' +
-              '<li>Физические методы охлаждения — только при гипертермии/перегревании, однократно не более 30 мин</li>' +
-              '<li>Эффективность: снижение аксиллярной T на 0,5 °C за 30 мин; переход «белой» лихорадки в «красную»; при тепловом ударе жаропонижающие неэффективны</li>' +
-            '</ul>' +
-
-            '<div class="drug-modal-section-title">🛡️ Key Safety Notes</div>' +
-            '<div class="medref-alert medref-alert-warning">' +
-              '<ul>' +
-                '<li>Менингококцемия: антибиотик — только на фоне противошоковой терапии; быстрое в/в введение усиливает СШ; при транспортировке &lt; 1 часа — воздержаться</li>' +
-                '<li>ОКИ: ГКС и прессорные амины противопоказаны; гипотонические растворы запрещены</li>' +
-                '<li>Круп: седативные ЛП противопоказаны; не провоцировать стресс (риск рефлекторной остановки сердца)</li>' +
-                '<li>Лихорадка: ацетилсалициловая кислота и нимесулид у детей не применяются</li>' +
-                '<li>Геморрагическая сыпь на фоне лихорадки — исключить менингококцемию</li>' +
-              '</ul>' +
-            '</div>' +
-          '</div>' +
-        '</section>' +
-      '</div>';
-
-    var existing = document.getElementById("drugInfoModal");
-    if (existing) existing.remove();
-
-    document.body.insertAdjacentHTML("beforeend", modalHtml);
-    document.body.classList.add("modal-open");
-
-    document.getElementById("drugInfoModalClose").addEventListener("click", closeDrugInfoModal);
-    document.querySelector("#drugInfoModal .modal-backdrop").addEventListener("click", closeDrugInfoModal);
-  }
-
-    function openEndoModal() {
-    var modalHtml =
-      '<div class="modal" id="drugInfoModal">' +
-        '<div class="modal-backdrop"></div>' +
-        '<section class="modal-panel modal-panel--ett">' +
-          '<div class="modal-header">' +
-            '<h2 class="modal-title"><span class="modal-title-icon">🩸</span>Диабетический кетоацидоз · гипогликемия</h2>' +
-            '<button type="button" class="modal-close" id="drugInfoModalClose" aria-label="Закрыть">&times;</button>' +
-          '</div>' +
-          '<div class="modal-body">' +
-
-            '<div class="drug-modal-section-title">⚠️ Диабетический кетоацидоз (ДКА) и кетоацидотическая кома (п. 54)</div>' +
-            '<div class="medref-alert medref-alert-danger">Пациент должен быть незамедлительно госпитализирован в отделение интенсивной терапии. Оптимально — в первые 60 минут после установления диагноза. При поздней госпитализации и неправильной терапии может развиться отёк головного мозга и лёгких.</div>' +
-            '<div class="medref-sub-title">Неотложная помощь на догоспитальном этапе</div>' +
-            '<ol class="medref-list">' +
-              '<li>Обеспечить проходимость ВДП, оксигенотерапия (кислород через лицевую маску или носовые канюли потоком 4 л/мин)</li>' +
-              '<li>Определить уровень глюкозы в крови</li>' +
-              '<li>Обеспечить венозный доступ и начать инфузионную терапию: при гиповолемическом шоке — NaCl 9 мг/мл 10–20 мл/кг в час за 30–40 мин; при дегидратации и неадекватной периферической перфузии — 10 мл/кг в час; при гемодинамике в пределах ±10–15% от возрастной нормы — скорость инфузии в объёме часовой жидкости поддержания</li>' +
-              '<li>Обеспечить выполнение ЭКГ, гемодинамических показателей (АД, ЧСС) и функции внешнего дыхания (ЧД и SaO₂)</li>' +
-              '<li>При диабетическом кетоацидозе часто имеет место выраженная гипервентиляция, проведение ИВЛ на догоспитальном этапе не требуется</li>' +
-            '</ol>' +
-            '<div class="medref-alert medref-alert-warning"><strong>Инсулинотерапия на догоспитальном этапе НЕ проводится</strong> — высока вероятность развития гипогликемической комы на фоне диабетического кетоацидоза. В стационаре болюсное введение инсулина в/в или п/к не используется; инсулин назначается только в виде непрерывной инфузии в дозе 0,1–0,025 ЕД/кг/час, но не ранее чем через час от начала внутривенной инфузионной терапии.</div>' +
-
-            '<div class="drug-modal-section-title">🍬 Гипогликемия и гипогликемическая кома (п. 55)</div>' +
-            '<p class="medref-p">Уровень гликемии <strong>ниже 3,6 ммоль/л (65 мг%)</strong> определяется как гипогликемия. Пороговый для начала лечения у пациентов с сахарным диабетом — <strong>ниже 3,9 ммоль/л (70 мг%)</strong>. Цель лечения — повысить уровень глюкозы на 3–4 ммоль/л (54–70 мг%).</p>' +
-            '<div class="medref-sub-title">Неотложная помощь</div>' +
-            '<ol class="medref-list">' +
-              '<li>При первых (клинических и лабораторных) признаках гипогликемии — приём легкоусвояемых углеводов: таблетки/порошки глюкозы до <strong>0,3 г/кг</strong> массы тела ИЛИ сладкое питьё (100 мл сока, колы, лимонада, сладкий чай с 1–2 кусочками сахара)</li>' +
-              '<li>При отсутствии положительной динамики через 10–15 мин — повторный приём легкоусвояемых углеводов</li>' +
-              '<li>При улучшении состояния (нормализация гликемии) — приём сложных углеводов (фрукты, хлеб, молоко, каши) для профилактики рецидива</li>' +
-              '<li>При тяжёлой гипогликемии — <strong>глюкоза 10%</strong> (100 мг/мл) в дозе <strong>2 мл/кг в/в струйно медленно</strong> до полного восстановления сознания</li>' +
-              '<li>Если установить венозную систему невозможно — подача раствора глюкозы 10% через назогастральный зонд</li>' +
-              '<li>При отсутствии сознания — срочная госпитализация</li>' +
-            '</ol>' +
-            '<div class="medref-step-info">Бригада СМП обеспечивает поддержание витальных функций пациента (стабильный уровень АД, ЧСС, ЧД) и транспортировку в приёмное отделение ближайшей больничной организации.</div>' +
-
-            '<div class="drug-modal-section-title">📊 Сводная таблица</div>' +
-            '<div class="medref-table-wrap"><table class="medref-table">' +
-              '<thead><tr><th>Состояние</th><th>Тактика</th><th>Госпитализация</th></tr></thead>' +
-              '<tbody>' +
-                '<tr><td>ДКА / кетоацидотическая кома</td><td>Кислород 4 л/мин; NaCl 10–20 мл/кг/ч; инсулин НЕ вводить</td><td>Незамедлительно в ОРИТ (первые 60 мин)</td></tr>' +
-                '<tr><td>Лёгкая гипогликемия (в сознании)</td><td>Глюкоза таблетки 0,3 г/кг или сладкое питьё; повтор через 10–15 мин при отсутствии эффекта; затем сложные углеводы</td><td>При отсутствии улучшения</td></tr>' +
-                '<tr><td>Тяжёлая гипогликемия (потеря сознания)</td><td>Глюкоза 10% 2 мл/кг в/в медленно или через назогастральный зонд</td><td>Срочная</td></tr>' +
-              '</tbody>' +
-            '</table></div>' +
-
-            '<div class="drug-modal-section-title">🛡️ Key Safety Notes</div>' +
-            '<div class="medref-alert medref-alert-warning">' +
-              '<ul>' +
-                '<li>При диабетическом кетоацидозе инсулин на догоспитальном этапе НЕ вводится — риск гипогликемической комы</li>' +
-                '<li>Госпитализация при ДКА — в первые 60 минут; при поздней госпитализации риск отёка головного мозга и лёгких</li>' +
-                '<li>При тяжёлой гипогликемии без сознания — срочная госпитализация</li>' +
-                '<li>После купирования гипогликемии — сложные углеводы для профилактики рецидива</li>' +
-              '</ul>' +
-            '</div>' +
-          '</div>' +
-        '</section>' +
-      '</div>';
-
-    var existing = document.getElementById("drugInfoModal");
-    if (existing) existing.remove();
-
-    document.body.insertAdjacentHTML("beforeend", modalHtml);
-    document.body.classList.add("modal-open");
-
-    document.getElementById("drugInfoModalClose").addEventListener("click", closeDrugInfoModal);
-    document.querySelector("#drugInfoModal .modal-backdrop").addEventListener("click", closeDrugInfoModal);
-  }
-
-    function openAllergyModal() {
-    var modalHtml =
-      '<div class="modal" id="drugInfoModal">' +
-        '<div class="modal-backdrop"></div>' +
-        '<section class="modal-panel modal-panel--ett">' +
-          '<div class="modal-header">' +
-            '<h2 class="modal-title"><span class="modal-title-icon">🚨</span>Анафилаксия · крапивница · астма</h2>' +
-            '<button type="button" class="modal-close" id="drugInfoModalClose" aria-label="Закрыть">&times;</button>' +
-          '</div>' +
-          '<div class="modal-body">' +
-
-            '<div class="drug-modal-section-title">⚡ Анафилаксия (АФ) и анафилактический шок (п. 51)</div>' +
-            '<div class="medref-sub-title">Клинические критерии (вероятность АФ высока при одном из трёх)</div>' +
-            '<ol class="medref-list">' +
-              '<li>Острое начало (минуты–часы) с поражением кожи/слизистых (генерализованная крапивница, зуд, гиперемия, отёк губ, языка, нёба) + дыхательные нарушения ИЛИ снижение АД/органная дисфункция</li>' +
-              '<li>≥ 2 признаков быстро после контакта с вероятным аллергеном: кожа/слизистые, дыхательные нарушения, снижение АД, стойкие ЖКТ-симптомы</li>' +
-              '<li>Снижение АД после воздействия известного аллергена: систолическое АД ниже возрастной нормы (1–12 мес — 70; 1–10 лет — 70 + 2n; 11–17 лет — 90 мм рт. ст.) или снижение &gt; 30% от индивидуального</li>' +
-            '</ol>' +
-            '<div class="medref-sub-title">Этап 1 (выполняется одновременно)</div>' +
-            '<ol class="medref-list">' +
-              '<li>Прекратить поступление аллергена; при АШ на в/в ЛП — остановить введение, СОХРАНИТЬ венозный доступ; на яд перепончатокрылых — удалить жало, венозный жгут выше места ужаления</li>' +
-              '<li>Уложить на спину на твёрдую поверхность, ноги приподнять; ЗАПРЕТИТЬ резко вставать или садиться (возможна мгновенная смерть)</li>' +
-              '<li>Оценка дыхания, сознания, гемодинамики; при отсутствии сознания — голова набок, выдвинуть нижнюю челюсть</li>' +
-              '<li>Немедленно вызвать реаниматолога / бригаду СМП</li>' +
-              '<li>НЕМЕДЛЕННО эпинефрин в/м в середину переднелатеральной поверхности бедра; отметить время введения</li>' +
-              '<li>При венозном доступе — эпинефрин в/в 10 мкг/кг на 10–20 мл NaCl 9 мг/мл</li>' +
-              '<li>Нет ответа через 5 мин — повторная доза эпинефрина</li>' +
-              '<li>Стабильный в/в доступ, при невозможности — внутрикостный; после эпинефрина NaCl 9 мг/мл 10–20 мл/кг в первые 5–10 мин</li>' +
-              '<li>Неэффективность 2 болюсов — инфузия эпинефрина 0,1 мкг/кг/мин с титрованием до 1 мкг/кг/мин</li>' +
-              '<li>Увлажнённый кислород через лицевую маску</li>' +
-            '</ol>' +
-            '<div class="medref-table-wrap"><table class="medref-table">' +
-              '<thead><tr><th>Возраст</th><th>Доза эпинефрина в/м</th></tr></thead>' +
-              '<tbody>' +
-                '<tr><td>Младше 6 месяцев</td><td>100–150 мкг (0,1–0,15 мл)</td></tr>' +
-                '<tr><td>6 месяцев – 6 лет</td><td>150 мкг (0,15 мл)</td></tr>' +
-                '<tr><td>6–12 лет</td><td>300 мкг (0,3 мл)</td></tr>' +
-                '<tr><td>Старше 12 лет</td><td>500 мкг (0,5 мл)</td></tr>' +
-                '<tr><td>Или по массе</td><td>0,1–0,15 мл на 10 кг</td></tr>' +
-              '</tbody>' +
-            '</table></div>' +
-            '<div class="medref-sub-title">Этапы 2–3</div>' +
-            '<ul class="medref-list">' +
-              '<li>Этап 2: продолжить кислород и NaCl (до 20 мл/кг); при остановке дыхания/кровообращения — СЛР; крапивница — п. 52; бронхоспазм — п. 53</li>' +
-              '<li>Этап 3: NaCl до 30 мл/кг в первый час; ГКС для предотвращения поздних симптомов: преднизолон 2–5 мг/кг каждые 4 ч (или метилпреднизолон, дексаметазон, гидрокортизон в эквивалентных дозах)</li>' +
-              '<li>Транспортировка в ОРИТ минуя приёмное отделение; мониторинг (пульсоксиметрия, ЭКГ, АД, ЧСС) не менее 24 ч при неосложнённом течении</li>' +
-              '<li>Госпитализация во всех случаях АФ/АШ; после эпизода — консультация аллерголога-иммунолога</li>' +
-            '</ul>' +
-
-            '<div class="drug-modal-section-title">🌸 Крапивница и ангионевротический отёк (п. 52)</div>' +
-            '<ul class="medref-list">' +
-              '<li>Элиминация триггера (диета, отмена/замена ЛП, лечение инфекции, уменьшение физических факторов)</li>' +
-              '<li>Острая крапивница: антигистаминные 2-го поколения внутрь (цетиризин, лоратадин, дезлоратадин — дозы по возрасту на карточках препаратов)</li>' +
-              '<li>Острое развитие, генерализованные высыпания, ангионевротический отёк, ЖКТ-симптомы — стартовое лечение ПАРЕНТЕРАЛЬНО 1-м поколением: хлоропирамин, клемастин, дифенгидрамин</li>' +
-              '<li>Генерализованная крапивница, отёк головы/шеи, нет эффекта от старта — ГКС: преднизолон 1–2 мг/кг в/в на 10–20 мл NaCl или в/м (декса­метазон эквивалентно), до 5–7 суток</li>' +
-              '<li>Ангионевротический отёк гортани — экстренная интубация или трахеостомия по показаниям</li>' +
-              '<li>Если крапивница/отёк — симптом АФ — помощь по п. 51</li>' +
-            '</ul>' +
-            '<div class="medref-sub-title">Показания к госпитализации</div>' +
-            '<ul class="medref-list">' +
-              '<li>Острая спонтанная генерализованная крапивница</li>' +
-              '<li>Ангионевротический отёк с признаками стеноза гортани и риском асфиксии</li>' +
-              '<li>Отёк, локализованный в области головы и шеи</li>' +
-              '<li>Крапивница, сопровождающая АФ</li>' +
-              '<li>Тяжёлые формы хронической крапивницы, торпидные к амбулаторному лечению</li>' +
-              '<li>Подозрение на токсический эпидермальный некролиз (Лайелла) — немедленная госпитализация</li>' +
-            '</ul>' +
-
-            '<div class="drug-modal-section-title">🌬️ Приступ бронхиальной астмы (п. 53)</div>' +
-            '<div class="medref-table-wrap"><table class="medref-table">' +
-              '<thead><tr><th>Тяжесть</th><th>Критерии</th></tr></thead>' +
-              '<tbody>' +
-                '<tr><td><strong>Лёгкий</strong></td><td>В сознании, может говорить; хрипы непостоянные; умеренная тахикардия; нет цианоза; SpO₂ &gt; 95%; ПСВ &gt; 70%</td></tr>' +
-                '<tr><td><strong>Среднетяжёлый</strong></td><td>Не купируется сутки несмотря на лечение; возбуждён; ЧСС до 180 (&lt; 3 лет), до 150 (4–5 лет), 100–120 (&gt; 6 лет); ЧД до 30 (до 40 &lt; 5 лет); SpO₂ &gt; 90%; ПСВ 50–70%</td></tr>' +
-                '<tr><td><strong>Тяжёлый</strong></td><td>Угнетение сознания, говорит отдельными словами; ЧСС &gt; 180 / &gt; 150 / &gt; 120 по возрастам; ЧД &gt; 30 (&gt; 40 &lt; 5 лет); выраженный цианоз; SpO₂ &lt; 90%; ПСВ &lt; 50%</td></tr>' +
-              '</tbody>' +
-            '</table></div>' +
-            '<div class="medref-sub-title">Ингаляционные бронхолитики (дозы)</div>' +
-            '<div class="medref-table-wrap"><table class="medref-table">' +
-              '<thead><tr><th>Препарат</th><th>Доза</th></tr></thead>' +
-              '<tbody>' +
-                '<tr><td>Сальбутамол аэрозоль 100 мкг/доза</td><td>Лёгкий: 2–4 дозы; среднетяжёлый: 4 дозы; тяжёлый: 2–4 (до 8) доз через спейсер/маску; до 3 раз в 1-й час каждые 20 мин</td></tr>' +
-                '<tr><td>Сальбутамол небулайзер 1 мг/мл</td><td>Лёгкий: 2,5–5 мг; среднетяжёлый и тяжёлый: 5 мг на ингаляцию</td></tr>' +
-                '<tr><td>Фенотерол раствор 1 мг/мл</td><td>До 6 лет (&lt; 22 кг): 1 капля/год жизни; 6–14 лет: 5–30 капель; &gt; 14 лет: 10–40 капель</td></tr>' +
-                '<tr><td>Фенотерол/ипратропия бромид раствор (500+250 мкг)/мл</td><td>До 6 лет (&lt; 22 кг): 0,5 мл (10 кап); 6–12 лет: 0,5–1 мл (10–20 кап); &gt; 12 лет: 1 мл (20 кап) через небулайзер</td></tr>' +
-                '<tr><td>Фенотерол/ипратропия бромид аэрозоль (50+20 мкг)/доза</td><td>2 дозы (тяжёлый: 2–4 дозы) через спейсер/маску до 5 лет</td></tr>' +
-                '<tr><td>Будесонид суспензия 0,25/0,5 мг/мл</td><td>Тяжёлый: 0,5–1 мг через небулайзер, затем 2 р/день 3–5 дней + β2-агонисты</td></tr>' +
-              '</tbody>' +
-            '</table></div>' +
-            '<div class="medref-sub-title">Тактика по степеням</div>' +
-            '<ul class="medref-list">' +
-              '<li><strong>Лёгкий:</strong> свежий воздух; бронхолитик; при ПСВ ≥ 80% и сохранении ответа 3–4 ч — дополнительных ЛП не требуется</li>' +
-              '<li><strong>Среднетяжёлый:</strong> кислород; бронхолитик; если ПСВ &lt; 80% через 1 час — ГКС: преднизолон таблетки 1–2 мг/кг/сут (макс 20/30/40 мг по возрасту) 3–5 дней ИЛИ в/в 1 мг/кг (макс 60 мг), дексаметазон 0,15 мг/кг (макс 8 мг); при ПСВ ≥ 80% — β2-агонисты каждые 8 ч 24–48 ч; нарастание тяжести или неэффективность — госпитализация</li>' +
-              '<li><strong>Тяжёлый:</strong> вызвать СМП; кислород; бронхолитики каждые 20 мин в 1-й час; преднизолон в/в 2 мг/кг (при угрозе остановки дыхания 6 мг/кг, макс 120 мг), дексаметазон 0,3 мг/кг (макс 16 мг); будесонид через небулайзер; нет эффекта — аминофиллин 5 мг/кг за 30 мин, затем 0,6–1 мг/кг/ч; нет эффекта — ОРИТ (решение об ИВЛ)</li>' +
-            '</ul>' +
-
-            '<div class="drug-modal-section-title">🛡️ Key Safety Notes</div>' +
-            '<div class="medref-alert medref-alert-warning">' +
-              '<ul>' +
-                '<li>Эпинефрин в/м в бедро — препарат ПЕРВОГО ряда при АФ/АШ; не откладывать введение</li>' +
-                '<li>Пациент лёжа с приподнятыми ногами; запрет резко вставать/садиться — риск мгновенной смерти</li>' +
-                '<li>ГКС не заменяют эпинефрин при АШ — вводятся на 3-м этапе для профилактики поздних симптомов</li>' +
-                '<li>Ангионевротический отёк гортани — экстренная интубация или трахеостомия</li>' +
-                '<li>Астма: ПСВ &lt; 80% через 1 час бронхолитиков — добавить ГКС; аминофиллин — только при неэффективности ГКС + бронхолитиков</li>' +
-              '</ul>' +
-            '</div>' +
-          '</div>' +
-        '</section>' +
-      '</div>';
-
-    var existing = document.getElementById("drugInfoModal");
-    if (existing) existing.remove();
-
-    document.body.insertAdjacentHTML("beforeend", modalHtml);
-    document.body.classList.add("modal-open");
-
-    document.getElementById("drugInfoModalClose").addEventListener("click", closeDrugInfoModal);
-    document.querySelector("#drugInfoModal .modal-backdrop").addEventListener("click", closeDrugInfoModal);
-  }
-
-  function openNeuroModal() {
-    var modalHtml =
-      '<div class="modal" id="drugInfoModal">' +
-        '<div class="modal-backdrop"></div>' +
-        '<section class="modal-panel modal-panel--ett">' +
-          '<div class="modal-header">' +
-            '<h2 class="modal-title"><span class="modal-title-icon">🧠</span>Неврология: неотложная помощь</h2>' +
-            '<button type="button" class="modal-close" id="drugInfoModalClose" aria-label="Закрыть">&times;</button>' +
-          '</div>' +
-          '<div class="modal-body">' +
-
-            '<div class="drug-modal-section-title">⚡ Судорожные припадки (п. 47)</div>' +
-            '<p class="medref-p">Генерализованный судорожный припадок длительностью <strong>более 5 минут</strong> лечится по принципам эпилептического статуса. Два направления: базисная терапия (жизненно важные системы) и специфическая фармакотерапия.</p>' +
-            '<ol class="medref-list">' +
-              '<li>Профилактика травмы головы</li>' +
-              '<li>Проходимость ВДП, газообмен, оксигенация мозга</li>' +
-              '<li>Поддержка кровообращения</li>' +
-              '<li>Быстрейшее купирование судорожной активности</li>' +
-              '<li>Выявление провоцирующих факторов (гипогликемия, электролитный дисбаланс, инфекция, гипертермия)</li>' +
-              '<li>Коррекция метаболических сдвигов, профилактика системных осложнений</li>' +
-              '<li>Анализ причин эпилептического статуса и соответствующая терапия</li>' +
-            '</ol>' +
-            '<div class="medref-step-info">Мероприятия проводят, уложив пациента на бок с аккуратной фиксацией — укладка создаёт условия для свободного истечения отделяемого ротоглотки. Пути введения ЛП: оптимально в/в; ректальный (мягкие насадки); в/м.</div>' +
-            '<div class="medref-sub-title">Фармакотерапия</div>' +
-            '<ul class="medref-list">' +
-              '<li>Диазепам 5 мг/мл: 0,1–0,2 мг/кг в/в или в/м (ректально 0,3–0,5 мг/кг); в/в за 2–4 мин; первая доза не более 10 мг</li>' +
-              '<li>Судороги продолжаются через 10–15 мин — повтор диазепама 0,2–0,4 мг/кг (макс 15 мг); при необходимости через 2–4 ч</li>' +
-              '<li>Оксигенотерапия увлажнённым кислородом 4–6 л/мин</li>' +
-              '<li>Подозрение на гипогликемию (при сосудистом доступе) — глюкоза 100 мг/мл 2 мл/кг в/в</li>' +
-              '<li>Подозрение на гипокальциемию — кальция глюконат 100 мг/мл 0,5–1 мл/кг (или 1 мл/год жизни), разведя глюкозой 50 мг/мл или NaCl 9 мг/мл в соотношении 1:10</li>' +
-            '</ul>' +
-            '<div class="medref-sub-title">Показания к госпитализации</div>' +
-            '<ul class="medref-list">' +
-              '<li>Впервые развившийся приступ судорог</li>' +
-              '<li>Возраст пациента до 1 года</li>' +
-              '<li>Судороги неясного генеза</li>' +
-              '<li>Судороги на фоне инфекционного заболевания</li>' +
-            '</ul>' +
-
-            '<div class="drug-modal-section-title">🤕 Мигрень (п. 48)</div>' +
-            '<ol class="medref-list">' +
-              '<li>Обеспечить покой и нахождение в тёмной комнате</li>' +
-              '<li>При рвоте — метоклопрамид 5 мг/мл 0,1–0,15 мг/кг (не более 10 мг) в/м</li>' +
-              '<li>До 16 лет — метамизол 500 мг/мл 10 мг/кг в/м; старше 15 лет (&gt;53 кг) — 1000 мг (2 мл)</li>' +
-              '<li>Старше 16 лет предпочтительнее кеторолак 30 мг/мл 0,5 мг/кг в/м (не более 30 мг)</li>' +
-              '<li>Нет эффекта от метамизола/кеторолака 20–30 мин — магния сульфат 250 мг/мл 30 мг/кг в/м (не более 2 г)</li>' +
-              '<li>Затянувшийся приступ — в/в инфузия NaCl 9 мг/мл 10 мл/кг</li>' +
-            '</ol>' +
-            '<div class="medref-step-info">Показание к госпитализации: продолжительность приступа дольше, чем предыдущие.</div>' +
-
-            '<div class="drug-modal-section-title">🧠 ЧМТ: диагностика (п. 49)</div>' +
-            '<div class="medref-table-wrap"><table class="medref-table">' +
-              '<thead><tr><th>Степень</th><th>Признаки (≥ 1)</th></tr></thead>' +
-              '<tbody>' +
-                '<tr><td>Лёгкая</td><td>Кратковременная потеря сознания; ретроградная амнезия; рвота (чаще 1–2-кратная); головная боль</td></tr>' +
-                '<tr><td>Средняя</td><td>Потеря сознания &gt; 30 мин; нарушение сознания при осмотре; очаговая симптоматика; видимые переломы черепа</td></tr>' +
-                '<tr><td>Тяжёлая</td><td>Парезы конечностей; анизокория; брадикардия; «светлый» промежуток</td></tr>' +
-              '</tbody>' +
-            '</table></div>' +
-            '<div class="medref-sub-title">Особенности у детей до 1 года</div>' +
-            '<ul class="medref-list">' +
-              '<li>Преобладание общемозговых симптомов; тяжёлые формы чаще; потеря сознания редка (20–30 % даже при тяжёлой ЧМТ)</li>' +
-              '<li>Основания для диагноза: пронзительный крик или кратковременное апноэ в момент травмы; двигательные автоматизмы (сосательный, жевательный); срыгивание, рвота, жидкий стул, температура 37,5–38,5 °C; вегетативные нарушения; нарушение сна</li>' +
-              '<li>Любой из этих симптомов после травмы — госпитализация для исключения ЧМТ</li>' +
-            '</ul>' +
-            '<div class="medref-sub-title">Перелом основания черепа</div>' +
-            '<ul class="medref-list">' +
-              '<li>Назальная ликворея — симптом двойного пятна (в центре кровь, по периферии светлое)</li>' +
-              '<li>Истечение ликвора из слухового прохода (кровотечение без ликвора — осмотр ЛОР)</li>' +
-              '<li>Симптом «очков» — через 24–48 ч, может не иметь связи с ЧМТ</li>' +
-              '<li>Нарушение функции зрительного нерва при сдавлении отломками</li>' +
-            '</ul>' +
-
-            '<div class="drug-modal-section-title">🚑 ЧМТ: неотложная помощь (п. 49.4)</div>' +
-            '<ul class="medref-list">' +
-              '<li>Диагноз ЧМТ — обязательная госпитализация; лёгкая степень — помощь обычно не требуется</li>' +
-              '<li>Средняя и тяжёлая: проходимость ВДП; кислород через маску или канюли ≥ 4–6 л/мин; 1–2 периферических доступа, инфузия Рингером или NaCl 9 мг/мл 10–15 мл/кг/час под контролем гемодинамики</li>' +
-              '<li>Раны головы — туалет с обработкой краёв антисептиком, стерильная повязка; инородные тела и костные отломки из полости черепа НЕ извлекают</li>' +
-              '<li>Сочетанная травма — обезболивание тримеперидином или метамизолом 0,1 мл/год жизни в/м или в/в</li>' +
-              '<li>Перемещение и транспортировка — только при стабилизации шейного отдела до уточнения характера травмы</li>' +
-              '<li>Укладка на носилки с приподнятым на 30° головным концом (при отсутствии артериальной гипотензии)</li>' +
-              '<li>Транспортировка в ближайшую больницу с нейрохирургией и ОРИТ</li>' +
-            '</ul>' +
-            '<div class="medref-alert medref-alert-danger">Маннитол 150 мг/мл для профилактики отёка и дислокации головного мозга на догоспитальном этапе НЕ рекомендуется.</div>' +
-
-            '<div class="drug-modal-section-title">💪 Кризы при миастении (п. 50)</div>' +
-            '<div class="medref-sub-title">Миастенический криз</div>' +
-            '<p class="medref-p">Нарастающая мышечная слабость + сухость слизистых, густая слюна, мидриаз, тахикардия, повышение АД. Помощь: кислород 4–6 л/мин; <strong>неостигмин 0,5 мг/мл п/к: до 12 лет 0,2–0,5 мг, старше 12 лет 0,5 мг</strong>; экстренная госпитализация.</p>' +
-            '<div class="medref-sub-title">Холинергический и смешанный кризы</div>' +
-            '<p class="medref-p">Избыточный приём антихолинэстеразных (пиридостигмин &gt; 360 мг/сут): слезотечение, бронхорея, ринорея, жидкая слюна, миоз, брадикардия, снижение АД, тошнота, рвота, кишечная колика, жидкий стул, полиурия. Помощь: кислород 4–6 л/мин; экстренная госпитализация; <strong>неостигмин НЕ вводить</strong>.</p>' +
-
-            '<div class="drug-modal-section-title">🛡️ Key Safety Notes</div>' +
-            '<div class="medref-alert medref-alert-warning">' +
-              '<ul>' +
-                '<li>Диазепам: первая доза не более 10 мг, в/в за 2–4 мин; повторная не более 15 мг</li>' +
-                '<li>Маннитол на догоспитальном этапе при ЧМТ не рекомендуется</li>' +
-                '<li>Транспортировка при ЧМТ — только после стабилизации шейного отдела позвоночника</li>' +
-                '<li>Холинергический криз — неостигмин противопоказан</li>' +
-                '<li>Кальция глюконат при гипокальциемии вводить только разведённым 1:10</li>' +
               '</ul>' +
             '</div>' +
           '</div>' +

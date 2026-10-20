@@ -1,117 +1,128 @@
-/* ===== Визуальная аналоговая шкала ===== */
-.vas-slider-card {
+/* ===== Шкала ВАШ (Визуальная аналоговая шкала боли) ===== */
+
+.vas-visual-scale {
+  margin-bottom: 16px;
   padding: 16px;
-  margin-bottom: 12px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
 }
-.vas-current-display {
+
+.vas-scale-header {
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 10px 0 14px;
-  border-bottom: 1px solid var(--border);
+  gap: 12px;
   margin-bottom: 14px;
 }
-.vas-face {
-  font-size: 3rem;
+
+.vas-scale-icon {
+  font-size: 2rem;
   line-height: 1;
-  flex-shrink: 0;
 }
-.vas-score {
-  font-size: 2.5rem;
+
+.vas-scale-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.vas-scale-current {
+  margin-left: auto;
+  font-size: 1.5rem;
   font-weight: 800;
   font-variant-numeric: tabular-nums;
-  flex-shrink: 0;
-  line-height: 1;
+  color: var(--accent);
 }
-.vas-label {
-  font-size: 1rem;
-  color: var(--muted);
-  font-weight: 600;
-}
-.vas-slider-wrapper {
+
+.vas-scale-track {
   position: relative;
-  margin-bottom: 12px;
-}
-.vas-slider {
-  width: 100%;
-  -webkit-appearance: none;
-  appearance: none;
-  height: 8px;
-  background: transparent;
-  outline: none;
-  position: relative;
-  z-index: 2;
-}
-.vas-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background: var(--accent);
+  height: 40px;
+  border-radius: 20px;
+  background: linear-gradient(to right, 
+    #1a7a3e 0%, 
+    #b08900 30%, 
+    #e68a2e 60%, 
+    #b42323 100%);
   cursor: pointer;
-  border: 3px solid #fff;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  margin-bottom: 8px;
+  user-select: none;
 }
-.vas-slider::-moz-range-thumb {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background: var(--accent);
-  cursor: pointer;
-  border: 3px solid #fff;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-}
-.vas-slider-track {
+
+.vas-scale-marker {
   position: absolute;
-  top: 50%;
-  left: 0;
-  right: 0;
-  height: 8px;
-  background: var(--border);
-  border-radius: 4px;
-  transform: translateY(-50%);
-  overflow: hidden;
-  z-index: 1;
-}
-.vas-slider-fill {
+  width: 4px;
   height: 100%;
-  background: linear-gradient(to right, #1a7a3e 0%, #b08900 50%, #b42323 100%);
-  border-radius: 4px;
-  transition: width .1s ease;
+  background: #fff;
+  border: 2px solid var(--text);
+  border-radius: 2px;
+  transform: translateX(-50%);
+  pointer-events: none;
+  transition: left 0.15s ease;
 }
+
 .vas-scale-labels {
   display: flex;
   justify-content: space-between;
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   color: var(--muted);
-  margin-bottom: 14px;
-  text-align: center;
+  font-weight: 600;
 }
-.vas-scale-labels small { display: block; font-size: 0.7rem; opacity: 0.7; }
 
-.vas-quick-buttons {
-  display: grid;
-  grid-template-columns: repeat(11, 1fr);
-  gap: 4px;
+.vas-scale-label-start {
+  color: #1a7a3e;
 }
-@media (max-width: 480px) {
-  .vas-quick-buttons { grid-template-columns: repeat(6, 1fr); }
+
+.vas-scale-label-end {
+  color: #b42323;
 }
-.vas-quick-btn {
-  padding: 8px 0;
-  background: var(--menu-icon-bg);
-  border: 1px solid transparent;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 700;
-  font-size: 0.9rem;
-  color: var(--text);
-  transition: all .15s ease;
+
+/* ===== Цветовое оформление пунктов ВАШ ===== */
+
+/* Бледный фон по умолчанию */
+.vas-item {
+  background: color-mix(in srgb, var(--item-color) 8%, var(--card)) !important;
+  border-left: 4px solid color-mix(in srgb, var(--item-color) 35%, transparent) !important;
+  transition: all 0.2s ease !important;
 }
-.vas-quick-btn:hover { border-color: var(--accent); }
-.vas-quick-btn.active {
-  background: var(--accent);
-  color: #fff;
-  border-color: var(--accent);
+
+/* Радиокнопка бледная */
+.vas-item .geneva-radio-custom {
+  border-color: color-mix(in srgb, var(--item-color) 50%, var(--border)) !important;
+}
+
+/* Текст баллов в бледном цвете */
+.vas-item .geneva-item-points {
+  color: color-mix(in srgb, var(--item-color) 60%, var(--muted)) !important;
+}
+
+/* ===== Выбранный пункт — яркий ===== */
+.vas-item.checked {
+  background: var(--item-color) !important;
+  border-left-color: var(--item-color) !important;
+  color: #fff !important;
+  box-shadow: 0 3px 10px color-mix(in srgb, var(--item-color) 40%, transparent) !important;
+}
+
+.vas-item.checked .geneva-item-title {
+  color: #fff !important;
+  font-weight: 750 !important;
+}
+
+.vas-item.checked .geneva-item-points {
+  color: #fff !important;
+  opacity: 0.95 !important;
+  font-weight: 800 !important;
+}
+
+.vas-item.checked .geneva-radio-custom {
+  border-color: #fff !important;
+  background: #fff !important;
+  box-shadow: inset 0 0 0 3px var(--item-color) !important;
+}
+
+/* ===== При наведении — чуть ярче ===== */
+.vas-item:hover:not(.checked) {
+  background: color-mix(in srgb, var(--item-color) 15%, var(--card)) !important;
+  border-left-color: color-mix(in srgb, var(--item-color) 60%, transparent) !important;
 }

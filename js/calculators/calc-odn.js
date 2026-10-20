@@ -2,135 +2,96 @@
   "use strict";
   var CU = window.SMP.calcUtils;
 
-  // Шкала Кассиля: 6 параметров, каждый 0-4 балла
+  // ===== ПАРАМЕТРЫ ШКАЛЫ =====
   var PARAMS = [
-    {
-      id: "consciousness", title: "Сознание", icon: "🧠",
-      options: [
-        { v: 0, t: "Ясное (норма)", degree: "Норма" },
-        { v: 1, t: "Ясное (ОДН I)", degree: "I" },
-        { v: 2, t: "Возбуждение, агрессивность", degree: "II" },
-        { v: 3, t: "Спутанность, оглушение", degree: "III" },
-        { v: 4, t: "Гипоксическая кома, судороги", degree: "IV" }
-      ]
-    },
-    {
-      id: "respRate", title: "Частота дыхания (ЧДД, /мин)", icon: "🌬️",
-      options: [
-        { v: 0, t: "12–16 (норма)", degree: "Норма" },
-        { v: 1, t: "14–20 (ОДН I)", degree: "I" },
-        { v: 2, t: "20–30 (ОДН II)", degree: "II" },
-        { v: 3, t: "30–40 (ОДН III)", degree: "III" },
-        { v: 4, t: ">40 или <8 (ОДН IV)", degree: "IV" }
-      ]
-    },
-    {
-      id: "skinColor", title: "Цвет кожных покровов", icon: "🩵",
-      options: [
-        { v: 0, t: "Обычной окраски", degree: "Норма" },
-        { v: 1, t: "Бледность, умеренный цианоз (I)", degree: "I" },
-        { v: 2, t: "Цианоз (II)", degree: "II" },
-        { v: 3, t: "Выраженный цианоз (III)", degree: "III" },
-        { v: 4, t: "«Мраморный» цианоз (IV)", degree: "IV" }
-      ]
-    },
-    {
-      id: "heartRate", title: "Частота сердечных сокращений (ЧСС)", icon: "❤️",
-      options: [
-        { v: 0, t: "Норма (60–90)", degree: "Норма" },
-        { v: 1, t: "100–110/мин (ОДН I)", degree: "I" },
-        { v: 2, t: "110–120/мин (ОДН II)", degree: "II" },
-        { v: 3, t: "120–140/мин (ОДН III)", degree: "III" },
-        { v: 4, t: ">140 или <60, аритмия (ОДН IV)", degree: "IV" }
-      ]
-    },
-    {
-      id: "bp", title: "Артериальное давление (систолическое)", icon: "📈",
-      options: [
-        { v: 0, t: "Норма (ОДН 0)", degree: "Норма" },
-        { v: 1, t: "Норма / умеренная гипертензия (I)", degree: "I" },
-        { v: 2, t: "Умеренная гипертензия (II)", degree: "II" },
-        { v: 3, t: "Гипертензия (III)", degree: "III" },
-        { v: 4, t: "Гипотензия (IV)", degree: "IV" }
-      ]
-    },
-    {
-      id: "spo2", title: "SpO₂ на фоне оксигенотерапии", icon: "🫧",
-      options: [
-        { v: 0, t: "96–99% (норма)", degree: "Норма" },
-        { v: 1, t: "92–95% (ОДН I)", degree: "I" },
-        { v: 2, t: "90–92% (ОДН II)", degree: "II" },
-        { v: 3, t: "85–90% (ОДН III)", degree: "III" },
-        { v: 4, t: "<85% (ОДН IV)", degree: "IV" }
-      ]
-    }
+    { id: "consciousness", title: "Сознание", icon: "🧠", color: "#1f6e9c", options: [
+      { v: 0, t: "Ясное (норма)" },
+      { v: 1, t: "Ясное (ОДН I)" },
+      { v: 2, t: "Возбуждение, агрессивность" },
+      { v: 3, t: "Спутанность, оглушение" },
+      { v: 4, t: "Гипоксическая кома, судороги" }
+    ]},
+    { id: "respRate", title: "Частота дыхания (ЧДД, /мин)", icon: "🌬️", color: "#e68a2e", options: [
+      { v: 0, t: "12–16 (норма)" },
+      { v: 1, t: "14–20 (ОДН I)" },
+      { v: 2, t: "20–30 (ОДН II)" },
+      { v: 3, t: "30–40 (ОДН III)" },
+      { v: 4, t: ">40 или <8 (ОДН IV)" }
+    ]},
+    { id: "skinColor", title: "Цвет кожных покровов", icon: "🩵", color: "#2e8b57", options: [
+      { v: 0, t: "Обычной окраски" },
+      { v: 1, t: "Бледность, умеренный цианоз (I)" },
+      { v: 2, t: "Цианоз (II)" },
+      { v: 3, t: "Выраженный цианоз (III)" },
+      { v: 4, t: "«Мраморный» цианоз (IV)" }
+    ]},
+    { id: "heartRate", title: "Частота сердечных сокращений (ЧСС)", icon: "❤️", color: "#b42323", options: [
+      { v: 0, t: "Норма (60–90)" },
+      { v: 1, t: "100–110/мин (ОДН I)" },
+      { v: 2, t: "110–120/мин (ОДН II)" },
+      { v: 3, t: "120–140/мин (ОДН III)" },
+      { v: 4, t: ">140 или <60, аритмия (ОДН IV)" }
+    ]},
+    { id: "bp", title: "Артериальное давление (систолическое)", icon: "📈", color: "#6a5acd", options: [
+      { v: 0, t: "Норма (ОДН 0)" },
+      { v: 1, t: "Норма / умеренная гипертензия (I)" },
+      { v: 2, t: "Умеренная гипертензия (II)" },
+      { v: 3, t: "Гипертензия (III)" },
+      { v: 4, t: "Гипотензия (IV)" }
+    ]},
+    { id: "spo2", title: "SpO₂ на фоне оксигенотерапии", icon: "🫧", color: "#8b5a2b", options: [
+      { v: 0, t: "96–99% (норма)" },
+      { v: 1, t: "92–95% (ОДН I)" },
+      { v: 2, t: "90–92% (ОДН II)" },
+      { v: 3, t: "85–90% (ОДН III)" },
+      { v: 4, t: "<85% (ОДН IV)" }
+    ]}
   ];
 
-  // Степени ОДН по максимуму баллов
+  // ===== СТЕПЕНИ ОДН =====
   var DEGREES = [
-    {
-      v: 0, label: "Норма", color: "success", icon: "✅",
-      desc: "Нормальные показатели. Дыхательная недостаточность отсутствует.",
-      action: "Специальная терапия не требуется. Наблюдение."
-    },
-    {
-      v: 1, label: "ОДН I степени (лёгкая)", color: "warning", icon: "⚠️",
-      desc: "Компенсированная стадия.",
-      action: "Оксигенотерапия, контроль SpO₂. Наблюдение в профильном отделении."
-    },
-    {
-      v: 2, label: "ОДН II степени (средняя)", color: "warning-strong", icon: "⚠️",
-      desc: "Субкомпенсированная ОДН.",
-      action: "Госпитализация в ОРИТ/пульмонологию. NIV, высокопоточная оксигенация. Мониторинг газов крови."
-    },
-    {
-      v: 3, label: "ОДН III степени (тяжёлая)", color: "error", icon: "🚨",
-      desc: "Декомпенсированная дыхательная недостаточность.",
-      action: "Экстренная госпитализация в ОРИТ. Высокий риск перехода на ИВЛ. Тщательный мониторинг."
-    },
-    {
-      v: 4, label: "ОДН IV степени (крайне тяжёлая)", color: "critical", icon: "🆘",
-      desc: "Угрожающее жизни состояние!",
-      action: "Немедленная интубация, ИВЛ. Реанимационные мероприятия. Вазопрессорная поддержка. ОРИТ."
-    }
+    { v: 0, label: "Норма", color: "gcs-15" },
+    { v: 1, label: "ОДН I степени", color: "gcs-14" },
+    { v: 2, label: "ОДН II степени", color: "gcs-11-12" },
+    { v: 3, label: "ОДН III степени", color: "gcs-6-7" },
+    { v: 4, label: "ОДН IV степени", color: "gcs-3" }
   ];
 
+  // ===== СПРАВОЧНАЯ ИНФОРМАЦИЯ (резерв) =====
   var REFERENCE = {
     title: "О шкале Кассиля",
     paragraphs: [
       "Шкала Кассиля — классический метод оценки степени острой дыхательной недостаточности (ОДН) по 6 клиническим параметрам.",
       "Степень ОДН определяется как МАКСИМУМ баллов среди всех 6 параметров (не сумма!). Это позволяет выделить самый тяжёлый симптом."
     ],
-    importantNote: "Шкала применима в условиях СМП для быстрой оценки и определения тактики. При ОДН III–IV степени показана экстренная госпитализация в ОРИТ.",
-    indicationsTitle: "📋 6 параметров шкалы:",
-    indications: [
-      "🧠 Сознание: от ясного до гипоксической комы",
-      "🌬️ ЧДД: 12–16 (норма) до >40 или <8 (IV степень)",
-      "🩵 Цвет кожи: от обычного до «мраморного» цианоза",
-      "❤️ ЧСС: 60–90 (норма) до >140, <60 или аритмии",
-      "📈 АД сист: от нормы до гипотензии",
-      "🫧 SpO₂ на фоне оксигенотерапии: 96–99% до <85%"
-    ]
+    importantNote: "Шкала применима в условиях СМП для быстрой оценки. При ОДН III–IV степени показана экстренная госпитализация в ОРИТ."
   };
 
-  var selections = {};
-  PARAMS.forEach(function (p) { selections[p.id] = null; });
+  // ===== СОСТОЯНИЕ =====
+  var STORAGE_KEY = "smp-odn-state";
+  var state = { selections: {} };
 
-  var bodyEl, panelEl;
-
-  function resetButtonHtml() {
-    return '<button type="button" class="result-reset-big" aria-label="Сбросить" title="Сбросить">↺</button>';
+  function saveState() { CU.saveCalcState(STORAGE_KEY, state); }
+  function loadState() {
+    var saved = CU.loadCalcState(STORAGE_KEY);
+    if (saved && saved.selections) {
+      state.selections = saved.selections;
+    }
   }
 
+  // ===== ВСПОМОГАТЕЛЬНЫЕ =====
   function getDegree() {
-    var vals = PARAMS.map(function (p) { return selections[p.id]; });
-    if (vals.some(function (v) { return v === null; })) return null;
+    var vals = PARAMS.map(function (p) { return state.selections[p.id]; });
+    if (vals.some(function (v) { return v === undefined || v === null; })) return null;
     return Math.max.apply(null, vals);
   }
 
-  function getMissing() {
-    return PARAMS.filter(function (p) { return selections[p.id] === null; })
-      .map(function (p) { return p.title.split(' ')[0]; });
+  function filledCount() {
+    var count = 0;
+    PARAMS.forEach(function (p) {
+      if (state.selections[p.id] !== undefined && state.selections[p.id] !== null) count++;
+    });
+    return count;
   }
 
   function getDegreeInfo(d) {
@@ -140,114 +101,123 @@
     return DEGREES[0];
   }
 
-  function getOptionText(paramId, value) {
-    var p = PARAMS.find(function (x) { return x.id === paramId; });
-    if (!p) return "—";
-    var opt = p.options.find(function (o) { return o.v === value; });
-    return opt ? opt.t : "—";
-  }
+  // ===== РЕНДЕРИНГ =====
+  var bodyEl, panelEl;
 
-  function renderBody() {
+  function renderGroups() {
     bodyEl.innerHTML = PARAMS.map(function (p) {
-      var sel = selections[p.id];
-      var optsHtml = p.options.map(function (o) {
-        var active = sel === o.v ? ' selected' : '';
-        return '<div class="odn-option' + active + '" data-param="' + p.id + '" data-value="' + o.v + '">' +
-          '<div class="odn-option-circle"><div class="odn-option-dot"></div></div>' +
-          '<div class="odn-option-text">' + CU.escapeHtml(o.t) + '</div>' +
-          '<div class="odn-option-score">' + o.v + '</div>' +
+      var sel = state.selections[p.id];
+      var scoreDisplay = (sel !== undefined && sel !== null) ? sel : "Х";
+
+      var optionsHtml = p.options.map(function (o) {
+        var isChecked = sel === o.v;
+        return '<div class="geneva-item geneva-radio-item' + (isChecked ? " checked" : "") + '" data-param="' + p.id + '" data-value="' + o.v + '" role="radio" aria-checked="' + isChecked + '" tabindex="0">' +
+          '<span class="geneva-radio-custom"></span>' +
+          '<span class="geneva-item-content">' +
+            '<span class="geneva-item-title">' + CU.escapeHtml(o.t) + '</span>' +
+            '<span class="geneva-item-points">' + o.v + '</span>' +
+          '</span>' +
         '</div>';
       }).join("");
 
-      return '<div class="odn-param-card">' +
-        '<div class="odn-param-header">' +
-          '<span class="odn-param-icon">' + p.icon + '</span>' +
-          '<span class="odn-param-title">' + p.title + '</span>' +
-          (sel !== null ? '<span class="odn-param-value">' + sel + '</span>' : '') +
+      return '<div class="geneva-category" style="--cat-color: ' + p.color + ';">' +
+        '<div class="geneva-category-header">' +
+          '<div class="geneva-category-left">' +
+            '<span class="geneva-category-icon">' + p.icon + '</span>' +
+            '<span class="geneva-category-title">' + p.title + '</span>' +
+          '</div>' +
+          '<div class="geneva-category-score">' + scoreDisplay + '</div>' +
         '</div>' +
-        '<div class="odn-options-grid">' + optsHtml + '</div>' +
+        '<div class="geneva-category-items">' + optionsHtml + '</div>' +
       '</div>';
     }).join("");
   }
 
   function renderResult() {
-    var d = getDegree();
+    var filled = filledCount();
 
-    if (d === null) {
-      var missing = getMissing();
-      panelEl.innerHTML =
-        '<div class="result-content result-incomplete">' +
-        '<div class="result-score"><div class="result-score-value">—</div><div class="result-score-label">неполная оценка</div></div>' +
-        '<div class="result-divider"></div>' +
-        '<div class="result-info"><div class="result-label">Заполните все параметры</div><div class="result-description">Осталось: ' + missing.join(", ") + '</div></div>' +
-        resetButtonHtml() +
-        '</div>';
+    if (filled < PARAMS.length) {
+      CU.renderResultPanel({
+        score: "—",
+        scoreLabel: "",
+        color: "incomplete",
+        title: "Оцените все параметры",
+        description: "Заполнено: " + filled + " из " + PARAMS.length,
+        extraDescription: "",
+        breakdownHtml: "",
+        onReset: resetAll
+      });
       return;
     }
 
+    var d = getDegree();
     var info = getDegreeInfo(d);
 
-    // Сводка всех параметров
-    var summaryHtml = '<div class="odn-summary-grid">' +
-      PARAMS.map(function (p) {
-        var v = selections[p.id];
-        return '<div class="odn-summary-item">' +
-          '<div class="odn-summary-icon">' + p.icon + '</div>' +
-          '<div class="odn-summary-text">' + CU.escapeHtml(getOptionText(p.id, v)) + '</div>' +
-        '</div>';
-      }).join("") +
-    '</div>';
-
-    panelEl.innerHTML =
-      '<div class="result-content result-' + info.color + ' odn-result">' +
-      '<div class="odn-result-main">' +
-        '<div class="odn-degree-icon">' + info.icon + '</div>' +
-        '<div class="odn-degree-text">' + info.label + '</div>' +
-      '</div>' +
-      summaryHtml +
-      '<div class="odn-result-desc">' + info.desc + '</div>' +
-      '<div class="odn-result-action">📋 ' + info.action + '</div>' +
-      resetButtonHtml() +
-      '</div>';
+    CU.renderResultPanel({
+      score: d,
+      scoreLabel: "балл (максимум)",
+      color: info.color,
+      title: info.label,
+      description: "",
+      extraDescription: "",
+      breakdownHtml: "",
+      onReset: resetAll
+    });
   }
 
   function resetAll() {
-    PARAMS.forEach(function (p) { selections[p.id] = null; });
-    fullRender();
-  }
-
-  function fullRender() {
-    renderBody();
+    state.selections = {};
+    saveState();
+    renderGroups();
     renderResult();
   }
 
+  function bindListeners() {
+    bodyEl.addEventListener("click", function (e) {
+      var item = e.target.closest(".geneva-radio-item[data-param]");
+      if (!item) return;
+      var paramId = item.getAttribute("data-param");
+      var v = parseInt(item.getAttribute("data-value"), 10);
+      state.selections[paramId] = v;
+      saveState();
+      renderGroups();
+      renderResult();
+    });
+
+    bodyEl.addEventListener("keydown", function (e) {
+      if (e.key !== "Enter" && e.key !== " ") return;
+      var item = e.target.closest(".geneva-radio-item[data-param]");
+      if (!item) return;
+      e.preventDefault();
+      var paramId = item.getAttribute("data-param");
+      var v = parseInt(item.getAttribute("data-value"), 10);
+      state.selections[paramId] = v;
+      saveState();
+      renderGroups();
+      renderResult();
+    });
+  }
+
   function init() {
-    bodyEl = document.getElementById("calcBody");
+    bodyEl = document.getElementById("odnGroups");
     panelEl = document.getElementById("resultPanel");
     if (!bodyEl || !panelEl) return;
 
-    fullRender();
-
-    bodyEl.addEventListener("click", function (e) {
-      var opt = e.target.closest(".odn-option");
-      if (!opt) return;
-      var paramId = opt.getAttribute("data-param");
-      var value = parseInt(opt.getAttribute("data-value"), 10);
-      selections[paramId] = value;
-      fullRender();
-    });
-
-    panelEl.addEventListener("click", function (e) {
-      if (e.target.closest(".result-reset-big")) resetAll();
-    });
+    loadState();
+    renderGroups();
+    renderResult();
+    bindListeners();
 
     var infoBtn = document.getElementById("calcInfoBtn");
     if (infoBtn) infoBtn.addEventListener("click", function () {
-      CU.openReferenceModal({ reference: REFERENCE });
+      if (window.SMP.references && window.SMP.references.odn && window.SMP.openRefMarkdownModal) {
+        window.SMP.openRefMarkdownModal({ markdown: window.SMP.references.odn });
+      } else {
+        CU.openReferenceModal({ reference: REFERENCE });
+      }
     });
   }
-  
-  CU.autoPersist("smp-calc-odn-v1");
+
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
   else init();
 })();

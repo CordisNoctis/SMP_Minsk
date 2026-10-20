@@ -10,10 +10,10 @@
       icon: "⚠️",
       color: "#e68a2e",
       items: [
-        { id: "age",     title: "Возраст > 65 лет",                             points: 1 },
-        { id: "vte",     title: "ВТЭО в анамнезе (тромбоз глубоких вен или ТЭЛА)",               points: 3 },
-        { id: "surgery", title: "Хирургическое вмешательство или перелом в течение последнего месяца", points: 2 },
-        { id: "cancer",  title: "Онкологическое заболевание в активной фазе",         points: 2 }
+        { id: "age",     title: "Возраст > 65 лет", points: 1 },
+        { id: "vte",     title: "ВТЭО в анамнезе (ТГВ или ТЭЛА)", points: 3 },
+        { id: "surgery", title: "Хирургия или перелом за последний месяц", points: 2 },
+        { id: "cancer",  title: "Онкологическое заболевание в активной фазе", points: 2 }
       ]
     },
     {
@@ -23,7 +23,7 @@
       color: "#1f6e9c",
       items: [
         { id: "calf_pain",  title: "Боль в одной из ног", points: 3 },
-        { id: "hemoptysis", title: "Кровохарканье",                points: 2 }
+        { id: "hemoptysis", title: "Кровохарканье", points: 2 }
       ]
     },
     {
@@ -32,41 +32,39 @@
       icon: "🩺",
       color: "#b42323",
       items: [
-        { id: "hr",     title: "Частота сердечных сокращений",  type: "hr", points: 0 },
-        { id: "dvt",    title: "Боль при пальпации глубоких вен нижней конечности или отек одной из ног", points: 4 }
+        { id: "hr",     title: "Частота сердечных сокращений", type: "hr", points: 0 },
+        { id: "dvt",    title: "Боль при пальпации глубоких вен или отёк одной ноги", points: 4 }
       ]
     }
   ];
 
-  // ===== ИНТЕРПРЕТАЦИЯ (revised Geneva Score) =====
+  // ===== ИНТЕРПРЕТАЦИЯ =====
   var RANGES = [
-    { min: 0, max: 3, label: "Низкая вероятность", color: "success", therapy: "" },
-    { min: 4, max: 10, label: "Промежуточная вероятность", color: "warning", therapy: "" },
-    { min: 11, max: 99, label: "Высокая вероятность", color: "error", therapy: "" }
+    { min: 0, max: 3, label: "Низкая вероятность", color: "gcs-15" },
+    { min: 4, max: 10, label: "Промежуточная вероятность", color: "gcs-11-12" },
+    { min: 11, max: 99, label: "Высокая вероятность", color: "gcs-4-5" }
   ];
 
+  // ===== СПРАВОЧНАЯ ИНФОРМАЦИЯ (резерв) =====
   var REFERENCE = {
     title: "Обновлённая Женевская шкала",
     paragraphs: [
-      "Обновлённая Женевская шкала — это клинический инструмент, разработанный для оценки предтестовой вероятности тромбоэмболии лёгочной артерии (ТЭЛА) у пациентов с острым началом одышки, болью в груди или другими симптомами, подозрительными на ТЭЛА. Шкала была создана как объективная альтернатива шкале Уэллса: в ней полностью исключена субъективная оценка врача, что делает её особенно полезной в экстренных отделениях и при многоцентровых протоколах.",
-      "Обновлённая версия Женевской шкалы включает девять клинических параметров, каждый из которых имеет строго заданный вес в баллах. Компоненты шкалы охватывают анамнез (возраст, предшествующий ТЭЛА или хирургическое вмешательство), активные заболевания (онкология), клинические симптомы (боль, отёк, кровохарканье) и объективные данные (частота пульса).",
-      "После подсчёта суммы баллов применяется одна из двух схем интерпретации — трёхуровневая или двухуровневая. Выбор зависит от клинической ситуации и протокола учреждения. При низкой вероятности по шкале и отрицательном результате D-димера, ТЭЛА может быть безопасно исключена без проведения КТ-ангиографии."
-    ]
+      "Обновлённая Женевская шкала — клинический инструмент для оценки предтестовой вероятности ТЭЛА. Исключает субъективную оценку врача.",
+      "Включает 9 параметров: возраст, анамнез ВТЭО, хирургия/перелом, онкология, боль в ноге, кровохарканье, ЧСС, боль/отёк при пальпации."
+    ],
+    importantNote: "При низкой вероятности и отрицательном D-димере ТЭЛА может быть безопасно исключена без КТ-ангиографии."
   };
 
-    var state = {};
+  // ===== СОСТОЯНИЕ =====
+  var STORAGE_KEY = "smp-geneva-state";
+  var state = {};
   CATEGORIES.forEach(function (cat) {
     cat.items.forEach(function (it) {
       state[it.id] = it.type === "hr" ? null : false;
     });
   });
 
-  var STORAGE_KEY = "smp-calc-geneva-v1";
-
-  function saveState() {
-    CU.saveCalcState(STORAGE_KEY, state);
-  }
-
+  function saveState() { CU.saveCalcState(STORAGE_KEY, state); }
   function loadState() {
     var saved = CU.loadCalcState(STORAGE_KEY);
     if (!saved) return;
@@ -77,9 +75,7 @@
     }
   }
 
-  var bodyEl, panelEl;
-
-  // ===== ПОДСЧЁТ =====
+  // ===== ВСПОМОГАТЕЛЬНЫЕ =====
   function categoryScore(catId) {
     var cat = CATEGORIES.find(function (c) { return c.id === catId; });
     if (!cat) return 0;
@@ -109,7 +105,9 @@
     return RANGES[RANGES.length - 1];
   }
 
-  // ===== РЕНДЕР КАТЕГОРИЙ =====
+  // ===== РЕНДЕРИНГ =====
+  var bodyEl, panelEl;
+
   function renderCategories() {
     bodyEl.innerHTML = CATEGORIES.map(function (cat) {
       var score = categoryScore(cat.id);
@@ -117,7 +115,7 @@
         if (it.type === "hr") {
           var val = state[it.id];
           return '<div class="geneva-item geneva-item-hr">' +
-            '<div class="geneva-item-title"><span class="geneva-item-icon">❤️</span>' + CU.escapeHtml(it.title) + '</div>' +
+            '<div class="geneva-item-title" style="margin-bottom: 8px;"><span class="geneva-item-icon">❤️</span> ' + CU.escapeHtml(it.title) + '</div>' +
             '<div class="geneva-hr-group">' +
               '<label class="geneva-hr-option' + (val === "low" ? " active" : "") + '">' +
                 '<input type="radio" name="hr" value="low"' + (val === "low" ? " checked" : "") + '>' +
@@ -135,8 +133,8 @@
           '</div>';
         } else {
           var checked = state[it.id];
-          return '<label class="geneva-item' + (checked ? " checked" : "") + '">' +
-            '<input type="checkbox" data-id="' + it.id + '"' + (checked ? " checked" : "") + '>' +
+          return '<label class="geneva-item geneva-checkbox-item' + (checked ? " checked" : "") + '">' +
+            '<input type="checkbox" data-id="' + it.id + '"' + (checked ? " checked" : "") + ' style="position:absolute;opacity:0;pointer-events:none;">' +
             '<span class="geneva-checkbox-custom"></span>' +
             '<span class="geneva-item-content">' +
               '<span class="geneva-item-title">' + CU.escapeHtml(it.title) + '</span>' +
@@ -159,61 +157,57 @@
     }).join("");
   }
 
-  // ===== РЕНДЕР РЕЗУЛЬТАТА =====
   function renderResult() {
     var sum = total();
     var r = rangeFor(sum);
 
-    // Используем универсальный рендер: баллы слева, сброс справа, без лишних текстов
     CU.renderResultPanel({
       score: sum,
       scoreLabel: "баллов",
       color: r.color,
       title: r.label,
-      description: sum <= 5 ? "ТЭЛА невозможна" : "ТЭЛА возможна",
+      description: "",
       extraDescription: "",
-      therapy: "",              // Убрана терапия
+      breakdownHtml: "",
       onReset: resetAll
     });
   }
 
-  // ===== СБРОС =====
   function resetAll() {
     CATEGORIES.forEach(function (cat) {
       cat.items.forEach(function (it) {
         state[it.id] = it.type === "hr" ? null : false;
       });
     });
-    CU.clearCalcState(STORAGE_KEY);
-    fullRender();
+    saveState();
+    renderCategories();
+    renderResult();
   }
 
   function fullRender() {
     renderCategories();
     renderResult();
-    saveState();
   }
 
-  // ===== ОБРАБОТЧИКИ =====
   function bindListeners() {
     bodyEl.addEventListener("change", function (e) {
       var cb = e.target.closest("input[type=checkbox][data-id]");
       if (cb) {
         state[cb.getAttribute("data-id")] = cb.checked;
+        saveState();
         fullRender();
         return;
       }
       if (e.target.name === "hr") {
         state.hr = e.target.value;
+        saveState();
         fullRender();
       }
     });
-    
-    // Обработчик сброса теперь автоматически добавляется внутри CU.renderResultPanel
   }
 
   function init() {
-    bodyEl = document.getElementById("calcBody");
+    bodyEl = document.getElementById("genevaGroups");
     panelEl = document.getElementById("resultPanel");
     if (!bodyEl || !panelEl) return;
 
@@ -223,7 +217,11 @@
 
     var infoBtn = document.getElementById("calcInfoBtn");
     if (infoBtn) infoBtn.addEventListener("click", function () {
-      CU.openReferenceModal({ reference: REFERENCE });
+      if (window.SMP.references && window.SMP.references.geneva && window.SMP.openRefMarkdownModal) {
+        window.SMP.openRefMarkdownModal({ markdown: window.SMP.references.geneva });
+      } else {
+        CU.openReferenceModal({ reference: REFERENCE });
+      }
     });
   }
 

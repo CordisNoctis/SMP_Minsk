@@ -1,0 +1,75 @@
+/* ===== Стили markdown-справок ===== */
+.ref-md { font-size: 0.9rem; line-height: 1.55; color: var(--text); }
+
+.ref-md h3 {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--accent);
+  margin: 16px 0 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+.ref-md h4 { font-size: 0.92rem; font-weight: 700; margin: 12px 0 6px; }
+
+.ref-md p { margin: 0 0 10px; }
+
+.ref-md ul, .ref-md ol { margin: 0 0 10px; padding-left: 20px; }
+.ref-md li { margin-bottom: 4px; }
+
+.ref-md blockquote {
+  margin: 10px 0;
+  padding: 10px 12px;
+  background: var(--menu-icon-bg);
+  border-left: 3px solid var(--accent);
+  border-radius: 6px;
+}
+
+.ref-md hr { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
+
+.ref-md-table-wrap { overflow-x: auto; margin: 10px 0; }
+.ref-md-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+.ref-md-table th {
+  padding: 8px 6px;
+  background: var(--menu-icon-bg);
+  color: var(--accent);
+  font-weight: 800;
+  text-align: left;
+  border-bottom: 2px solid var(--accent);
+  white-space: nowrap;
+}
+.ref-md-table td {
+  padding: 6px;
+  border-bottom: 1px solid var(--border-light, rgba(0,0,0,0.06));
+  vertical-align: top;
+}
+
+.ref-md strong { font-weight: 800; }
+
+/* ===== Блоки кода (схемы, алгоритмы) ===== */
+.ref-md-pre {
+  margin: 10px 0;
+  padding: 12px;
+  background: var(--menu-icon-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow-x: auto;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: var(--text);
+  white-space: pre;
+}
+
+.ref-md-pre code {
+  font-family: inherit;
+  background: none;
+  padding: 0;
+}
+
+.ref-md-code {
+  padding: 1px 5px;
+  background: var(--menu-icon-bg);
+  border-radius: 4px;
+  font-family: ui-monospace, monospace;
+  font-size: 0.85em;
+}

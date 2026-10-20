@@ -2,41 +2,14 @@
   "use strict";
   var CU = window.SMP.calcUtils;
 
-  var PRESETS = [
-    { name: "Адреналин 0.1%",       percent: 0.1,   icon: "❤️",  warning: "В/в медленно! Критический препарат" },
-    { name: "Анальгин 50%",          percent: 50,    icon: "💊",  warning: "Риск анафилаксии!" },
-    { name: "Атропин 0.1%",          percent: 0.1,   icon: "💊" },
-    { name: "Дексаметазон 0.4%",     percent: 0.4,   icon: "💉" },
-    { name: "Димедрол 1%",           percent: 1,     icon: "🧠" },
-    { name: "Диазепам 0.5%",         percent: 0.5,   icon: "😴",  warning: "Медленно в/в, риск угнетения дыхания" },
-    { name: "Допамин 4%",            percent: 4,     icon: "💓",  warning: "Только через инфузомат!" },
-    { name: "Кальция глюконат 10%",  percent: 10,    icon: "🦴" },
-    { name: "Кетамин 5%",            percent: 5,     icon: "😴",  warning: "Диссоциативная анестезия" },
-    { name: "Лидокаин 2%",           percent: 2,     icon: "💊" },
-    { name: "Лидокаин 10%",          percent: 10,    icon: "💊",  warning: "Для аритмий!" },
-    { name: "Магния сульфат 25%",    percent: 25,    icon: "🧪" },
-    { name: "Мидазолам 0.5%",        percent: 0.5,   icon: "😴" },
-    { name: "Морфин 1%",             percent: 1,     icon: "💊",  warning: "Наркотический анальгетик!" },
-    { name: "Нитроглицерин 0.1%",    percent: 0.1,   icon: "💓",  warning: "Только через инфузомат!" },
-    { name: "Норэпинефрин 0.2%",     percent: 0.2,   icon: "📈",  warning: "Только через ЦВК!" },
-    { name: "Новокаин 0.5%",         percent: 0.5,   icon: "💊" },
-    { name: "Преднизолон 3%",        percent: 3,     icon: "💉" },
-    { name: "Супрастин 2%",          percent: 2,     icon: "🤧" },
-    { name: "Трамадол 5%",           percent: 5,     icon: "💊" },
-    { name: "Фентанил 0.005%",       percent: 0.005, icon: "💊",  warning: "Сильный опиоид! 50 мкг/мл" },
-    { name: "Фуросемид 1%",          percent: 1,     icon: "💧" },
-    { name: "Эуфиллин 2.4%",         percent: 2.4,   icon: "🫁" },
-    { name: "Глюкоза 40%",           percent: 40,    icon: "🩸",  warning: "Только в центральную вену!" },
-    { name: "Глюкоза 5%",            percent: 5,     icon: "💧" },
-    { name: "NaCl 0.9%",             percent: 0.9,   icon: "💧" }
-  ];
-
+  // ===== РЕЖИМЫ =====
   var MODES = [
     { id: "concentration", label: "Концентр.", icon: "🧪", subtitle: "% ↔ мг/мл" },
     { id: "dose",          label: "По дозе",   icon: "💉", subtitle: "мг → мл" },
     { id: "weight",        label: "По весу",   icon: "⚖️", subtitle: "мг/кг → мл" }
   ];
 
+  // ===== СПРАВОЧНАЯ ИНФОРМАЦИЯ (резерв, если markdown-файл не подключён) =====
   var REFERENCE = {
     title: "О калькуляторе",
     paragraphs: [
@@ -44,201 +17,243 @@
       "Формула: 1% = 1 г на 100 мл = 1000 мг на 100 мл = 10 мг на 1 мл. Следовательно: концентрация (мг/мл) = % × 10.",
       "Объём (мл) = доза (мг) / концентрация (мг/мл). При дозировании по массе тела: объём = (доза мг/кг × вес кг) / концентрация."
     ],
-    importantNote: "Расчётный объём ориентировочный. Перед введением всегда проверяйте концентрацию на ампуле, срок годности, прозрачность раствора и совместимость.",
-    indicationsTitle: "💊 Часто используемые концентрации препаратов:",
-    indications: [
-      "Адреналин — 0.1% (1 мг/мл)",
-      "Анальгин — 50% (500 мг/мл)",
-      "Атропин — 0.1% (1 мг/мл)",
-      "Дексаметазон — 0.4% (4 мг/мл)",
-      "Допамин — 0.5% (5 мг/мл), 4% (40 мг/мл)",
-      "Кальция глюконат — 10% (100 мг/мл)",
-      "Кетамин — 5% (50 мг/мл)",
-      "Лидокаин — 1% (10 мг/мл), 2% (20 мг/мл), 10% (100 мг/мл)",
-      "Магния сульфат — 25% (250 мг/мл)",
-      "Мидазолам — 0.5% (5 мг/мл)",
-      "Морфин — 1% (10 мг/мл)",
-      "Нитроглицерин — 0.1% (1 мг/мл)",
-      "Новокаин — 0.5% (5 мг/мл), 2% (20 мг/мл)",
-      "Норэпинефрин — 0.2% (2 мг/мл)",
-      "Преднизолон — 3% (30 мг/мл)",
-      "Сибазон (диазепам) — 0.5% (5 мг/мл)",
-      "Трамадол — 5% (50 мг/мл)",
-      "Фентанил — 0.005% (0.05 мг/мл = 50 мкг/мл)",
-      "Эуфиллин — 2.4% (24 мг/мл)"
-    ]
+    importantNote: "Расчётный объём ориентировочный. Перед введением всегда проверяйте концентрацию на ампуле, срок годности, прозрачность раствора и совместимость."
   };
 
+  // ===== СОСТОЯНИЕ =====
+  var STORAGE_KEY = "smp-converter-state";
   var state = {
     mode: "dose",
     concPercent: null, concMgMl: null,
     doseMg: null, dosePerKg: null, weightKg: null
   };
+
+  function saveState() { CU.saveCalcState(STORAGE_KEY, state); }
+  function loadState() {
+    var saved = CU.loadCalcState(STORAGE_KEY);
+    if (!saved) return;
+    if (saved.mode) state.mode = saved.mode;
+    if (typeof saved.concPercent === "number") state.concPercent = saved.concPercent;
+    if (typeof saved.concMgMl === "number") state.concMgMl = saved.concMgMl;
+    if (typeof saved.doseMg === "number") state.doseMg = saved.doseMg;
+    if (typeof saved.dosePerKg === "number") state.dosePerKg = saved.dosePerKg;
+    if (typeof saved.weightKg === "number") state.weightKg = saved.weightKg;
+  }
+
+  // ===== ВСПОМОГАТЕЛЬНЫЕ =====
+  function parseNum(v) {
+    var n = parseFloat(String(v).replace(",", "."));
+    return isNaN(n) ? null : n;
+  }
+
+  function round2(n) { return Math.round(n * 100) / 100; }
+
+  // Округление объёма (мл): <=9 — 2 знака, 10–99 — 1 знак, >=100 — целое
+  function roundVol(n) {
+    if (n >= 100) return Math.round(n);
+    var r1 = Math.round(n * 10) / 10;
+    if (r1 >= 100) return Math.round(n);
+    if (n >= 10) return r1;
+    var r2 = Math.round(n * 100) / 100;
+    if (r2 >= 10) return Math.round(n * 10) / 10;
+    return r2;
+  }
+
+  // Форматирование объёма для вывода (с правильным числом знаков после запятой)
+  function formatVol(n) {
+    if (n >= 100) return Math.round(n).toString();
+    if (n >= 10)  return n.toFixed(1);
+    return n.toFixed(2);
+  }
+
+  function calc() {
+    if (state.mode === "concentration") {
+      if (state.concPercent === null && state.concMgMl === null) return null;
+      var p = state.concPercent !== null ? state.concPercent : round2(state.concMgMl / 10);
+      var m = state.concMgMl !== null ? state.concMgMl : round2(state.concPercent * 10);
+      return { type: "conc", p: p, m: m };
+    }
+    if (state.mode === "dose") {
+      if (state.concMgMl === null || state.concMgMl <= 0 || state.doseMg === null) return null;
+      return { type: "vol", vol: roundVol(state.doseMg / state.concMgMl), dose: state.doseMg };
+    }
+    if (state.mode === "weight") {
+      if (state.concMgMl === null || state.concMgMl <= 0 || state.dosePerKg === null || state.weightKg === null) return null;
+      var total = round2(state.dosePerKg * state.weightKg);
+      return { type: "vol", vol: roundVol(total / state.concMgMl), dose: total };
+    }
+    return null;
+  }
+
+  // ===== РЕНДЕРИНГ =====
   var bodyEl, panelEl;
 
-  function parseNum(el) {
-    var v = parseFloat(String(el.value).replace(",", "."));
-    return isNaN(v) ? null : v;
-  }
-
-  function resetButtonHtml() {
-    return '<button type="button" class="result-reset-big" aria-label="Сбросить" title="Сбросить">↺</button>';
-  }
-
-  function renderBody() {
-    var mode = state.mode;
-    bodyEl.innerHTML =
-      '<div class="drug-mode-switcher">' +
+  function renderModeSwitcher() {
+    return '<div class="dc-mode-switcher">' +
       MODES.map(function (m) {
-        return '<button type="button" class="drug-mode-btn' + (mode === m.id ? ' active' : '') + '" data-mode="' + m.id + '">' +
+        return '<button type="button" class="dc-mode-btn' + (state.mode === m.id ? " active" : "") + '" data-mode="' + m.id + '">' +
           '<span>' + m.icon + '</span>' +
-          '<div class="drug-mode-label">' + m.label + '</div>' +
-          '<div class="drug-mode-subtitle">' + m.subtitle + '</div></button>';
+          '<div class="dc-mode-label">' + m.label + '</div>' +
+          '<div class="dc-mode-subtitle">' + m.subtitle + '</div>' +
+        '</button>';
       }).join("") +
+    '</div>';
+  }
+
+  function headerScore() {
+    var res = calc();
+    if (!res) return "—";
+    if (res.type === "conc") return res.m + " мг/мл";
+    return formatVol(res.vol) + " мл";
+  }
+
+  function renderInputs() {
+    var items = "";
+
+    // Концентрация (всегда)
+    items += '<div class="dc-input-item">' +
+      '<div class="dc-input-label">🧪 Концентрация препарата</div>' +
+      '<div class="dc-input-row">' +
+        '<input type="text" id="concPercent" class="dc-field" inputmode="decimal" placeholder="—" value="' + (state.concPercent !== null ? state.concPercent : "") + '">' +
+        '<span class="dc-unit">%</span>' +
+        '<span class="dc-separator">=</span>' +
+        '<input type="text" id="concMgMl" class="dc-field" inputmode="decimal" placeholder="—" value="' + (state.concMgMl !== null ? state.concMgMl : "") + '">' +
+        '<span class="dc-unit">мг/мл</span>' +
       '</div>' +
+    '</div>';
 
-      '<details class="drug-presets card" open>' +
-        '<summary class="drug-presets-summary"><span>📦</span><span>Популярные препараты</span></summary>' +
-        '<div class="drug-presets-grid">' +
-        PRESETS.map(function (p, idx) {
-          return '<button type="button" class="drug-preset-btn" data-preset="' + idx + '">' +
-            '<span>' + p.icon + '</span>' +
-            '<div>' + CU.escapeHtml(p.name) + '</div></button>';
-        }).join("") +
-        '</div></details>' +
-
-      '<div class="card drug-input-card">' +
-        '<div class="drug-input-title">🧪 Концентрация препарата</div>' +
-        '<div class="drug-input-row">' +
-          '<input type="text" id="concPercent" class="drug-field" inputmode="decimal" placeholder="—">' +
-          '<span class="drug-unit">%</span>' +
-          '<span class="drug-separator">=</span>' +
-          '<input type="text" id="concMgMl" class="drug-field" inputmode="decimal" placeholder="—">' +
-          '<span class="drug-unit">мг/мл</span>' +
+    if (state.mode === "dose") {
+      items += '<div class="dc-input-item">' +
+        '<div class="dc-input-label">💉 Требуемая доза</div>' +
+        '<div class="dc-input-row">' +
+          '<input type="text" id="doseMg" class="dc-field" inputmode="decimal" placeholder="—" value="' + (state.doseMg !== null ? state.doseMg : "") + '">' +
+          '<span class="dc-unit">мг</span>' +
         '</div>' +
-        '<div class="drug-hint">1% = 10 мг/мл</div>' +
+      '</div>';
+    }
+
+    if (state.mode === "weight") {
+      items += '<div class="dc-input-item">' +
+        '<div class="dc-input-label">⚖️ Доза на массу тела</div>' +
+        '<div class="dc-input-row">' +
+          '<input type="text" id="dosePerKg" class="dc-field" inputmode="decimal" placeholder="—" value="' + (state.dosePerKg !== null ? state.dosePerKg : "") + '">' +
+          '<span class="dc-unit">мг/кг</span>' +
+        '</div>' +
       '</div>' +
+      '<div class="dc-input-item">' +
+        '<div class="dc-input-label">👤 Масса тела пациента</div>' +
+        '<div class="dc-input-row">' +
+          '<input type="text" id="weightKg" class="dc-field" inputmode="decimal" placeholder="—" value="' + (state.weightKg !== null ? state.weightKg : "") + '">' +
+          '<span class="dc-unit">кг</span>' +
+        '</div>' +
+      '</div>';
+    }
 
-      (mode === "dose" ?
-        '<div class="card drug-input-card">' +
-          '<div class="drug-input-title">💉 Требуемая доза</div>' +
-          '<div class="drug-input-row">' +
-            '<input type="text" id="doseMg" class="drug-field" inputmode="decimal" placeholder="—">' +
-            '<span class="drug-unit">мг</span>' +
-          '</div></div>' : "") +
-
-      (mode === "weight" ?
-        '<div class="card drug-input-card">' +
-          '<div class="drug-input-title">⚖️ Доза на массу тела</div>' +
-          '<div class="drug-input-row">' +
-            '<input type="text" id="dosePerKg" class="drug-field" inputmode="decimal" placeholder="—">' +
-            '<span class="drug-unit">мг/кг</span>' +
-          '</div></div>' +
-        '<div class="card drug-input-card">' +
-          '<div class="drug-input-title">👤 Масса тела пациента</div>' +
-          '<div class="drug-input-row">' +
-            '<input type="text" id="weightKg" class="drug-field" inputmode="decimal" placeholder="—">' +
-            '<span class="drug-unit">кг</span>' +
-          '</div></div>' : "");
+    bodyEl.innerHTML = renderModeSwitcher() +
+      '<div class="dc-category" style="--cat-color: #1f6e9c;">' +
+        '<div class="dc-category-header">' +
+          '<div class="dc-category-left">' +
+            '<span class="dc-category-icon">🧮</span>' +
+            '<span class="dc-category-title">Исходные данные</span>' +
+          '</div>' +
+          '<div class="dc-category-score" id="dcScore">' + headerScore() + '</div>' +
+        '</div>' +
+        '<div class="dc-category-items">' + items + '</div>' +
+        '<div class="dc-hint">1% = 10 мг/мл · Объём = доза / концентрация</div>' +
+      '</div>';
   }
 
   function renderResult() {
-    var mode = state.mode;
-    var cp = state.concPercent, cm = state.concMgMl;
-    var dm = state.doseMg, dpk = state.dosePerKg, w = state.weightKg;
+    var res = calc();
 
-    // Режим 1: только концентрация
-    if (mode === "concentration") {
-      if (cp === null && cm === null) return renderEmpty("Введите концентрацию", "% или мг/мл");
-      var p = cp !== null ? cp : (cm !== null ? Math.round((cm / 10) * 100) / 100 : null);
-      var m = cm !== null ? cm : (cp !== null ? Math.round(cp * 10 * 100) / 100 : null);
-      panelEl.innerHTML =
-        '<div class="result-content result-success drug-result">' +
-        '<div class="drug-result-main">' +
-          '<div class="drug-result-big">' + p + '%</div>' +
-          '<div class="drug-result-eq">=</div>' +
-          '<div class="drug-result-big">' + m + ' мг/мл</div>' +
-        '</div>' +
-        resetButtonHtml() +
-        '</div>';
+    if (!res) {
+      var hint = state.mode === "concentration" ? "Введите концентрацию (% или мг/мл)"
+        : state.mode === "dose" ? "Введите концентрацию и дозу"
+        : "Заполните все поля";
+      CU.renderResultPanel({
+        score: "—",
+        scoreLabel: "",
+        color: "incomplete",
+        title: hint,
+        description: "",
+        extraDescription: "",
+        breakdownHtml: "",
+        onReset: resetAll
+      });
       return;
     }
 
-    // Режим 2: доза в мг
-    if (mode === "dose") {
-      if (cm === null || dm === null || cm === 0) return renderEmpty("Введите концентрацию и дозу", "для расчёта объёма");
-      var vol = dm / cm;
-      return renderVolume(vol, dm, false);
+    if (res.type === "conc") {
+      CU.renderResultPanel({
+        score: res.m,
+        scoreLabel: "мг/мл",
+        color: "gcs-15",
+        title: "Концентрация " + res.p + "%",
+        description: "",
+        extraDescription: "",
+        breakdownHtml: "",
+        onReset: resetAll
+      });
+    } else {
+      CU.renderResultPanel({
+        score: formatVol(res.vol),
+        scoreLabel: "мл",
+        color: "gcs-15",
+        title: "Объём для введения",
+        description: "",
+        extraDescription: "",
+        breakdownHtml: "",
+        onReset: resetAll
+      });
     }
-
-    // Режим 3: доза по весу
-    if (mode === "weight") {
-      if (cm === null || dpk === null || w === null || cm === 0) return renderEmpty("Заполните все поля", "концентрация, мг/кг, вес");
-      var td = dpk * w;
-      var vol2 = td / cm;
-      return renderVolume(vol2, td, true);
-    }
   }
 
-  function renderEmpty(label, desc) {
-    panelEl.innerHTML =
-      '<div class="result-content result-incomplete">' +
-      '<div class="result-score"><div class="result-score-value">—</div><div class="result-score-label">нет данных</div></div>' +
-      '<div class="result-divider"></div>' +
-      '<div class="result-info"><div class="result-label">' + label + '</div><div class="result-description">' + desc + '</div></div>' +
-      resetButtonHtml() +
-      '</div>';
+  function updateHeaderScore() {
+    var el = document.getElementById("dcScore");
+    if (el) el.textContent = headerScore();
   }
 
-  function renderVolume(vol, doseMg, fromWeight) {
-    var vr = Math.round(vol * 100) / 100;
-    var dr = Math.round(doseMg * 100) / 100;
-
-    var warnings = [];
-    if (vr > 20)  warnings.push("⚠️ Большой объём (" + vr + " мл). Проверьте концентрацию!");
-    if (vr < 0.1) warnings.push("⚠️ Очень малый объём — используйте более разведённый раствор.");
-    if (vr > 100) warnings.push("⚠️ Экстремально большой объём! Проверьте расчёт.");
-
-    var ampoules = [0.5, 1, 2, 5, 10].map(function (a) {
-      var count = (vol / a).toFixed(1);
-      return '<div class="drug-ampoule-item"><div class="drug-ampoule-count">' + count + '</div><div class="drug-ampoule-label">× ' + a + ' мл</div></div>';
-    }).join("");
-
-    panelEl.innerHTML =
-      '<div class="result-content result-success drug-result">' +
-      '<div class="drug-result-main">' +
-        '<div class="drug-result-big">' + vr + '</div>' +
-        '<div class="drug-result-unit">мл</div>' +
-      '</div>' +
-      '<div class="drug-result-details" style="width:100%;margin-top:10px;">' +
-        '<div class="drug-result-row"><span class="drug-result-label">Суммарная доза:</span><span class="drug-result-value">' + dr + ' мг</span></div>' +
-        (fromWeight ? '<div class="drug-result-row"><span class="drug-result-label">Расчёт:</span><span class="drug-result-value">' + state.dosePerKg + ' мг/кг × ' + state.weightKg + ' кг</span></div>' : "") +
-        '<div class="drug-result-row"><span class="drug-result-label">Концентрация:</span><span class="drug-result-value">' + (state.concPercent !== null ? state.concPercent : "?") + '% (' + state.concMgMl + ' мг/мл)</span></div>' +
-      '</div>' +
-      '<div class="drug-ampoules" style="width:100%;margin-top:10px;">' +
-        '<div class="drug-ampoules-title">Это соответствует:</div>' +
-        '<div class="drug-ampoules-grid">' + ampoules + '</div>' +
-      '</div>' +
-      warnings.map(function (w) { return '<div class="result-warning" style="margin-top:8px;">' + w + '</div>'; }).join("") +
-      resetButtonHtml() +
-      '</div>';
+  function resetAll() {
+    state = {
+      mode: "dose",
+      concPercent: null, concMgMl: null,
+      doseMg: null, dosePerKg: null, weightKg: null
+    };
+    saveState();
+    renderInputs();
+    bindInputs();
+    renderResult();
   }
 
-  function syncConcInputs(source) {
-    var cpEl = document.getElementById("concPercent");
+  // ===== ОБРАБОТЧИКИ ВВОДА =====
+  function onConcPercent() {
+    var v = parseNum(document.getElementById("concPercent").value);
+    state.concPercent = v;
+    state.concMgMl = v !== null ? round2(v * 10) : null;
     var cmEl = document.getElementById("concMgMl");
-    if (!cpEl || !cmEl) return;
-    if (source === "percent") {
-      var v = parseNum(cpEl);
-      state.concPercent = v;
-      state.concMgMl = v !== null ? Math.round(v * 10 * 100) / 100 : null;
-      cmEl.value = state.concMgMl !== null ? state.concMgMl : "";
-    } else if (source === "mgml") {
-      var v2 = parseNum(cmEl);
-      state.concMgMl = v2;
-      state.concPercent = v2 !== null ? Math.round((v2 / 10) * 100) / 100 : null;
-      cpEl.value = state.concPercent !== null ? state.concPercent : "";
-    }
+    if (cmEl) cmEl.value = state.concMgMl !== null ? state.concMgMl : "";
+    afterChange();
+  }
+
+  function onConcMgMl() {
+    var v = parseNum(document.getElementById("concMgMl").value);
+    state.concMgMl = v;
+    state.concPercent = v !== null ? round2(v / 10) : null;
+    var cpEl = document.getElementById("concPercent");
+    if (cpEl) cpEl.value = state.concPercent !== null ? state.concPercent : "";
+    afterChange();
+  }
+
+  function onSimple(field, key) {
+    var v = parseNum(document.getElementById(field).value);
+    state[key] = v;
+    afterChange();
+  }
+
+  function afterChange() {
+    saveState();
+    updateHeaderScore();
+    renderResult();
   }
 
   function bindInputs() {
@@ -248,75 +263,46 @@
     var dpkEl = document.getElementById("dosePerKg");
     var wEl = document.getElementById("weightKg");
 
-    if (cpEl) cpEl.addEventListener("input", function () { syncConcInputs("percent"); renderResult(); });
-    if (cmEl) cmEl.addEventListener("input", function () { syncConcInputs("mgml"); renderResult(); });
-    if (dmEl) dmEl.addEventListener("input", function () { state.doseMg = parseNum(dmEl); renderResult(); });
-    if (dpkEl) dpkEl.addEventListener("input", function () { state.dosePerKg = parseNum(dpkEl); renderResult(); });
-    if (wEl) wEl.addEventListener("input", function () { state.weightKg = parseNum(wEl); renderResult(); });
-
-    if (cpEl && state.concPercent !== null) cpEl.value = state.concPercent;
-    if (cmEl && state.concMgMl !== null) cmEl.value = state.concMgMl;
-    if (dmEl && state.doseMg !== null) dmEl.value = state.doseMg;
-    if (dpkEl && state.dosePerKg !== null) dpkEl.value = state.dosePerKg;
-    if (wEl && state.weightKg !== null) wEl.value = state.weightKg;
+    if (cpEl) cpEl.addEventListener("input", onConcPercent);
+    if (cmEl) cmEl.addEventListener("input", onConcMgMl);
+    if (dmEl) dmEl.addEventListener("input", function () { onSimple("doseMg", "doseMg"); });
+    if (dpkEl) dpkEl.addEventListener("input", function () { onSimple("dosePerKg", "dosePerKg"); });
+    if (wEl) wEl.addEventListener("input", function () { onSimple("weightKg", "weightKg"); });
   }
 
-  function fullRender() {
-    renderBody();
-    bindInputs();
-    renderResult();
-  }
-
-  function resetAll() {
-    state = {
-      mode: "dose",
-      concPercent: null, concMgMl: null,
-      doseMg: null, dosePerKg: null, weightKg: null
-    };
-    fullRender();
+  function bindListeners() {
+    bodyEl.addEventListener("click", function (e) {
+      var modeBtn = e.target.closest(".dc-mode-btn");
+      if (!modeBtn) return;
+      state.mode = modeBtn.getAttribute("data-mode");
+      saveState();
+      renderInputs();
+      bindInputs();
+      renderResult();
+    });
   }
 
   function init() {
-    bodyEl = document.getElementById("calcBody");
+    bodyEl = document.getElementById("dcGroups");
     panelEl = document.getElementById("resultPanel");
     if (!bodyEl || !panelEl) return;
 
-    fullRender();
-
-    bodyEl.addEventListener("click", function (e) {
-      var modeBtn = e.target.closest(".drug-mode-btn");
-      if (modeBtn) {
-        state.mode = modeBtn.getAttribute("data-mode");
-        fullRender();
-        return;
-      }
-      var presetBtn = e.target.closest(".drug-preset-btn");
-      if (presetBtn) {
-        var p = PRESETS[parseInt(presetBtn.getAttribute("data-preset"), 10)];
-        if (p.percent !== undefined) {
-          state.concPercent = p.percent;
-          state.concMgMl = Math.round(p.percent * 10 * 100) / 100;
-        } else if (p.mgMl !== undefined) {
-          state.concMgMl = p.mgMl;
-          state.concPercent = Math.round((p.mgMl / 10) * 100) / 100;
-        }
-        if (state.mode === "concentration") state.mode = "dose";
-        fullRender();
-        if (p.warning) CU.showToast("⚠️ " + p.warning);
-      }
-    });
-
-    panelEl.addEventListener("click", function (e) {
-      if (e.target.closest(".result-reset-big")) resetAll();
-    });
+    loadState();
+    renderInputs();
+    bindInputs();
+    bindListeners();
+    renderResult();
 
     var infoBtn = document.getElementById("calcInfoBtn");
     if (infoBtn) infoBtn.addEventListener("click", function () {
-      CU.openReferenceModal({ reference: REFERENCE });
+      if (window.SMP.references && window.SMP.references.drugConverter && window.SMP.openRefMarkdownModal) {
+        window.SMP.openRefMarkdownModal({ markdown: window.SMP.references.drugConverter });
+      } else {
+        CU.openReferenceModal({ reference: REFERENCE });
+      }
     });
   }
 
-  CU.autoPersist("smp-calc-converter-v1");
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
   else init();
 })();

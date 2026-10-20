@@ -244,6 +244,81 @@
     </section>
   </div>
 
+    <!-- МОДАЛКА РЕДАКТИРОВАНИЯ ШАБЛОНА -->
+  <div class="modal" id="template-edit-modal" hidden aria-hidden="true">
+    <div class="modal-backdrop" data-modal-close></div>
+    <section class="modal-panel schedule-modal-panel" role="dialog" aria-modal="true">
+      <header class="modal-header">
+        <h2 id="templateEditTitle">Новый шаблон</h2>
+        <button type="button" class="modal-close" data-modal-close aria-label="Закрыть">×</button>
+      </header>
+
+      <div class="modal-body">
+
+        <!-- Название шаблона -->
+        <div class="schedule-section">
+          <label class="event-name-field">
+            <span>Название шаблона</span>
+            <input type="text" id="templateEditName" class="event-name-input" maxlength="30" placeholder="Например: День, Ночь, Сутки">
+          </label>
+        </div>
+
+        <!-- Время смены -->
+        <div class="schedule-section">
+          <p class="edit-time-heading" id="templateEditTimeHeading">Время смены</p>
+
+          <div class="edit-time-row">
+            <div class="edit-time-block edit-time-card">
+              <div class="edit-time-label">Начало</div>
+              <div class="wheel-triple-row">
+                <div class="wheel-triple wheel-triple-vertical">
+                  <button type="button" class="wheel-adjacent" data-template-edit-field="startHour" data-direction="prev" aria-label="Уменьшить час начала">−</button>
+                  <input type="text" class="wheel-main wheel-main-input" id="templateEditStartHourMain" value="08" maxlength="2" inputmode="numeric" autocomplete="off" aria-label="Час начала">
+                  <button type="button" class="wheel-adjacent" data-template-edit-field="startHour" data-direction="next" aria-label="Увеличить час начала">+</button>
+                </div>
+                <div class="wheel-triple wheel-triple-vertical">
+                  <button type="button" class="wheel-adjacent" data-template-edit-field="startMinute" data-direction="prev" aria-label="Уменьшить минуту начала">−</button>
+                  <input type="text" class="wheel-main wheel-main-input" id="templateEditStartMinuteMain" value="00" maxlength="2" inputmode="numeric" autocomplete="off" aria-label="Минута начала">
+                  <button type="button" class="wheel-adjacent" data-template-edit-field="startMinute" data-direction="next" aria-label="Увеличить минуту начала">+</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="edit-time-divider" aria-hidden="true">—</div>
+
+            <div class="edit-time-block edit-time-card">
+              <div class="edit-time-label">Конец</div>
+              <div class="wheel-triple-row">
+                <div class="wheel-triple wheel-triple-vertical">
+                  <button type="button" class="wheel-adjacent" data-template-edit-field="endHour" data-direction="prev" aria-label="Уменьшить час конца">−</button>
+                  <input type="text" class="wheel-main wheel-main-input" id="templateEditEndHourMain" value="20" maxlength="2" inputmode="numeric" autocomplete="off" aria-label="Час конца">
+                  <button type="button" class="wheel-adjacent" data-template-edit-field="endHour" data-direction="next" aria-label="Увеличить час конца">+</button>
+                </div>
+                <div class="wheel-triple wheel-triple-vertical">
+                  <button type="button" class="wheel-adjacent" data-template-edit-field="endMinute" data-direction="prev" aria-label="Уменьшить минуту конца">−</button>
+                  <input type="text" class="wheel-main wheel-main-input" id="templateEditEndMinuteMain" value="00" maxlength="2" inputmode="numeric" autocomplete="off" aria-label="Минута конца">
+                  <button type="button" class="wheel-adjacent" data-template-edit-field="endMinute" data-direction="next" aria-label="Увеличить минуту конца">+</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Цвет шаблона -->
+        <div class="schedule-section event-color-section">
+          <div class="schedule-section-title">Цвет шаблона</div>
+          <div class="event-colors" id="templateEditColors"></div>
+        </div>
+
+      </div>
+
+      <footer class="modal-footer schedule-modal-footer">
+        <button type="button" class="btn-secondary" data-modal-close>Отмена</button>
+        <button type="button" class="btn-primary" id="templateEditSaveBtn">Сохранить</button>
+      </footer>
+    </section>
+  </div>
+
   <!-- МОДАЛКА МАССОВОГО ДОБАВЛЕНИЯ -->
   <div class="modal" id="bulk-modal" hidden aria-hidden="true">
     <div class="modal-backdrop" data-modal-close></div>

@@ -2,12 +2,14 @@
   "use strict";
   var CU = window.SMP.calcUtils;
 
+  // ===== КРИТЕРИИ =====
   var ITEMS = [
     { id: "concordant_st", title: "Элевация ST ≥ 1 мм, конкордантная с QRS", points: 5 },
     { id: "st_depression_v1v3", title: "Депрессия ST ≥ 1 мм в V1, V2 или V3", points: 3 },
     { id: "discordant_st", title: "Элевация ST ≥ 5 мм, дискордантная с QRS", points: 2 }
   ];
 
+  // ===== ТАБЛИЦА ВЕРОЯТНОСТЕЙ =====
   var PROB_TABLE = [
     { score: 10, prob: "100%" },
     { score: 8,  prob: "92%" },
@@ -18,6 +20,7 @@
     { score: 0,  prob: "16%" }
   ];
 
+  // ===== СПРАВОЧНАЯ ИНФОРМАЦИЯ (резерв, если markdown-файл не подключён) =====
   var REFERENCE = {
     title: "О критериях Сгарбоссы",
     paragraphs: [
@@ -27,14 +30,23 @@
     importantNote: "Отрицательный результат (0–2 балла) НЕ исключает ИМ. Обязательна оценка тропонина и клинической картины."
   };
 
-  var checked = {};
-  var itemsEl, probTableEl, panelEl;
+  // ===== СОСТОЯНИЕ =====
+  var STORAGE_KEY = "smp-sgarbossa-state";
+  var state = { checked: {} };
 
+  function saveState() { CU.saveCalcState(STORAGE_KEY, state); }
+  function loadState() {
+    var saved = CU.loadCalcState(STORAGE_KEY);
+    if (saved && saved.checked) {
+      state.checked = saved.checked;
+    }
+  }
+
+  // ===== ВСПОМОГАТЕЛЬНЫЕ =====
   function total() {
     var sum = 0;
-    for (var id in checked) if (checked[id]) {
-      var it = ITEMS.find(function (i) { return i.id === id; });
-      if (it) sum += it.points;
+    for (var i = 0; i < ITEMS.length; i++) {
+      if (state.checked[ITEMS[i].id]) sum += ITEMS[i].points;
     }
     return sum;
   }
@@ -59,86 +71,119 @@
     return "баллов";
   }
 
-  function resetButtonHtml() {
-      return '<button type="button" class="result-reset-big" aria-label="Сбросить" title="Сбросить">↺</button>';
-  }
+  // ===== РЕНДЕРИНГ =====
+  var bodyEl, panelEl;
 
-  function resetAll() {
-      checked = {};
-      renderItems();
-      renderProbTable();
-      renderResult();
-  }
-
-  function renderItems() {
-    itemsEl.innerHTML = ITEMS.map(function (it) {
-      var cls = checked[it.id] ? " checked" : "";
-      return '<div class="calc-item' + cls + '" data-id="' + it.id + '">' +
-        '<div class="calc-item-checkbox"><span class="check-icon">✓</span></div>' +
-        '<div class="calc-item-content"><div class="calc-item-title">' + CU.escapeHtml(it.title) + '</div></div>' +
-        '<div class="calc-item-points">+' + it.points + '</div></div>';
-    }).join('');
-  }
-
-  function renderProbTable() {
+  function renderGroups() {
     var sum = total();
-    probTableEl.innerHTML = PROB_TABLE.map(function (r) {
-      var active = r.score === sum ? " active" : "";
-      return '<div class="sgarbossa-prob-row' + active + '" data-score="' + r.score + '">' +
-        '<span class="sgarbossa-prob-score">' + r.score + ' б.</span>' +
-        '<span class="sgarbossa-prob-value">' + r.prob + '</span></div>';
-    }).join('');
+    var catColor = sum >= 3 ? "#b42323" : "#1f6e9c";
+
+    var itemsHtml = ITEMS.map(function (it) {
+      var isChecked = !!state.checked[it.id];
+      return '<div class="geneva-item geneva-checkbox-item' + (isChecked ? " checked" : "") + '" data-id="' + it.id + '" role="checkbox" aria-checked="' + isChecked + '" tabindex="0">' +
+        '<span class="geneva-checkbox-custom"></span>' +
+        '<span class="geneva-item-content">' +
+          '<span class="geneva-item-title">' + CU.escapeHtml(it.title) + '</span>' +
+          '<span class="geneva-item-points">+' + it.points + '</span>' +
+        '</span>' +
+      '</div>';
+    }).join("");
+
+    var probHtml =
+      '<div class="card sgarbossa-probability-card">' +
+        '<div style="padding: 10px 14px 6px; font-weight: 700; font-size: 0.9rem;">Вероятность ИМ по баллам</div>' +
+        '<div class="sgarbossa-probability-table">' +
+        PROB_TABLE.map(function (r) {
+          var active = r.score === sum ? " active" : "";
+          return '<div class="sgarbossa-prob-row' + active + '">' +
+            '<span class="sgarbossa-prob-score">' + r.score + ' б.</span>' +
+            '<span class="sgarbossa-prob-value">' + r.prob + '</span></div>';
+        }).join("") +
+        '</div>' +
+      '</div>';
+
+    bodyEl.innerHTML =
+      '<div class="geneva-category" style="--cat-color: ' + catColor + ';">' +
+        '<div class="geneva-category-header">' +
+          '<div class="geneva-category-left">' +
+            '<span class="geneva-category-icon">📈</span>' +
+            '<span class="geneva-category-title">Критерии Сгарбоссы (ЭКГ с БЛНПГ)</span>' +
+          '</div>' +
+          '<div class="geneva-category-score">' + sum + '</div>' +
+        '</div>' +
+        '<div class="geneva-category-items">' + itemsHtml + '</div>' +
+      '</div>' +
+      probHtml;
   }
 
   function renderResult() {
     var sum = total();
     var prob = getProb(sum);
     var positive = sum >= 3;
-    var color = positive ? "error" : "warning";
-    var desc = positive
-      ? "≥3 баллов — высокая специфичность. Показана экстренная реперфузионная терапия."
-      : "<3 баллов — низкая чувствительность. ИМ не исключён! Оцените тропонин, ЭхоКГ.";
 
-    panelEl.innerHTML =
-        '<div class="result-content result-' + color + '">' +
-        '<div class="result-score"><div class="result-score-value">' + sum + '</div><div class="result-score-label">' + pluralize(sum) + '</div></div>' +
-        '<div class="result-divider"></div>' +
-        '<div class="result-info"><div class="result-label">Вероятность ИМ: ' + prob + '</div><div class="result-description">' + desc + '</div></div>' +
-        resetButtonHtml() +
-        '</div>';
+    CU.renderResultPanel({
+      score: sum,
+      scoreLabel: pluralize(sum),
+      color: positive ? "gcs-4-5" : "gcs-11-12",
+      title: "Вероятность ИМ: " + prob,
+      description: "",
+      extraDescription: "",
+      breakdownHtml: "",
+      onReset: resetAll
+    });
   }
 
-  function init() {
-    itemsEl = document.getElementById("calcItems");
-    probTableEl = document.getElementById("probTable");
-    panelEl = document.getElementById("resultPanel");
-    if (!itemsEl || !probTableEl || !panelEl) return;
-
-    renderItems();
-    renderProbTable();
+  function resetAll() {
+    state.checked = {};
+    saveState();
+    renderGroups();
     renderResult();
+  }
 
-    itemsEl.addEventListener("click", function (e) {
-      var item = e.target.closest(".calc-item");
+  function bindListeners() {
+    bodyEl.addEventListener("click", function (e) {
+      var item = e.target.closest(".geneva-checkbox-item[data-id]");
       if (!item) return;
       var id = item.getAttribute("data-id");
-      checked[id] = !checked[id];
-      renderItems();
-      renderProbTable();
+      state.checked[id] = !state.checked[id];
+      saveState();
+      renderGroups();
       renderResult();
     });
 
-    panelEl.addEventListener("click", function (e) {
-        if (e.target.closest(".result-reset-big")) resetAll();
+    bodyEl.addEventListener("keydown", function (e) {
+      if (e.key !== "Enter" && e.key !== " ") return;
+      var item = e.target.closest(".geneva-checkbox-item[data-id]");
+      if (!item) return;
+      e.preventDefault();
+      var id = item.getAttribute("data-id");
+      state.checked[id] = !state.checked[id];
+      saveState();
+      renderGroups();
+      renderResult();
     });
+  }
+
+  function init() {
+    bodyEl = document.getElementById("sgarbossaGroups");
+    panelEl = document.getElementById("resultPanel");
+    if (!bodyEl || !panelEl) return;
+
+    loadState();
+    renderGroups();
+    renderResult();
+    bindListeners();
 
     var infoBtn = document.getElementById("calcInfoBtn");
     if (infoBtn) infoBtn.addEventListener("click", function () {
-      CU.openReferenceModal({ reference: REFERENCE });
+      if (window.SMP.references && window.SMP.references.sgarbossa && window.SMP.openRefMarkdownModal) {
+        window.SMP.openRefMarkdownModal({ markdown: window.SMP.references.sgarbossa });
+      } else {
+        CU.openReferenceModal({ reference: REFERENCE });
+      }
     });
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
   else init();
-  CU.autoPersist("smp-calc-sgarbossa-v1");
 })();

@@ -1,185 +1,173 @@
-/* ===== QTc Bazett ===== */
-.qtc-inputs { padding: 14px; margin-bottom: 12px; }
-.qtc-input-group { margin-bottom: 10px; }
-.qtc-input-label {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  margin-bottom: 6px;
-}
-.qtc-input-row { display: flex; align-items: center; gap: 10px; }
-.qtc-unit { min-width: 60px; }
-.qtc-formula-hint {
-  margin-top: 8px;
-  padding: 8px 10px;
-  background: var(--menu-icon-bg);
-  border-radius: 8px;
-  font-size: 0.8rem;
-  color: var(--muted);
-  text-align: center;
-  font-family: ui-monospace, monospace;
-}
+/* ===== QTc Bazett (в стиле Глазго) ===== */
 
-.qtc-result { flex-direction: column; align-items: stretch; padding: 14px !important; }
-.qtc-main-value {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 12px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid rgba(255,255,255,0.2);
-}
-.qtc-big-number {
-  font-size: 2.8rem;
-  font-weight: 800;
-  font-variant-numeric: tabular-nums;
-  line-height: 1;
-  text-align: center;
-}
-.qtc-big-label {
-  font-size: 0.85rem;
-  opacity: 0.85;
-  margin-top: 4px;
-}
-.qtc-details { width: 100%; }
-.qtc-detail-row {
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-  padding: 3px 0;
-  font-size: 0.85rem;
-}
-.qtc-detail-label { opacity: 0.85; }
-.qtc-detail-value { font-weight: 700; text-align: right; }
-
-.qtc-gender-row {
+/* Переключатель режимов */
+.qtc-mode-switcher {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 8px;
-  margin-top: 8px;
-}
-.qtc-gender-item {
-  padding: 8px;
-  background: rgba(255,255,255,0.12);
-  border-radius: 8px;
-  text-align: center;
-  font-size: 0.85rem;
-}
-.qtc-gender-item span:first-child {
-  font-size: 16px;
-  vertical-align: -2px;
-  margin-right: 4px;
-}
-.qtc-status-normal { font-weight: 700; }
-.qtc-status-borderline { font-weight: 700; color: #fff3a0; }
-.qtc-status-prolonged { font-weight: 800; color: #ffb3b3; }
-
-/* Режим должного QT */
-.qtc-range-main {
-  text-align: center;
   margin-bottom: 12px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid rgba(255,255,255,0.2);
-}
-.qtc-range-title {
-  font-size: 0.85rem;
-  opacity: 0.9;
-  margin-bottom: 6px;
-}
-.qtc-range-values {
-  display: flex;
-  align-items: baseline;
-  justify-content: center;
-  gap: 12px;
-}
-.qtc-range-value {
-  font-size: 2.4rem;
-  font-weight: 800;
-  font-variant-numeric: tabular-nums;
-}
-.qtc-range-sep { font-size: 1.8rem; opacity: 0.6; }
-.qtc-range-unit {
-  font-size: 1rem;
-  opacity: 0.85;
-  margin-left: 4px;
 }
 
-.qtc-cells-block {
-  margin-top: 10px;
-  padding: 10px;
-  background: rgba(255,255,255,0.12);
-  border-radius: 8px;
-}
-.qtc-cells-title {
-  font-size: 0.82rem;
-  font-weight: 700;
-  margin-bottom: 6px;
-}
-.qtc-cell-row {
-  font-size: 0.78rem;
-  line-height: 1.5;
-  padding: 2px 0;
-}
-
-.qtc-section { margin-bottom: 14px; }
-.qtc-section-title {
-  font-weight: 700;
-  font-size: 0.95rem;
-  margin-bottom: 12px;
+.qtc-mode-btn {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 6px;
-}
-.qtc-category-row {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 6px;
-  margin-bottom: 12px;
-}
-.qtc-category-btn {
-  padding: 10px 6px;
-  background: var(--menu-icon-bg);
-  border: 2px solid transparent;
-  border-radius: 10px;
+  gap: 4px;
+  padding: 14px 10px;
+  background: var(--card);
+  border: 2px solid var(--border);
+  border-radius: 14px;
   cursor: pointer;
-  text-align: center;
-  transition: all .15s ease;
+  transition: all 0.15s ease;
   color: var(--text);
+  box-shadow: var(--shadow);
 }
-.qtc-category-btn:hover { border-color: var(--accent); }
-.qtc-category-btn.active {
+
+.qtc-mode-btn:hover {
+  border-color: var(--accent);
+}
+
+.qtc-mode-btn.active {
   background: var(--accent);
   border-color: var(--accent);
   color: #fff;
 }
-.qtc-category-btn span { font-size: 20px; display: block; }
-.qtc-category-label { font-size: 0.82rem; font-weight: 600; margin-top: 2px; }
 
-.qtc-input-label {
-  display: block;
-  font-size: 0.82rem;
-  color: var(--muted);
-  font-weight: 600;
-  margin-bottom: 4px;
+.qtc-mode-btn span:first-child {
+  font-size: 1.6rem;
+  line-height: 1;
 }
-.qtc-unit { min-width: 50px; }
-.qtc-hint {
-  margin-top: 6px;
-  padding: 6px 10px;
-  background: var(--menu-icon-bg);
-  border-radius: 6px;
-  font-size: 0.78rem;
-  color: var(--muted);
+
+.qtc-mode-label {
+  font-size: 0.95rem;
+  font-weight: 750;
+}
+
+.qtc-mode-desc {
+  font-size: 0.72rem;
+  opacity: 0.85;
   text-align: center;
 }
 
+/* Категории (пол/возраст) */
+.qtc-category {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+
+.qtc-category-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  background: linear-gradient(135deg, var(--cat-color, #1f6e9c) 0%, var(--cat-color, #1f6e9c) 100%);
+  color: #fff;
+}
+
+.qtc-category-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.qtc-category-icon {
+  font-size: 1.3rem;
+}
+
+.qtc-category-title {
+  font-size: 1rem;
+  font-weight: 750;
+}
+
+.qtc-category-score {
+  font-size: 1.4rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.qtc-category-items {
+  padding: 8px 0;
+}
+
+/* Поля ввода в стиле Глазго */
+.qtc-input-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-light, rgba(0,0,0,0.06));
+}
+
+.qtc-input-item:last-child {
+  border-bottom: none;
+}
+
+.qtc-input-label {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.qtc-input-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+
+.qtc-field {
+  width: 90px;
+  padding: 8px 12px;
+  background: var(--card);
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.qtc-field:focus {
+  border-color: var(--accent);
+}
+
+.qtc-unit {
+  font-size: 0.85rem;
+  color: var(--muted);
+  font-weight: 600;
+  min-width: 55px;
+}
+
+/* Подсказка с формулой */
+.qtc-formula-hint {
+  padding: 8px 16px;
+  font-size: 0.78rem;
+  color: var(--muted);
+  text-align: center;
+  font-family: ui-monospace, monospace;
+  background: var(--menu-icon-bg);
+  border-top: 1px solid var(--border-light, rgba(0,0,0,0.06));
+}
+
+/* Кнопки скорости ЭКГ */
 .qtc-speed-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 6px;
+  padding: 8px 16px 14px;
 }
+
 .qtc-speed-btn {
   padding: 10px 8px;
   background: var(--menu-icon-bg);
@@ -188,12 +176,41 @@
   cursor: pointer;
   text-align: center;
   font-weight: 700;
+  font-size: 0.88rem;
   color: var(--text);
-  transition: all .15s ease;
+  transition: all 0.15s ease;
 }
-.qtc-speed-btn:hover { border-color: var(--accent); }
+
+.qtc-speed-btn:hover {
+  border-color: var(--accent);
+}
+
 .qtc-speed-btn.active {
   background: var(--accent);
   border-color: var(--accent);
   color: #fff;
+}
+
+.qtc-speed-btn small {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  opacity: 0.75;
+  margin-top: 2px;
+}
+
+/* Адаптивность */
+@media (max-width: 420px) {
+  .qtc-input-item {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+  .qtc-input-row {
+    justify-content: space-between;
+  }
+  .qtc-field {
+    flex: 1;
+    max-width: 120px;
+  }
 }

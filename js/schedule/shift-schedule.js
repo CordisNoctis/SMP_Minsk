@@ -1098,8 +1098,14 @@
     if (!list) return;
     list.innerHTML = "";
 
-    TMPL.load().forEach(function (tpl) {
+    var templates = TMPL.load();
+
+    templates.forEach(function (tpl) {
       var color = TMPL.getColor(tpl.colorId);
+      
+      var row = document.createElement("div");
+      row.className = "template-picker-row";
+      
       var btn = document.createElement("button");
       btn.type = "button";
       btn.className = "template-chip";
@@ -1137,7 +1143,288 @@
         closeTemplatePicker();
       });
 
-      list.appendChild(btn);
+      var actions = document.createElement("div");
+      actions.className = "template-picker-actions";
+
+      var editBtn = document.createElement("button");
+      editBtn.type = "button";
+      editBtn.className = "template-picker-action-btn";
+      editBtn.textContent = "✏️";
+      editBtn.setAttribute("aria-label", "Редактировать");
+      editBtn.addEventListener("click", function (e) {
+        e.stopPropagation();
+        vibrate(10);
+        openTemplateEditModal(tpl);
+      });
+
+      var deleteBtn = document.createElement("button");
+      deleteBtn.type = "button";
+      deleteBtn.className = "template-picker-action-btn";
+      deleteBtn.textContent = "🗑️";
+      deleteBtn.setAttribute("aria-label", "Удалить");
+      deleteBtn.addEventListener("click", function (e) {
+        e.stopPropagation();
+        vibrate(15);
+        deleteTemplateFromPicker(tpl.id);
+      });
+
+      actions.appendChild(editBtn);
+      actions.appendChild(deleteBtn);
+
+      row.appendChild(btn);
+      row.appendChild(actions);
+      list.appendChild(row);
+    });
+
+    // Кнопка создания нового шаблона внизу списка
+    var createBtn = document.createElement("button");
+    createBtn.type = "button";
+    createBtn.className = "template-chip template-chip-create";
+    createBtn.innerHTML = '<span class="template-chip-name">➕ Создать новый шаблон</span>';
+    createBtn.addEventListener("click", function () {
+      vibrate(10);
+      openTemplateEditModal(null);
+    });
+    list.appendChild(createBtn);
+  }
+
+  // ===== РЕДАКТИРОВАНИЕ ШАБЛОНОВ =====
+
+  var templateEditState = {
+    id: null,
+    name: "",
+    startHour: 8,
+    startMinute: 0,
+    endHour: 20,
+    endMinute: 0,
+    endsNextDay: false,
+    colorId: "maroon"
+  };
+
+  function openTemplateEditModal(tpl) {
+    // Закрываем пикер, если он открыт (чтобы редактор не был под ним)
+    var pickerModal = document.getElementById("template-picker-modal");
+    if (pickerModal && !pickerModal.hidden) {
+      pickerModal.hidden = true;
+      pickerModal.setAttribute("aria-hidden", "true");
+      // НЕ снимаем класс modal-open — он нужен для редактора
+    }
+
+    templateEditState.id = tpl ? tpl.id : null;
+    templateEditState.name = tpl ? tpl.name : "";
+    templateEditState.startHour = tpl ? tpl.startHour : 8;
+    templateEditState.startMinute = tpl ? tpl.startMinute : 0;
+    templateEditState.endHour = tpl ? tpl.endHour : 20;
+    templateEditState.endMinute = tpl ? tpl.endMinute : 0;
+    templateEditState.endsNextDay = tpl ? !!tpl.endsNextDay : false;
+    templateEditState.colorId = tpl ? tpl.colorId : "maroon";
+
+    var titleEl = document.getElementById("templateEditTitle");
+    if (titleEl) titleEl.textContent = tpl ? "Редактирование шаблона" : "Новый шаблон";
+
+    var nameInput = document.getElementById("templateEditName");
+    if (nameInput) nameInput.value = templateEditState.name;
+
+    updateTemplateEditUI();
+    renderTemplateEditColors();
+
+    var modal = document.getElementById("template-edit-modal");
+    if (modal) {
+      modal.hidden = false;
+      modal.setAttribute("aria-hidden", "false");
+      document.body.classList.add("modal-open");
+    }
+
+    attachTplEditWheelMouse();
+    attachTplEditWheelSwipe();
+  }
+
+  function closeTemplateEditModal() {
+    var modal = document.getElementById("template-edit-modal");
+    if (modal) {
+      modal.hidden = true;
+      modal.setAttribute("aria-hidden", "true");
+    }
+
+    // Возвращаемся в пикер — открываем его заново с обновлённым списком
+    var pickerModal = document.getElementById("template-picker-modal");
+    if (pickerModal) {
+      pickerModal.hidden = false;
+      pickerModal.setAttribute("aria-hidden", "false");
+      renderTemplatePickerList();
+      // Важно: добавляем modal-open заново, так как стандартный обработчик
+      // мог его снять при закрытии редактора
+      document.body.classList.add("modal-open");
+    } else {
+      document.body.classList.remove("modal-open");
+    }
+  }
+
+  function updateTemplateEditUI() {
+    var fields = ["startHour", "startMinute", "endHour", "endMinute"];
+    fields.forEach(function (field) {
+      var cfg = getFieldConfig(field);
+      var mainEl = document.getElementById("templateEdit" + field.charAt(0).toUpperCase() + field.slice(1) + "Main");
+      var prevBtn = document.querySelector('[data-template-edit-field="' + field + '"][data-direction="prev"]');
+      var nextBtn = document.querySelector('[data-template-edit-field="' + field + '"][data-direction="next"]');
+
+      var value = templateEditState[field];
+      var prevVal = (value - cfg.step + cfg.modulus) % cfg.modulus;
+      var nextVal = (value + cfg.step) % cfg.modulus;
+
+      if (mainEl) mainEl.value = pad(value, cfg.padLength);
+      if (prevBtn) prevBtn.textContent = pad(prevVal, cfg.padLength);
+      if (nextBtn) nextBtn.textContent = pad(nextVal, cfg.padLength);
+    });
+
+    var sT = templateEditState.startHour * 60 + templateEditState.startMinute;
+    var eT = templateEditState.endHour * 60 + templateEditState.endMinute;
+    templateEditState.endsNextDay = (sT === eT) || (eT <= sT);
+
+    var duration = 0;
+    if (templateEditState.endsNextDay) {
+      duration = 1440 - sT + eT;
+    } else if (eT > sT) {
+      duration = eT - sT;
+    }
+
+    var heading = document.getElementById("templateEditTimeHeading");
+    if (heading) {
+      if (duration === 0) {
+        heading.textContent = "Время смены";
+      } else {
+        var h = Math.floor(duration / 60);
+        var m = duration % 60;
+        var durationText = "";
+        if (h > 0 && m > 0) {
+          durationText = h + " ч " + m + " мин";
+        } else if (h > 0) {
+          durationText = h + " ч";
+        } else {
+          durationText = m + " мин";
+        }
+        heading.textContent = "Время смены (длительность: " + durationText + ")";
+      }
+    }
+  }
+
+  function adjustTemplateEditField(field, direction) {
+    vibrate(8);
+    var cfg = getFieldConfig(field);
+    var current = templateEditState[field];
+    var newVal = direction === "prev"
+      ? (current - cfg.step + cfg.modulus) % cfg.modulus
+      : (current + cfg.step) % cfg.modulus;
+
+    templateEditState[field] = newVal;
+    updateTemplateEditUI();
+  }
+
+  function onTemplateEditTimeTyping(inputEl, field) {
+    var raw = inputEl.value.replace(/[^0-9]/g, "");
+    if (raw.length > 2) raw = raw.slice(0, 2);
+    if (inputEl.value !== raw) inputEl.value = raw;
+  }
+
+  function commitTemplateEditTimeField(field, inputEl) {
+    var cfg = getFieldConfig(field);
+    var raw = inputEl.value.replace(/[^0-9]/g, "");
+    var val = parseInt(raw, 10);
+    if (isNaN(val)) val = 0;
+    if (val > cfg.modulus - 1) val = cfg.modulus - 1;
+    templateEditState[field] = val;
+    updateTemplateEditUI();
+  }
+
+  function renderTemplateEditColors() {
+    var container = document.getElementById("templateEditColors");
+    if (!container) return;
+    container.innerHTML = "";
+
+    TMPL.COLORS.forEach(function (color) {
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "event-color-btn" + (color.id === templateEditState.colorId ? " selected" : "");
+      btn.style.background = color.bg;
+      btn.setAttribute("aria-label", color.name);
+      btn.addEventListener("click", function () {
+        vibrate(8);
+        templateEditState.colorId = color.id;
+        renderTemplateEditColors();
+      });
+      container.appendChild(btn);
+    });
+  }
+
+  function saveTemplateEdit() {
+    var nameInput = document.getElementById("templateEditName");
+    var name = nameInput ? nameInput.value.trim() : "";
+
+    if (!name) {
+      showToast("⚠️ Введите название шаблона");
+      if (nameInput) nameInput.focus();
+      return;
+    }
+
+    var templates = TMPL.load();
+    var wasEdit = false;
+
+    if (templateEditState.id) {
+      for (var i = 0; i < templates.length; i++) {
+        if (templates[i].id === templateEditState.id) {
+          templates[i].name = name;
+          templates[i].colorId = templateEditState.colorId;
+          templates[i].startHour = templateEditState.startHour;
+          templates[i].startMinute = templateEditState.startMinute;
+          templates[i].endHour = templateEditState.endHour;
+          templates[i].endMinute = templateEditState.endMinute;
+          templates[i].endsNextDay = templateEditState.endsNextDay;
+          wasEdit = true;
+          break;
+        }
+      }
+    } else {
+      var newTemplate = {
+        id: "custom-" + Date.now(),
+        name: name,
+        colorId: templateEditState.colorId,
+        startHour: templateEditState.startHour,
+        startMinute: templateEditState.startMinute,
+        endHour: templateEditState.endHour,
+        endMinute: templateEditState.endMinute,
+        endsNextDay: templateEditState.endsNextDay,
+        builtin: false
+      };
+      templates.push(newTemplate);
+    }
+
+    TMPL.save(templates);
+    closeTemplateEditModal();
+    showToast(wasEdit ? "✅ Шаблон обновлён" : "✅ Шаблон создан");
+  }
+
+  function deleteTemplateFromPicker(id) {
+    var templates = TMPL.load();
+    var tpl = null;
+
+    for (var i = 0; i < templates.length; i++) {
+      if (templates[i].id === id) {
+        tpl = templates[i];
+        break;
+      }
+    }
+
+    SMP.confirm("Удалить этот шаблон?").then(function (ok) {
+      if (!ok) return;
+
+      var newTemplates = [];
+      for (var i = 0; i < templates.length; i++) {
+        if (templates[i].id !== id) newTemplates.push(templates[i]);
+      }
+
+      TMPL.save(newTemplates);
+      renderTemplatePickerList();
+      showToast("🗑️ Шаблон удалён");
     });
   }
 
@@ -1627,6 +1914,110 @@
     });
   }
 
+  // ===== КОЛЁСИКО МЫШИ И СВАЙПЫ ДЛЯ ОКНА РЕДАКТИРОВАНИЯ ШАБЛОНА =====
+
+  var tplEditWheelMouseAttached = false;
+  var tplEditWheelSwipeAttached = false;
+  var tplEditLastTouchTime = 0;
+
+  function attachTplEditWheelMouse() {
+    if (tplEditWheelMouseAttached) return;
+    tplEditWheelMouseAttached = true;
+
+    var wheels = document.querySelectorAll("#template-edit-modal .wheel-triple");
+    wheels.forEach(function (wheel) {
+      var adjBtn = wheel.querySelector("[data-template-edit-field]");
+      if (!adjBtn) return;
+      var field = adjBtn.getAttribute("data-template-edit-field");
+      var mainEl = wheel.querySelector(".wheel-main-input, .wheel-main");
+      if (!mainEl) return;
+
+      var lastChange = 0;
+
+      wheel.addEventListener("wheel", function (e) {
+        e.preventDefault();
+        if (Date.now() - tplEditLastTouchTime < 300) return;
+        var now = Date.now();
+        if (now - lastChange < 200) return;
+        lastChange = now;
+        var direction = e.deltaY < 0 ? "next" : "prev";
+        mainEl.classList.remove("wheel-anim-up", "wheel-anim-down");
+        void mainEl.offsetWidth;
+        var animClass = direction === "next" ? "wheel-anim-up" : "wheel-anim-down";
+        mainEl.classList.add(animClass);
+        setTimeout(function () { adjustTemplateEditField(field, direction); }, 100);
+        setTimeout(function () { mainEl.classList.remove(animClass); }, 260);
+      }, { passive: false });
+    });
+  }
+
+  function attachTplEditWheelSwipe() {
+    if (tplEditWheelSwipeAttached) return;
+    tplEditWheelSwipeAttached = true;
+
+    var STEP_PX = 40;
+    var wheels = document.querySelectorAll("#template-edit-modal .wheel-triple");
+    wheels.forEach(function (wheel) {
+      var adjBtn = wheel.querySelector("[data-template-edit-field]");
+      if (!adjBtn) return;
+      var field = adjBtn.getAttribute("data-template-edit-field");
+      var mainEl = wheel.querySelector(".wheel-main-input, .wheel-main");
+      if (!mainEl) return;
+
+      var lastY = 0;
+      var accum = 0;
+      var isDragging = false;
+
+      wheel.addEventListener("touchstart", function (e) {
+        if (e.touches.length !== 1) return;
+        lastY = e.touches[0].clientY;
+        accum = 0;
+        isDragging = true;
+        mainEl.style.transition = "";
+      }, { passive: true });
+
+      wheel.addEventListener("touchmove", function (e) {
+        if (!isDragging || e.touches.length !== 1) return;
+        e.preventDefault();
+        var currentY = e.touches[0].clientY;
+        var dy = currentY - lastY;
+        lastY = currentY;
+        accum += dy;
+        var visualOffset = accum;
+        if (visualOffset > STEP_PX) visualOffset = STEP_PX;
+        if (visualOffset < -STEP_PX) visualOffset = -STEP_PX;
+        mainEl.style.transform = "translateY(" + visualOffset + "px)";
+        mainEl.style.opacity = String(1 - Math.abs(visualOffset) / (STEP_PX * 2.5));
+        if (accum <= -STEP_PX) {
+          adjustTemplateEditField(field, "next");
+          accum = 0;
+          vibrate(5);
+        } else if (accum >= STEP_PX) {
+          adjustTemplateEditField(field, "prev");
+          accum = 0;
+          vibrate(5);
+        }
+      }, { passive: false });
+
+      wheel.addEventListener("touchend", function () {
+        if (!isDragging) return;
+        isDragging = false;
+        tplEditLastTouchTime = Date.now();
+        mainEl.style.transition = "transform 0.15s ease, opacity 0.15s ease";
+        mainEl.style.transform = "translateY(0)";
+        mainEl.style.opacity = "1";
+        setTimeout(function () { mainEl.style.transition = ""; }, 160);
+      }, { passive: true });
+
+      wheel.addEventListener("touchcancel", function () {
+        isDragging = false;
+        mainEl.style.transform = "";
+        mainEl.style.opacity = "";
+        mainEl.style.transition = "";
+      }, { passive: true });
+    });
+  }
+
   function bindUI() {
     var grid = document.getElementById("calendarGrid");
     if (grid) {
@@ -1805,6 +2196,44 @@
         }
       });
     }
+
+    // ===== КНОПКИ УПРАВЛЕНИЯ ШАБЛОНАМИ =====
+
+    var createTemplateInlineBtn = document.getElementById("createTemplateInlineBtn");
+    if (createTemplateInlineBtn) {
+      createTemplateInlineBtn.addEventListener("click", function () {
+        vibrate(10);
+        openTemplateEditModal(null);
+      });
+    }
+
+    var templateEditSaveBtn = document.getElementById("templateEditSaveBtn");
+    if (templateEditSaveBtn) {
+      templateEditSaveBtn.addEventListener("click", saveTemplateEdit);
+    }
+
+    // Барабаны времени в окне редактирования шаблона
+    document.addEventListener("click", function (event) {
+      var adjacent = event.target.closest("[data-template-edit-field]");
+      if (adjacent) {
+        var field = adjacent.getAttribute("data-template-edit-field");
+        var direction = adjacent.getAttribute("data-direction");
+        adjustTemplateEditField(field, direction);
+      }
+    });
+
+    // Ввод времени с клавиатуры в окне редактирования шаблона
+    var tplEditTimeFields = ["startHour", "startMinute", "endHour", "endMinute"];
+    tplEditTimeFields.forEach(function (field) {
+      var cap = field.charAt(0).toUpperCase() + field.slice(1);
+      var inputEl = document.getElementById("templateEdit" + cap + "Main");
+      if (!inputEl) return;
+      inputEl.addEventListener("input", function () { onTemplateEditTimeTyping(inputEl, field); });
+      inputEl.addEventListener("blur", function () { commitTemplateEditTimeField(field, inputEl); });
+      inputEl.addEventListener("keydown", function (e) {
+        if (e.key === "Enter") { e.preventDefault(); inputEl.blur(); }
+      });
+    });
 
     document.addEventListener("click", function (event) {
       if (event.target.matches(".modal-backdrop")) {

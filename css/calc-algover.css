@@ -1,35 +1,131 @@
-/* ===== Шкала Альговера ===== */
-.algover-inputs { margin-bottom: 14px; }
-.algover-input-group { margin-bottom: 12px; }
-.algover-input-label {
+/* ===== Индекс Альговера ===== */
+
+/* Обёртка полей ввода в стиле Глазго */
+.algover-category {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+
+.algover-category-header {
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 0.88rem;
+  justify-content: space-between;
+  padding: 14px 16px;
+  background: linear-gradient(135deg, var(--cat-color, #1f6e9c) 0%, var(--cat-color, #1f6e9c) 100%);
+  color: #fff;
+}
+
+.algover-category-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.algover-category-icon {
+  font-size: 1.3rem;
+}
+
+.algover-category-title {
+  font-size: 1rem;
+  font-weight: 750;
+}
+
+.algover-category-score {
+  font-size: 1.4rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.algover-items {
+  padding: 8px 0;
+}
+
+.algover-input-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-light, rgba(0,0,0,0.06));
+}
+
+.algover-input-item:last-child {
+  border-bottom: none;
+}
+
+.algover-input-label {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.95rem;
   font-weight: 600;
-  margin-bottom: 6px;
   color: var(--text);
 }
-.algover-input-label .material-symbols-rounded {
-  font-size: 18px;
-  color: var(--accent);
-}
+
 .algover-input-row {
   display: flex;
   align-items: center;
   gap: 8px;
+  flex: 0 0 auto;
 }
-.algover-unit { min-width: 70px; }
 
-.algover-scale-card { margin-bottom: 14px; padding: 16px 14px; }
+.algover-field {
+  width: 80px;
+  padding: 8px 12px;
+  background: var(--card);
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.algover-field:focus {
+  border-color: var(--accent);
+}
+
+.algover-unit {
+  font-size: 0.85rem;
+  color: var(--muted);
+  font-weight: 600;
+  min-width: 70px;
+}
+
+/* Визуальная шкала */
+.algover-scale-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  padding: 14px;
+  margin-bottom: 12px;
+}
+
+.algover-scale-title {
+  font-size: 0.85rem;
+  font-weight: 750;
+  color: var(--muted);
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
 .algover-scale {
   position: relative;
   height: 56px;
   display: flex;
   border-radius: 10px;
   overflow: hidden;
-  margin-bottom: 10px;
 }
+
 .algover-scale-segment {
   flex: 1;
   display: flex;
@@ -39,20 +135,24 @@
   color: #fff;
   padding: 4px;
 }
+
 .seg-normal { background: #1a7a3e; }
 .seg-sub { background: #8ba82a; }
 .seg-mod { background: #c77700; }
 .seg-sev { background: #b42323; }
 .seg-crit { background: #7a0e1c; }
+
 .seg-label {
   font-size: 0.72rem;
   opacity: 0.9;
   font-weight: 700;
 }
+
 .seg-title {
   font-size: 0.82rem;
   font-weight: 750;
 }
+
 .algover-scale-marker {
   position: absolute;
   top: -6px;
@@ -64,35 +164,28 @@
   box-shadow: 0 0 0 1px rgba(255,255,255,0.5), 0 2px 6px rgba(0,0,0,0.4);
   transition: left .2s ease;
   pointer-events: none;
+  display: none;
 }
 
-.algover-big-number {
-  font-size: 2.6rem;
-  font-weight: 800;
-  line-height: 1;
-  font-variant-numeric: tabular-nums;
-}
-.algover-big-label {
-  font-size: 0.75rem;
-  opacity: 0.85;
-  margin-top: 2px;
-}
-.algover-details { flex: 1; min-width: 0; }
-.algover-detail-row {
-  font-size: 0.85rem;
-  margin-bottom: 2px;
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-}
-.algover-detail-label { opacity: 0.85; }
-.algover-detail-value { font-weight: 700; }
-.algover-therapy {
+.algover-formula-hint {
+  text-align: center;
+  font-size: 0.82rem;
+  color: var(--muted);
   margin-top: 8px;
-  padding: 8px 10px;
-  background: rgba(255,255,255,0.15);
-  border-radius: 8px;
-  font-size: 0.85rem;
-  line-height: 1.4;
   font-weight: 600;
+}
+
+@media (max-width: 420px) {
+  .algover-input-item {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+  .algover-input-row {
+    justify-content: space-between;
+  }
+  .algover-field {
+    flex: 1;
+    max-width: 120px;
+  }
 }

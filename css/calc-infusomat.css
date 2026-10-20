@@ -1,167 +1,274 @@
-/* ===== Инфузомат ===== */
-.infusomat-section {
-  padding: 12px 14px;
+/* ===== Расчёт инфузии (в стиле Глазго) ===== */
+
+/* Переключатель режимов */
+.inf-mode-switcher {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
   margin-bottom: 12px;
 }
-.infusomat-section-title {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-weight: 700;
-  font-size: 0.95rem;
-  margin-bottom: 10px;
-}
 
-.infusomat-drug-info {
-  margin-top: 10px;
-  padding: 12px;
-  background: var(--menu-icon-bg);
-  border-radius: 10px;
-}
-.drug-info-header {
+.inf-mode-btn {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 8px;
-}
-.drug-info-header span { font-size: 24px; }
-.drug-info-name { font-weight: 800; font-size: 1.05rem; }
-.drug-info-details { font-size: 0.85rem; }
-.drug-info-row {
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-  margin-bottom: 3px;
-}
-.drug-info-label { color: var(--muted); }
-.drug-info-value { font-weight: 700; text-align: right; }
-.drug-info-warning {
-  margin-top: 8px;
-  padding: 6px 10px;
-  background: #c77700;
-  color: #fff;
-  border-radius: 6px;
-  font-size: 0.82rem;
-  font-weight: 700;
-  text-align: center;
-}
-
-.infusomat-forms-grid,
-.infusomat-dilution-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
-  gap: 6px;
-}
-.infusomat-form-btn,
-.infusomat-dilution-btn {
-  padding: 10px 6px;
-  background: var(--menu-icon-bg);
-  border: 1px solid transparent;
-  border-radius: 8px;
+  gap: 4px;
+  padding: 14px 10px;
+  background: var(--card);
+  border: 2px solid var(--border);
+  border-radius: 14px;
   cursor: pointer;
-  text-align: center;
-  transition: all .15s ease;
+  transition: all 0.15s ease;
   color: var(--text);
+  box-shadow: var(--shadow);
 }
-.infusomat-form-btn:hover,
-.infusomat-dilution-btn:hover { border-color: var(--accent); }
-.infusomat-form-btn.active,
-.infusomat-dilution-btn.active {
+
+.inf-mode-btn:hover { border-color: var(--accent); }
+.inf-mode-btn.active {
   background: var(--accent);
   border-color: var(--accent);
   color: #fff;
 }
-.form-btn-label,
-.dilution-btn-label { font-weight: 700; font-size: 0.88rem; }
-.form-btn-details,
-.dilution-btn-total { font-size: 0.75rem; opacity: 0.85; margin-top: 2px; }
+.inf-mode-btn span:first-child { font-size: 1.6rem; line-height: 1; }
+.inf-mode-label { font-size: 0.95rem; font-weight: 750; }
+.inf-mode-desc { font-size: 0.72rem; opacity: 0.85; }
 
-.infusomat-dose-inputs {
+/* Сетки для форм и разведений */
+.inf-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 8px;
+}
+
+.inf-grid-btn {
+  padding: 10px 6px;
+  background: var(--card);
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.15s ease;
+  color: var(--text);
+}
+.inf-grid-btn:hover { border-color: var(--accent); }
+.inf-grid-btn.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.inf-grid-btn-label { font-weight: 700; font-size: 0.88rem; }
+.inf-grid-btn-desc { font-size: 0.72rem; opacity: 0.85; margin-top: 2px; }
+
+/* Поля ввода дозы и веса */
+.inf-input-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-bottom: 10px;
+  gap: 12px;
 }
-.dose-input-group { display: flex; flex-direction: column; gap: 4px; }
-.dose-input-label { font-size: 0.82rem; color: var(--muted); font-weight: 600; }
 
-.infusomat-dose-presets {
-  padding-top: 10px;
-  border-top: 1px solid var(--border);
+.inf-input-group { display: flex; flex-direction: column; gap: 6px; }
+.inf-input-label { font-size: 0.85rem; color: var(--muted); font-weight: 600; }
+
+.inf-field {
+  padding: 10px 12px;
+  background: var(--card);
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  outline: none;
+  transition: border-color 0.15s ease;
 }
-.presets-label {
-  font-size: 0.78rem;
-  color: var(--muted);
-  margin-bottom: 6px;
-}
-.presets-grid {
+.inf-field:focus { border-color: var(--accent); }
+
+/* Пресеты доз */
+.inf-presets {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
-  gap: 4px;
+  gap: 6px;
+  margin-top: 8px;
 }
-.preset-btn {
+.inf-preset-btn {
   padding: 8px 4px;
   background: var(--menu-icon-bg);
   border: 1px solid transparent;
   border-radius: 6px;
   cursor: pointer;
   font-weight: 700;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   color: var(--text);
+  transition: all 0.15s ease;
 }
-.preset-btn:hover { border-color: var(--accent); }
-.preset-btn.active { background: var(--accent); color: #fff; }
+.inf-preset-btn:hover { border-color: var(--accent); }
+.inf-preset-btn.active { background: var(--accent); color: #fff; }
 
-.infusomat-result {
-  flex-direction: column;
-  align-items: stretch;
-  padding: 14px !important;
-}
-.infusomat-result-main {
-  display: flex;
-  align-items: baseline;
-  gap: 14px;
-  margin-bottom: 10px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid rgba(255,255,255,0.2);
-}
-.infusomat-result-speed { display: flex; align-items: baseline; gap: 6px; }
-.speed-value { font-size: 2.4rem; font-weight: 800; font-variant-numeric: tabular-nums; }
-.speed-unit { font-size: 1rem; opacity: 0.85; }
-.infusomat-result-alt { font-size: 0.95rem; opacity: 0.85; }
-
-.infusomat-result-details { width: 100%; }
-.result-detail-row {
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-  padding: 3px 0;
+/* Информационный блок препарата */
+.inf-drug-info {
+  margin-top: 10px;
+  padding: 10px 12px;
+  background: var(--menu-icon-bg);
+  border-radius: 8px;
   font-size: 0.85rem;
 }
-.result-detail-label { opacity: 0.85; }
-.result-detail-value { font-weight: 700; text-align: right; }
-.result-detail-highlight {
-  margin-top: 6px;
-  padding: 6px 10px;
-  background: rgba(255,255,255,0.12);
-  border-radius: 6px;
-  font-size: 0.9rem;
+.inf-drug-info-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+.inf-drug-info-row:last-child { margin-bottom: 0; }
+.inf-drug-info-label { color: var(--muted); }
+.inf-drug-info-value { font-weight: 700; text-align: right; }
+
+/* Детали в плашке результата */
+.inf-breakdown-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.inf-breakdown-item {
+  padding: 8px 10px;
+  background: var(--menu-icon-bg);
+  border-radius: 8px;
+}
+.inf-breakdown-label { font-size: 0.72rem; color: var(--muted); font-weight: 600; }
+.inf-breakdown-value { font-size: 0.95rem; font-weight: 700; color: var(--text); }
+
+.inf-warning {
+  margin-top: 8px;
+  padding: 8px 10px;
+  background: #fff3cd;
+  color: #856404;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 600;
 }
 
-.mode-btn {
-  padding: 12px 8px;
-  background: var(--menu-icon-bg);
-  border: 2px solid transparent;
+@media (max-width: 420px) {
+  .inf-input-row { grid-template-columns: 1fr; }
+}
+
+/* ===== Сетка выбора препарата (плашки) ===== */
+.inf-drugs-grid {
+  display: grid;
+  grid-template-columns: 1fr; /* 1 колонка на узких экранах */
+  gap: 8px;
+}
+
+@media (min-width: 480px) {
+  .inf-drugs-grid {
+    grid-template-columns: repeat(2, 1fr); /* 2 колонки на средних экранах */
+  }
+}
+
+@media (min-width: 768px) {
+  .inf-drugs-grid {
+    grid-template-columns: repeat(3, 1fr); /* 3 колонки на широких экранах */
+  }
+}
+
+.inf-drug-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--card);
+  border: 2px solid var(--border);
   border-radius: 10px;
   cursor: pointer;
-  text-align: center;
-  transition: all .15s ease;
+  text-align: left;
+  transition: all 0.15s ease;
   color: var(--text);
+  width: 100%;
 }
-.mode-btn:hover { border-color: var(--accent); }
-.mode-btn.active {
+
+.inf-drug-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+
+.inf-drug-card.active {
   background: var(--accent);
   border-color: var(--accent);
   color: #fff;
 }
-.mode-btn span { font-size: 24px; display: block; margin-bottom: 4px; }
+
+.inf-drug-card.active .inf-drug-card-cat,
+.inf-drug-card.active .inf-drug-card-range {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.inf-drug-card-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.inf-drug-card-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.inf-drug-card-name {
+  font-weight: 750;
+  font-size: 0.95rem;
+  line-height: 1.2;
+}
+
+.inf-drug-card-cat {
+  font-size: 0.72rem;
+  color: var(--muted);
+  margin-top: 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.inf-drug-card-range {
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin-top: 3px;
+  font-weight: 600;
+}
+
+/* ===== Адаптивность плашки результата для длинных чисел ===== */
+.result-score-value {
+  min-width: 60px;
+  text-align: left;
+  font-variant-numeric: tabular-nums;
+  word-break: keep-all;
+  white-space: nowrap;
+}
+
+.result-content {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.result-score {
+  flex: 0 0 auto;
+  min-width: 80px;
+}
+
+.result-info {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.result-divider {
+  flex: 0 0 auto;
+  width: 1px;
+  align-self: stretch;
+  min-height: 40px;
+}
+
+/* ===== Адаптивность полей ввода для мобильных ===== */
+@media (max-width: 480px) {
+  .inf-input-row {
+    grid-template-columns: 1fr !important;
+  }
+}

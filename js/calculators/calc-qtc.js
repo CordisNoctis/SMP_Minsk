@@ -2,14 +2,13 @@
   "use strict";
   var CU = window.SMP.calcUtils;
 
-  // Пороги QTc для режима оценки (мс)
+  // ===== ПОРОГИ QTc (мс) =====
   var THRESHOLDS = {
-    male:    { normal: 440, borderline: 460, prolonged: 500 },
-    female:  { normal: 460, borderline: 480, prolonged: 500 },
-    child:   { normal: 460, borderline: 480, prolonged: 500 }
+    male:   { normal: 440, borderline: 460, prolonged: 500 },
+    female: { normal: 460, borderline: 480, prolonged: 500 },
+    child:  { normal: 460, borderline: 480, prolonged: 500 }
   };
 
-  // Должные диапазоны QTc (используются в режиме должного QT)
   var NORM_RANGES = {
     male:   { min: 350, max: 440 },
     female: { min: 350, max: 460 },
@@ -17,255 +16,120 @@
   };
 
   var CATEGORIES = [
-    { id: "male",   label: "Мужчина",  icon: "♂" },
-    { id: "female", label: "Женщина",  icon: "♀" },
-    { id: "child",  label: "Ребёнок",  icon: "👶" }
+    { id: "male",   label: "Мужчина",  icon: "♂",  color: "#1f6e9c" },
+    { id: "female", label: "Женщина",  icon: "♀",  color: "#e68a2e" },
+    { id: "child",  label: "Ребёнок",  icon: "👶", color: "#2e8b57" }
   ];
 
+  // ===== СПРАВОЧНАЯ ИНФОРМАЦИЯ =====
   var REFERENCE = {
-    title: "О расчёте QTc",
+    title: "QTc по формуле Базетта (Corrected QT Interval — QTc Bazett)",
     paragraphs: [
-      "Формула Базетта (1920) — наиболее распространённая: QTc = QT / √RR (RR в секундах). Несмотря на неточность при экстремальной ЧСС, остаётся стандартом клинической практики.",
-      "Нормальные значения QTc: у мужчин ≤440 мс, у женщин и детей ≤460 мс. Значения >500 мс ассоциированы с высоким риском полиморфной желудочковой тахикардии типа torsades de pointes."
+      "Корригированный интервал QT (QTc) — стандартизированный показатель продолжительности желудочковой реполяризации, приведённый к частоте сердечных сокращений 60 уд/мин. Формула Базетта (1920) остаётся наиболее широко применяемой в клинической практике.",
+      "Формула расчёта: QTc (мс) = QT (мс) ÷ √RR (с), где RR = 60 / ЧСС. Пример: QT = 400 мс, ЧСС = 75 уд/мин → RR = 0,80 с → QTc = 400 / √0,80 = 447 мс.",
+      "Методика измерения: использовать отведение II или V5; измерять от начала QRS до конца зубца T (метод касательной); усреднить 3–5 циклов; не включать зубец U.",
+      "Формула Базетта переоценивает QTc при тахикардии (ЧСС > 90) и недооценивает при брадикардии (ЧСС < 60). При ЧСС 60–80 уд/мин различия с другими формулами минимальны.",
+      "Историческая справка: предложена H.C. Bazett в 1920 году. Несмотря на ограничения, остаётся стандартом для автоматического расчёта QTc и диагностики врождённого синдрома удлинённого QT (LQTS) согласно рекомендациям ESC."
     ],
-    importantNote: "QTc > 500 мс — высокий риск torsades de pointes. Требуется срочная консультация кардиолога, отмена препаратов удлиняющих QT, коррекция электролитов (K⁺, Mg²⁺, Ca²⁺).",
-    indicationsTitle: "📋 Должные значения QTc по категориям:",
+    importantNote: "Норма для женщин несколько выше, чем для мужчин. Женский пол сам по себе является независимым фактором риска лекарственно-индуцированной TdP (риск вдвое выше). Актуальный перечень препаратов: www.crediblemeds.org",
+    indicationsTitle: "Нормативные значения и пороги тревоги:",
     indications: [
-      "Мужчины (взрослые): 350–440 мс",
-      "Женщины (взрослые): 350–460 мс",
-      "Дети (до 18 лет): 350–460 мс",
-      "",
-      "📏 Измерение RR на ЭКГ:",
-      "При 25 мм/с: 1 малая клетка = 40 мс, 1 большая (5 мм) = 200 мс",
-      "При 50 мм/с: 1 малая клетка = 20 мс, 1 большая = 100 мс",
-      "Измерьте расстояние между двумя зубцами R и умножьте на цену деления."
+      "< 440 мс — Норма (большинство источников)",
+      "> 450 (муж) / > 460 (жен) — Удлинение QTc; повышенный риск TdP",
+      "> 480 мс — Диагностический критерий врождённого синдрома удлинённого QT (ESC)",
+      "> 500 мс — Значительное удлинение; основной фактор риска TdP; клинически критический порог",
+      "≥ 60 мс от исходного — Значимое нарастание QTc на фоне терапии",
+      "< 340 мс — Укорочение QTc; синдром укороченного QT (риск ВСС)"
+    ],
+    warnings: [
+      "Показания: мониторинг препаратов, удлиняющих QT, скрининг LQTS, электролитные нарушения, брадикардия, синкопе, ОИМ, ЧМТ.",
+      "Факторы риска TdP: женский пол, возраст > 65 лет, гипокалиемия/гipoмагниемия, брадикардия, приём ≥ 2 препаратов, удлиняющих QT, сердечная недостаточность.",
+      "При ЧСС > 90 уд/мин Базетт систематически завышает QTc, что может приводить к гипердиагностике и избыточному лечению.",
+      "Ненадёжна при фибрилляции предсердий с вариабельным ответом желудочков. Рекомендована преимущественно при ЧСС 60–80 уд/мин."
     ]
   };
 
+  // ===== СОСТОЯНИЕ =====
+  var STORAGE_KEY = "smp-qtc-state";
   var state = {
-    mode: "assess",          // "assess" (оценка) или "range" (должный диапазон)
+    mode: "assess",
     category: "male",
     assess: { qt: null, hr: null },
-    range:  { rr: 1000, speed: 25 }
+    range:  { hr: null }
   };
 
-  var bodyEl, panelEl;
-
-  function parseNum(el) {
-    var v = parseFloat(String(el.value).replace(",", "."));
-    return isNaN(v) ? null : v;
+  function saveState() { CU.saveCalcState(STORAGE_KEY, state); }
+  function loadState() {
+    var saved = CU.loadCalcState(STORAGE_KEY);
+    if (!saved) return;
+    if (saved.mode) state.mode = saved.mode;
+    if (saved.category) state.category = saved.category;
+    if (saved.assess) state.assess = saved.assess;
+    if (saved.range) state.range = saved.range;
   }
 
-  function resetButtonHtml() {
-    return '<button type="button" class="result-reset-big" aria-label="Сбросить" title="Сбросить">↺</button>';
+  // ===== ВСПОМОГАТЕЛЬНЫЕ =====
+  function parseNum(v) {
+    var n = parseFloat(String(v).replace(",", "."));
+    return isNaN(n) ? null : n;
   }
 
-  // ===== СТАТУС ПО QTc =====
-
-  function getStatus(qtc, category) {
-    var t = THRESHOLDS[category];
-    if (qtc >= t.prolonged) return { label: "Удлинён",     css: "qtc-status-prolonged", color: "error" };
-    if (qtc >= t.borderline) return { label: "Пограничный", css: "qtc-status-borderline", color: "warning" };
-    return { label: "Норма", css: "qtc-status-normal", color: "success" };
+  function getCategory() {
+    for (var i = 0; i < CATEGORIES.length; i++) {
+      if (CATEGORIES[i].id === state.category) return CATEGORIES[i];
+    }
+    return CATEGORIES[0];
   }
 
-  // ===== РЕЖИМ 1: ОЦЕНКА ИЗМЕРЕННОГО QT =====
-
-  function renderAssessForm() {
-    var a = state.assess;
-    return '<div class="qtc-section card">' +
-      '<div class="qtc-section-title">📊 Оценка измеренного QT</div>' +
-
-      '<div class="qtc-category-row">' +
-        CATEGORIES.map(function (c) {
-          var active = state.category === c.id ? ' active' : '';
-          return '<button type="button" class="qtc-category-btn' + active + '" data-category="' + c.id + '">' +
-            '<span>' + c.icon + '</span>' +
-            '<div class="qtc-category-label">' + c.label + '</div>' +
-          '</button>';
-        }).join("") +
-      '</div>' +
-
-      '<div class="qtc-input-group">' +
-        '<label class="qtc-input-label">📏 Измеренный интервал QT</label>' +
-        '<div class="qtc-input-row">' +
-          '<input type="text" id="qtInput" class="qtc-field" inputmode="decimal" placeholder="400" value="' + (a.qt !== null ? a.qt : "") + '">' +
-          '<span class="qtc-unit">мс</span>' +
-        '</div>' +
-      '</div>' +
-
-      '<div class="qtc-input-group">' +
-        '<label class="qtc-input-label">❤️ Частота сердечных сокращений</label>' +
-        '<div class="qtc-input-row">' +
-          '<input type="text" id="hrInput" class="qtc-field" inputmode="decimal" placeholder="75" value="' + (a.hr !== null ? a.hr : "") + '">' +
-          '<span class="qtc-unit">уд/мин</span>' +
-        '</div>' +
-      '</div>' +
-
-      '<div class="qtc-hint">QTc = QT / √(RR в секундах)</div>' +
-    '</div>';
+  function getStatus(qtc) {
+    var t = THRESHOLDS[state.category];
+    if (qtc >= t.prolonged) return { label: "Удлинён",     color: "gcs-4-5" };
+    if (qtc >= t.borderline) return { label: "Пограничный", color: "gcs-11-12" };
+    return { label: "Норма", color: "gcs-15" };
   }
 
-  function calculateAssess() {
+  function calcAssess() {
     var a = state.assess;
     if (a.qt === null || a.hr === null || a.hr <= 0) return null;
     var rrSec = 60 / a.hr;
     var qtc = Math.round(a.qt / Math.sqrt(rrSec));
     var rrMs = Math.round(rrSec * 1000);
-    var status = getStatus(qtc, state.category);
-    return { qt: a.qt, hr: a.hr, rrSec: rrSec, rrMs: rrMs, qtc: qtc, status: status };
+    return { qt: a.qt, hr: a.hr, rrSec: rrSec, rrMs: rrMs, qtc: qtc, status: getStatus(qtc) };
   }
 
-  function renderAssessResult() {
-    var res = calculateAssess();
-    if (!res) {
-      return '<div class="result-content result-incomplete">' +
-        '<div class="result-score"><div class="result-score-value">—</div><div class="result-score-label">введите данные</div></div>' +
-        '<div class="result-divider"></div>' +
-        '<div class="result-info"><div class="result-label">Заполните оба поля</div><div class="result-description">Интервал QT (мс) и ЧСС (уд/мин)</div></div>' +
-        resetButtonHtml() +
-      '</div>';
-    }
-
-    var warning = res.qtc >= 500 ? '<div class="result-warning">⚠️ Высокий риск torsades de pointes!</div>' : '';
-    var th = THRESHOLDS[state.category];
-
-    return '<div class="result-content result-' + res.status.color + ' qtc-result">' +
-      '<div class="qtc-main-value">' +
-        '<div class="qtc-big-number">' + res.qtc + '</div>' +
-        '<div class="qtc-big-label">мс (QTc)</div>' +
-        '<div class="' + res.status.css + '" style="font-weight:700;margin-top:4px;font-size:0.95rem;">' + res.status.label + '</div>' +
-      '</div>' +
-      '<div class="qtc-details">' +
-        '<div class="qtc-detail-row"><span class="qtc-detail-label">QT измеренный:</span><span class="qtc-detail-value">' + res.qt + ' мс</span></div>' +
-        '<div class="qtc-detail-row"><span class="qtc-detail-label">RR интервал:</span><span class="qtc-detail-value">' + res.rrMs + ' мс (' + res.rrSec.toFixed(2) + ' с)</span></div>' +
-        '<div class="qtc-detail-row"><span class="qtc-detail-label">ЧСС:</span><span class="qtc-detail-value">' + res.hr + ' уд/мин</span></div>' +
-        '<div class="qtc-detail-row"><span class="qtc-detail-label">Пороги (' + state.category + '):</span><span class="qtc-detail-value">норма ≤' + th.normal + ', погран. ≤' + th.borderline + ', удлин. ≥' + th.prolonged + '</span></div>' +
-        warning +
-      '</div>' +
-      resetButtonHtml() +
-    '</div>';
-  }
-
-  // ===== РЕЖИМ 2: ДОЛЖНЫЙ ДИАПАЗОН QT =====
-
-  function renderRangeForm() {
+  function calcRange() {
     var r = state.range;
-    return '<div class="qtc-section card">' +
-      '<div class="qtc-section-title">📏 Должный диапазон QT для данной ЧСС</div>' +
-
-      '<div class="qtc-category-row">' +
-        CATEGORIES.map(function (c) {
-          var active = state.category === c.id ? ' active' : '';
-          return '<button type="button" class="qtc-category-btn' + active + '" data-category="' + c.id + '">' +
-            '<span>' + c.icon + '</span>' +
-            '<div class="qtc-category-label">' + c.label + '</div>' +
-          '</button>';
-        }).join("") +
-      '</div>' +
-
-      '<div class="qtc-input-group">' +
-        '<label class="qtc-input-label">⏱️ Интервал RR на ЭКГ</label>' +
-        '<div class="qtc-input-row">' +
-          '<input type="text" id="rrInput" class="qtc-field" inputmode="decimal" placeholder="1000" value="' + (r.rr !== null ? r.rr : "") + '">' +
-          '<span class="qtc-unit">мс</span>' +
-        '</div>' +
-        '<div class="qtc-hint">Расстояние между зубцами R на ЭКГ</div>' +
-      '</div>' +
-
-      '<div class="qtc-input-group">' +
-        '<label class="qtc-input-label">🎞️ Скорость движения ленты</label>' +
-        '<div class="qtc-speed-row">' +
-          '<button type="button" class="qtc-speed-btn' + (r.speed === 25 ? ' active' : '') + '" data-speed="25">25 мм/с<br><span style="font-size:0.7rem;opacity:0.7;">(стандарт)</span></button>' +
-          '<button type="button" class="qtc-speed-btn' + (r.speed === 50 ? ' active' : '') + '" data-speed="50">50 мм/с</button>' +
-        '</div>' +
-      '</div>' +
-    '</div>';
+    if (r.hr === null || r.hr <= 0) return null;
+    
+    var rrSec = 60 / r.hr;
+    var norm = NORM_RANGES[state.category];
+    var sqrtRR = Math.sqrt(rrSec);
+    
+    var qtMin = Math.round(norm.min * sqrtRR);
+    var qtMax = Math.round(norm.max * sqrtRR);
+    
+    return { hr: r.hr, qtMin: qtMin, qtMax: qtMax };
   }
 
   function msToCells(ms, speed) {
     var mm = speed === 25 ? ms / 40 : ms / 20;
     return {
       mm: mm.toFixed(1),
-      small: mm.toFixed(1),
       big: (mm / 5).toFixed(1)
     };
   }
 
-  function formatCellsText(ms, speed, label) {
-    var c = msToCells(ms, speed);
-    return label + ': ' + ms + ' мс → ' + c.mm + ' мм (' + c.small + ' мал. / ' + c.big + ' бол. клеток)';
-  }
-
-  function calculateRange() {
-    var r = state.range;
-    if (r.rr === null || r.rr <= 0) return null;
-    var norm = NORM_RANGES[state.category];
-    var sqrtRR = Math.sqrt(r.rr / 1000);
-    var qtMin = Math.round(norm.min * sqrtRR);
-    var qtMax = Math.round(norm.max * sqrtRR);
-    var hr = Math.round(60000 / r.rr);
-    return {
-      rr: r.rr,
-      hr: hr,
-      qtMin: qtMin,
-      qtMax: qtMax,
-      qtcMin: norm.min,
-      qtcMax: norm.max,
-      speed: r.speed
-    };
-  }
-
-  function renderRangeResult() {
-    var res = calculateRange();
-    if (!res) {
-      return '<div class="result-content result-incomplete">' +
-        '<div class="result-score"><div class="result-score-value">—</div><div class="result-score-label">введите RR</div></div>' +
-        '<div class="result-divider"></div>' +
-        '<div class="result-info"><div class="result-label">Укажите интервал RR</div><div class="result-description">Расстояние между зубцами R на ЭКГ (мс)</div></div>' +
-        resetButtonHtml() +
-      '</div>';
-    }
-
-    var cellsHtml =
-      '<div class="qtc-cells-block">' +
-        '<div class="qtc-cells-title">📏 Перевод в клетки ЭКГ (' + res.speed + ' мм/с):</div>' +
-        '<div class="qtc-cell-row">' + formatCellsText(res.rr, res.speed, "RR") + '</div>' +
-        '<div class="qtc-cell-row">' + formatCellsText(res.qtMin, res.speed, "QT нижняя граница") + '</div>' +
-        '<div class="qtc-cell-row">' + formatCellsText(res.qtMax, res.speed, "QT верхняя граница") + '</div>' +
-      '</div>';
-
-    return '<div class="result-content result-success qtc-result">' +
-      '<div class="qtc-range-main">' +
-        '<div class="qtc-range-title">Должный интервал QT</div>' +
-        '<div class="qtc-range-values">' +
-          '<div class="qtc-range-value">' + res.qtMin + '</div>' +
-          '<div class="qtc-range-sep">—</div>' +
-          '<div class="qtc-range-value">' + res.qtMax + '</div>' +
-          '<div class="qtc-range-unit">мс</div>' +
-        '</div>' +
-      '</div>' +
-      '<div class="qtc-details">' +
-        '<div class="qtc-detail-row"><span class="qtc-detail-label">Категория:</span><span class="qtc-detail-value">' + state.category + '</span></div>' +
-        '<div class="qtc-detail-row"><span class="qtc-detail-label">RR интервал:</span><span class="qtc-detail-value">' + res.rr + ' мс</span></div>' +
-        '<div class="qtc-detail-row"><span class="qtc-detail-label">ЧСС:</span><span class="qtc-detail-value">' + res.hr + ' уд/мин</span></div>' +
-        '<div class="qtc-detail-row"><span class="qtc-detail-label">Норма QTc:</span><span class="qtc-detail-value">' + res.qtcMin + '–' + res.qtcMax + ' мс</span></div>' +
-      '</div>' +
-      cellsHtml +
-      resetButtonHtml() +
-    '</div>';
-  }
-
-  // ===== ОБЩИЕ ФУНКЦИИ =====
+  // ===== РЕНДЕРИНГ =====
+  var bodyEl, panelEl;
 
   function renderModeSwitcher() {
     return '<div class="qtc-mode-switcher">' +
-      '<button type="button" class="qtc-mode-btn' + (state.mode === "assess" ? ' active' : '') + '" data-mode="assess">' +
+      '<button type="button" class="qtc-mode-btn' + (state.mode === "assess" ? " active" : "") + '" data-mode="assess">' +
         '<span>📊</span>' +
         '<div class="qtc-mode-label">Оценка QT</div>' +
         '<div class="qtc-mode-desc">Измерил → получил QTc</div>' +
       '</button>' +
-      '<button type="button" class="qtc-mode-btn' + (state.mode === "range" ? ' active' : '') + '" data-mode="range">' +
+      '<button type="button" class="qtc-mode-btn' + (state.mode === "range" ? " active" : "") + '" data-mode="range">' +
         '<span>📏</span>' +
         '<div class="qtc-mode-label">Должный QT</div>' +
         '<div class="qtc-mode-desc">RR → диапазон нормы</div>' +
@@ -273,33 +137,157 @@
     '</div>';
   }
 
-  function fullRender() {
-    bodyEl.innerHTML = renderModeSwitcher() +
-      (state.mode === "assess" ? renderAssessForm() : renderRangeForm());
-    panelEl.innerHTML = state.mode === "assess" ? renderAssessResult() : renderRangeResult();
-    bindListeners();
+  function renderCategories() {
+    var cat = getCategory();
+    var itemsHtml = CATEGORIES.map(function (c) {
+      var isChecked = state.category === c.id;
+      return '<div class="geneva-item geneva-radio-item' + (isChecked ? " checked" : "") + '" data-category="' + c.id + '" role="radio" aria-checked="' + isChecked + '" tabindex="0">' +
+        '<span class="geneva-radio-custom"></span>' +
+        '<span class="geneva-item-content">' +
+          '<span class="geneva-item-title">' + c.icon + ' ' + CU.escapeHtml(c.label) + '</span>' +
+        '</span>' +
+      '</div>';
+    }).join("");
+
+    return '<div class="geneva-category" style="--cat-color: ' + cat.color + ';">' +
+      '<div class="geneva-category-header">' +
+        '<div class="geneva-category-left">' +
+          '<span class="geneva-category-icon">👤</span>' +
+          '<span class="geneva-category-title">Категория пациента</span>' +
+        '</div>' +
+        '<div class="geneva-category-score">' + cat.icon + '</div>' +
+      '</div>' +
+      '<div class="geneva-category-items">' + itemsHtml + '</div>' +
+    '</div>';
   }
 
-  function bindListeners() {
+  function renderAssessInputs() {
+    var cat = getCategory();
+    var a = state.assess;
+    var res = calcAssess();
+    var scoreDisplay = res ? res.qtc + " мс" : "—";
+
+    return '<div class="qtc-category" style="--cat-color: ' + cat.color + ';">' +
+      '<div class="qtc-category-header">' +
+        '<div class="qtc-category-left">' +
+          '<span class="qtc-category-icon">📊</span>' +
+          '<span class="qtc-category-title">Оценка измеренного QT</span>' +
+        '</div>' +
+        '<div class="qtc-category-score">' + scoreDisplay + '</div>' +
+      '</div>' +
+      '<div class="qtc-category-items">' +
+        '<div class="qtc-input-item">' +
+          '<label class="qtc-input-label" for="qtInput">📏 Интервал QT</label>' +
+          '<div class="qtc-input-row">' +
+            '<input type="text" id="qtInput" class="qtc-field" inputmode="decimal" maxlength="3" placeholder="400" value="' + (a.qt !== null ? a.qt : "") + '">' +
+            '<span class="qtc-unit">мс</span>' +
+          '</div>' +
+        '</div>' +
+        '<div class="qtc-input-item">' +
+          '<label class="qtc-input-label" for="hrInput">❤️ Частота сердечных сокращений</label>' +
+          '<div class="qtc-input-row">' +
+            '<input type="text" id="hrInput" class="qtc-field" inputmode="decimal" maxlength="3" placeholder="75" value="' + (a.hr !== null ? a.hr : "") + '">' +
+            '<span class="qtc-unit">уд/мин</span>' +
+          '</div>' +
+        '</div>' +
+        '<div class="qtc-formula-hint">QTc = QT / √(RR в секундах)</div>' +
+      '</div>' +
+    '</div>';
+  }
+
+  function renderRangeInputs() {
+    var cat = getCategory();
+    var r = state.range;
+    var res = calcRange();
+    var scoreDisplay = res ? (res.qtMin + "–" + res.qtMax) : "—";
+
+    return '<div class="qtc-category" style="--cat-color: ' + cat.color + ';">' +
+      '<div class="qtc-category-header">' +
+        '<div class="qtc-category-left">' +
+          '<span class="qtc-category-icon">📏</span>' +
+          '<span class="qtc-category-title">Должный диапазон QT</span>' +
+        '</div>' +
+        '<div class="qtc-category-score">' + scoreDisplay + '</div>' +
+      '</div>' +
+      '<div class="qtc-category-items">' +
+        '<div class="qtc-input-item">' +
+          '<label class="qtc-input-label" for="hrInputRange">❤️ Частота сердечных сокращений</label>' +
+          '<div class="qtc-input-row">' +
+            '<input type="text" id="hrInputRange" class="qtc-field" inputmode="decimal" placeholder="60" value="' + (r.hr !== null ? r.hr : "") + '">' +
+            '<span class="qtc-unit">уд/мин</span>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  }
+
+  function renderAll() {
+    bodyEl.innerHTML = renderModeSwitcher() + renderCategories() +
+      (state.mode === "assess" ? renderAssessInputs() : renderRangeInputs());
+  }
+
+  function renderResult() {
     if (state.mode === "assess") {
-      var qtEl = document.getElementById("qtInput");
-      var hrEl = document.getElementById("hrInput");
-      if (qtEl) qtEl.addEventListener("input", function () {
-        var v = parseNum(qtEl);
-        state.assess.qt = v !== null ? Math.max(100, Math.min(800, v)) : null;
-        panelEl.innerHTML = renderAssessResult();
+      var res = calcAssess();
+      if (!res) {
+        CU.renderResultPanel({
+          score: "—",
+          scoreLabel: "QTc (мс)",
+          color: "incomplete",
+          title: "Заполните оба поля",
+          description: "Интервал QT (мс) и ЧСС (уд/мин)",
+          extraDescription: "",
+          breakdownHtml: "",
+          onReset: resetAll
+        });
+        return;
+      }
+
+      // Детали убраны по запросу
+      var breakdown = "";
+
+      var warningHtml = "";
+      if (res.qtc >= 500) {
+        warningHtml = '<div class="medref-alert medref-alert-danger">⚠️ Высокий риск torsades de pointes! Срочная консультация кардиолога.</div>';
+      }
+
+      CU.renderResultPanel({
+        score: res.qtc,
+        scoreLabel: "мс (QTc)",
+        color: res.status.color,
+        title: res.status.label,
+        description: "",
+        extraDescription: "",
+        breakdownHtml: breakdown + warningHtml,
+        onReset: resetAll
       });
-      if (hrEl) hrEl.addEventListener("input", function () {
-        var v = parseNum(hrEl);
-        state.assess.hr = v !== null ? Math.max(20, Math.min(250, v)) : null;
-        panelEl.innerHTML = renderAssessResult();
-      });
+
     } else {
-      var rrEl = document.getElementById("rrInput");
-      if (rrEl) rrEl.addEventListener("input", function () {
-        var v = parseNum(rrEl);
-        state.range.rr = v !== null ? Math.max(100, Math.min(3000, v)) : null;
-        panelEl.innerHTML = renderRangeResult();
+      var res = calcRange();
+      if (!res) {
+        CU.renderResultPanel({
+          score: "—",
+          scoreLabel: "должный QT (мс)",
+          color: "incomplete",
+          title: "Укажите ЧСС",
+          description: "Частота сердечных сокращений (уд/мин)",
+          extraDescription: "",
+          breakdownHtml: "",
+          onReset: resetAll
+        });
+        return;
+      }
+
+      // Все детали (RR, ЧСС, Норма, Категория, Клетки) убраны по запросу
+      CU.renderResultPanel({
+        score: res.qtMin + "–" + res.qtMax,
+        scoreLabel: "должный QT (мс)",
+        color: "gcs-15",
+        title: "Должный интервал QT",
+        description: "",
+        extraDescription: "",
+        breakdownHtml: "",
+        onReset: resetAll
       });
     }
   }
@@ -309,50 +297,126 @@
       mode: "assess",
       category: "male",
       assess: { qt: null, hr: null },
-      range: { rr: 1000, speed: 25 }
+      range: { hr: null }
     };
-    fullRender();
+    saveState();
+    renderAll();
+    bindInputListeners();
+    renderResult();
   }
 
-  function init() {
-    bodyEl = document.getElementById("calcBody");
-    panelEl = document.getElementById("resultPanel");
-    if (!bodyEl || !panelEl) return;
+  function updateHeaderScore() {
+    // Обновляем число в шапке текущей категории (без пересоздания DOM)
+    var header = document.querySelector(".qtc-category .qtc-category-score");
+    if (!header) return;
 
-    fullRender();
+    if (state.mode === "assess") {
+      var res = calcAssess();
+      header.textContent = res ? res.qtc + " мс" : "—";
+    } else {
+      var res = calcRange();
+      header.textContent = res ? (res.qtMin + "–" + res.qtMax) : "—";
+    }
+  }
 
+  function onInputChange() {
+    if (state.mode === "assess") {
+      var qtEl = document.getElementById("qtInput");
+      var hrEl = document.getElementById("hrInput");
+      var qt = parseNum(qtEl.value);
+      var hr = parseNum(hrEl.value);
+      if (qt !== null) qt = Math.max(100, Math.min(800, qt));
+      if (hr !== null) hr = Math.max(20, Math.min(250, hr));
+      state.assess.qt = qt;
+      state.assess.hr = hr;
+    } else {
+      var hrEl = document.getElementById("hrInputRange");
+      var hr = parseNum(hrEl.value);
+      if (hr !== null) hr = Math.max(20, Math.min(250, hr));
+      state.range.hr = hr;
+    }
+    saveState();
+    updateHeaderScore();
+    renderResult();
+  }
+
+  function bindInputListeners() {
+    var inputs = bodyEl.querySelectorAll(".qtc-field");
+    inputs.forEach(function (inp) {
+      inp.addEventListener("input", onInputChange);
+    });
+
+    var speedBtns = bodyEl.querySelectorAll(".qtc-speed-btn");
+    speedBtns.forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        state.range.speed = parseInt(btn.getAttribute("data-speed"), 10);
+        saveState();
+        renderAll();
+        bindInputListeners();
+        renderResult();
+      });
+    });
+  }
+
+  function bindListeners() {
+    // Режимы
     bodyEl.addEventListener("click", function (e) {
       var modeBtn = e.target.closest(".qtc-mode-btn");
       if (modeBtn) {
         state.mode = modeBtn.getAttribute("data-mode");
-        fullRender();
+        saveState();
+        renderAll();
+        bindInputListeners();
+        renderResult();
         return;
       }
-      var catBtn = e.target.closest(".qtc-category-btn");
-      if (catBtn) {
-        state.category = catBtn.getAttribute("data-category");
-        fullRender();
-        return;
-      }
-      var speedBtn = e.target.closest(".qtc-speed-btn");
-      if (speedBtn) {
-        state.range.speed = parseInt(speedBtn.getAttribute("data-speed"), 10);
-        fullRender();
-        return;
+
+      // Категории
+      var catItem = e.target.closest(".geneva-radio-item[data-category]");
+      if (catItem) {
+        state.category = catItem.getAttribute("data-category");
+        saveState();
+        renderAll();
+        bindInputListeners();
+        renderResult();
       }
     });
 
-    panelEl.addEventListener("click", function (e) {
-      if (e.target.closest(".result-reset-big")) resetAll();
-    });
-
-    var infoBtn = document.getElementById("calcInfoBtn");
-    if (infoBtn) infoBtn.addEventListener("click", function () {
-      CU.openReferenceModal({ reference: REFERENCE });
+    // Клавиатура
+    bodyEl.addEventListener("keydown", function (e) {
+      if (e.key !== "Enter" && e.key !== " ") return;
+      var catItem = e.target.closest(".geneva-radio-item[data-category]");
+      if (!catItem) return;
+      e.preventDefault();
+      state.category = catItem.getAttribute("data-category");
+      saveState();
+      renderAll();
+      bindInputListeners();
+      renderResult();
     });
   }
 
-  CU.autoPersist("smp-calc-qtc-v1");
+  function init() {
+    bodyEl = document.getElementById("qtcGroups");
+    panelEl = document.getElementById("resultPanel");
+    if (!bodyEl || !panelEl) return;
+
+    loadState();
+    renderAll();
+    bindInputListeners();
+    bindListeners();
+    renderResult();
+
+    var infoBtn = document.getElementById("calcInfoBtn");
+    if (infoBtn) infoBtn.addEventListener("click", function () {
+      if (window.SMP.references && window.SMP.references.qtc && window.SMP.openRefMarkdownModal) {
+        window.SMP.openRefMarkdownModal({ markdown: window.SMP.references.qtc });
+      } else {
+        CU.openReferenceModal({ reference: REFERENCE });
+      }
+    });
+  }
+
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
   else init();
 })();

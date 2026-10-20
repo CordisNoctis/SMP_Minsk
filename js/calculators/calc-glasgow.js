@@ -2,22 +2,22 @@
   "use strict";
   var CU = window.SMP.calcUtils;
 
-  // ===== КАТЕГОРИИ ПАРАМЕТРОВ (Структура как у Женевской шкалы) =====
+  // ===== КАТЕГОРИИ ПАРАМЕТРОВ =====
   var GROUPS_ADULT = [
-    { id: "E", title: "Открывание глаз (E, Eye response)", icon: "👁️", color: "#1f6e9c", items: [
+    { id: "E", title: "Открывание глаз (E)", icon: "👁️", color: "#1f6e9c", items: [
       { id: "E4", title: "Произвольное", points: 4 },
       { id: "E3", title: "На звук", points: 3 },
       { id: "E2", title: "На болевое раздражение", points: 2 },
       { id: "E1", title: "Отсутствует", points: 1 }
     ]},
-    { id: "V", title: "Речевая реакция (V, Verbal response)", icon: "🗣️", color: "#e68a2e", items: [
+    { id: "V", title: "Речевая реакция (V)", icon: "🗣️", color: "#e68a2e", items: [
       { id: "V5", title: "Ориентирован, говорит правильно", points: 5 },
       { id: "V4", title: "Спутанность сознания, дезориентирован", points: 4 },
       { id: "V3", title: "Неадекватные слова", points: 3 },
       { id: "V2", title: "Нечленораздельные звуки", points: 2 },
       { id: "V1", title: "Отсутствует", points: 1 }
     ]},
-    { id: "M", title: "Двигательная реакция (M, Motor response)", icon: "💪", color: "#b42323", items: [
+    { id: "M", title: "Двигательная реакция (M)", icon: "💪", color: "#b42323", items: [
       { id: "M6", title: "Выполняет команды", points: 6 },
       { id: "M5", title: "Локализует боль", points: 5 },
       { id: "M4", title: "Отдёргивает конечность (нормальное сгибание)", points: 4 },
@@ -28,20 +28,20 @@
   ];
 
   var GROUPS_INFANT = [
-    { id: "E", title: "Открывание глаз (E, Eye response)", icon: "👁️", color: "#1f6e9c", items: [
+    { id: "E", title: "Открывание глаз (E)", icon: "👁️", color: "#1f6e9c", items: [
       { id: "E4", title: "Произвольное", points: 4 },
       { id: "E3", title: "На звук", points: 3 },
       { id: "E2", title: "На болевое раздражение", points: 2 },
       { id: "E1", title: "Отсутствует", points: 1 }
     ]},
-    { id: "V", title: "Речевая реакция (V, Verbal response, до 1 года)", icon: "🗣️", color: "#e68a2e", items: [
+    { id: "V", title: "Речевая реакция (V)", icon: "🗣️", color: "#e68a2e", items: [
       { id: "V5", title: "Гулит, улыбается или проявляет неудовольствие", points: 5 },
       { id: "V4", title: "Эпизодический крик, плач спонтанно", points: 4 },
       { id: "V3", title: "Постоянный крик или плач", points: 3 },
       { id: "V2", title: "Стон на боль", points: 2 },
       { id: "V1", title: "Нет ответа", points: 1 }
     ]},
-    { id: "M", title: "Двигательная реакция (M, Motor response, до 1 года)", icon: "💪", color: "#b42323", items: [
+    { id: "M", title: "Двигательная реакция (M)", icon: "💪", color: "#b42323", items: [
       { id: "M6", title: "На звук", points: 6 },
       { id: "M5", title: "На боль", points: 5 },
       { id: "M4", title: "Вялая двигательная реакция на боль", points: 4 },
@@ -52,20 +52,20 @@
   ];
 
   var GROUPS_PED = [
-    { id: "E", title: "Открывание глаз (E, Eye response)", icon: "👁️", color: "#1f6e9c", items: [
+    { id: "E", title: "Открывание глаз (E)", icon: "👁️", color: "#1f6e9c", items: [
       { id: "E4", title: "Произвольное", points: 4 },
       { id: "E3", title: "Реакция на голос", points: 3 },
       { id: "E2", title: "Реакция на боль", points: 2 },
       { id: "E1", title: "Отсутствует", points: 1 }
     ]},
-    { id: "V", title: "Речевая реакция (V, Verbal response, 1–4 года)", icon: "🗣️", color: "#e68a2e", items: [
+    { id: "V", title: "Речевая реакция (V)", icon: "🗣️", color: "#e68a2e", items: [
       { id: "V5", title: "Улыбается, ориентируется на звук, следит за объектами", points: 5 },
       { id: "V4", title: "При плаче можно успокоить, интерактивность неполная", points: 4 },
       { id: "V3", title: "При плаче успокаивается ненадолго, стонет", points: 3 },
       { id: "V2", title: "Не успокаивается при плаче, беспокоен", points: 2 },
       { id: "V1", title: "Плач и интерактивность отсутствуют", points: 1 }
     ]},
-    { id: "M", title: "Двигательная реакция (M, Motor response, 1–4 года)", icon: "💪", color: "#b42323", items: [
+    { id: "M", title: "Двигательная реакция (M)", icon: "💪", color: "#b42323", items: [
       { id: "M6", title: "Выполнение движений по голосовой команде", points: 6 },
       { id: "M5", title: "Целенаправленное движение в ответ на боль", points: 5 },
       { id: "M4", title: "Отдёргивание в ответ на боль", points: 4 },
@@ -76,16 +76,16 @@
   ];
 
   var RANGES_ADULT = [
-    { min: 15, max: 15, label: "Ясное сознание", color: "gcs-15", extraDescription: "Полностью ориентирован. Наблюдение." },
-    { min: 13, max: 14, label: "Оглушение", color: "gcs-14", extraDescription: "Умеренное нарушение сознания. Обследование, контроль динамики." },
-    { min: 9, max: 12, label: "Сопор", color: "gcs-8-10", extraDescription: "Глубокое нарушение. Контроль проходимости дыхательных путей." },
-    { min: 4, max: 8, label: "Кома", color: "gcs-4-5", extraDescription: "Обеспечение проходимости ДП / интубация, ИВЛ." },
-    { min: 3, max: 3, label: "Глубокая кома", color: "gcs-3", extraDescription: "Терминальное состояние. Реанимационные мероприятия." }
+    { min: 15, max: 15, label: "Ясное сознание", color: "gcs-15" },
+    { min: 13, max: 14, label: "Оглушение", color: "gcs-14" },
+    { min: 9, max: 12, label: "Сопор", color: "gcs-8-10" },
+    { min: 4, max: 8, label: "Кома", color: "gcs-4-5" },
+    { min: 3, max: 3, label: "Глубокая кома", color: "gcs-3" }
   ];
-  var RANGES_PED = RANGES_ADULT; // Интерпретация одинаковая
+  var RANGES_PED = RANGES_ADULT;
 
+  // ===== СОСТОЯНИЕ =====
   var STORAGE_KEY = "smp-gcs-state";
-
   var state = {
     mode: "adult",
     adult: { E: null, V: null, M: null },
@@ -164,7 +164,6 @@
     var st = getCurrentState();
     var allFilled = st.E !== null && st.V !== null && st.M !== null;
 
-    // Не показывать подсчёт, пока не выбраны все 3 группы
     if (!allFilled) {
       var filledCount = (st.E !== null ? 1 : 0) + (st.V !== null ? 1 : 0) + (st.M !== null ? 1 : 0);
       CU.renderResultPanel({
@@ -189,7 +188,7 @@
       color: r.color,
       title: r.label,
       description: "",
-      extraDescription: r.extraDescription,
+      extraDescription: "",
       breakdownHtml: "",
       onReset: resetAll
     });
@@ -223,7 +222,6 @@
       }
     });
 
-    // Поддержка клавиатуры (Enter / Space)
     bodyEl.addEventListener("keydown", function (e) {
       if (e.key !== "Enter" && e.key !== " ") return;
       var item = e.target.closest(".geneva-radio-item");
@@ -248,22 +246,14 @@
 
     var infoBtn = document.getElementById("calcInfoBtn");
     if (infoBtn) infoBtn.addEventListener("click", function () {
-      CU.openReferenceModal({ reference: {
-        title: "О шкале Глазго",
-        paragraphs: [
-          "Шкала комы Глазго (GCS) — стандартизированный метод оценки уровня сознания, предложена в 1974 году для оценки уровня сознания. Состоит из трёх тестов: открывание глаз (E, 1–4), речевая реакция (V, 1–5), двигательная реакция (M, 1–6). Максимум 15 баллов, минимум 3.",
-          "Детская модификация (pGCS) применяется для детей до 4 лет. Ключевое отличие — оценка вербального ответа: оцениваются плач, способность к успокоению, интерактивность и слежение за объектами. Для детей до 1 года используется специальная шкала с учётом возрастных особенностей."
-        ],
-        importantNote: "ШКГ ≤ 8 баллов — кома: показаны интубация и ИВЛ.",
-        indicationsTitle: "Важно:",
-        indications: [
-          "Оценку проводят до введения седативных препаратов",
-          "Оценивайте лучший ответ пациента",
-          "При асимметрии моторного ответа учитывать лучшую сторону",
-          "У интубированных пациентов наиболее важна двигательная реакция",
-          "У интубированных пациентов необходимо дополнительно провести оценку по шкале комы FOUR"
-        ]
-      }});
+      if (window.SMP.references && window.SMP.references.glasgow && window.SMP.openRefMarkdownModal) {
+        window.SMP.openRefMarkdownModal({ markdown: window.SMP.references.glasgow });
+      } else {
+        CU.openReferenceModal({ reference: {
+          title: "О шкале Глазго",
+          paragraphs: ["Справка загружается..."]
+        }});
+      }
     });
   }
 

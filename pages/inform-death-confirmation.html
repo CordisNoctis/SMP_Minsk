@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content">
+  <title>Констатация смерти — СМП Минск</title>
+  <meta name="theme-color" content="#7A1F2B">
+
+  <script src="../js/core/theme-init.js"></script>
+  <link rel="stylesheet" href="../css/styles.css">
+
+  <link rel="icon" href="../icons/favicon.ico" sizes="any">
+  <link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+</head>
+
+<body>
+  <header class="page-header">
+    <button type="button" class="back-button" data-back data-back-fallback="normative-base.html" aria-label="Назад">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+    <h1 class="page-title-centered">Констатация смерти</h1>
+    <span class="header-spacer" aria-hidden="true"></span>
+  </header>
+
+  <main class="page">
+    <div id="contentContainer"></div>
+  </main>
+
+  <script src="../js/core/theme.js"></script>
+  <script src="../js/core/back.js"></script>
+  <script src="../js/documents/doc-death-confirmation.js"></script>
+  <script src="../js/core/sw-register.js"></script>
+  <script>
+    (function() {
+      if (window.SMP.documents && window.SMP.documents.deathConfirmation) {
+        document.getElementById('contentContainer').innerHTML = window.SMP.documents.deathConfirmation;
+      }
+    })();
+  </script>
+</body>
+</html>

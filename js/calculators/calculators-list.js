@@ -22,7 +22,6 @@
     { id: "odn-scale",      title: "Шкала Кассиля (степень ОДН)",                            emoji: "🫁", categories: ["Реанимация и ИТ", "Пульмонология"], page: "calc-odn.html" },
     { id: "shsn-scale",     title: "Шкала оценки клинического состояния при ХСН",             emoji: "🫀", categories: ["Кардиология", "Реанимация и ИТ"], page: "calc-shsn.html" },
     { id: "sgarbossa",      title: "Критерии Сгарбосса (ИМ при БЛНПГ)",                       emoji: "📈", categories: ["Кардиология", "Реанимация и ИТ"], page: "calc-sgarbossa.html" },
-    { id: "ett-size",       title: "Размер эндотрахеальной трубки",                          emoji: "🫁", categories: ["Реанимация и ИТ", "Педиатрия", "Акушерство и гинекология"], page: "calc-ett-size.html" },
     { id: "qtc-bazett",     title: "Коррекция интервала QT (QTc по Bazett)",                  emoji: "📈", categories: ["Кардиология", "Реанимация и ИТ"], page: "calc-qtc.html" }
   ];
 

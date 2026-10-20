@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="../css/calculators-common.css">
   <link rel="stylesheet" href="../css/calc-algover.css">
   <link rel="stylesheet" href="../css/result-panel.css">
+  <link rel="stylesheet" href="../css/ref-markdown.css">
 
   <link rel="icon" href="../icons/favicon.ico" sizes="any">
   <link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
@@ -30,45 +31,15 @@
   </header>
 
   <main class="page">
-    <section class="card calc-description">
-      <p style="margin:0;">Оценка тяжести шока и объёма кровопотери: отношение ЧСС к систолическому АД. Выявляет скрытый шок при нормальном АД.</p>
-    </section>
-
-    <section class="card algover-inputs">
-      <div class="algover-input-group">
-        <label class="algover-input-label">❤️ Частота сердечных сокращений</label>
-        <div class="algover-input-row">
-          <input type="text" id="hrInput" class="algover-field" inputmode="numeric" maxlength="3" placeholder="—">
-          <span class="algover-unit">уд/мин</span>
-        </div>
-      </div>
-      <div class="algover-input-group">
-        <label class="algover-input-label">🩸 Систолическое АД</label>
-        <div class="algover-input-row">
-          <input type="text" id="sbpInput" class="algover-field" inputmode="numeric" maxlength="3" placeholder="—">
-          <span class="algover-unit">мм рт. ст.</span>
-        </div>
-      </div>
-      <div class="algover-formula-hint">ИА = ЧСС / САД · Норма: 0.5–0.7</div>
-    </section>
-
-    <section class="card algover-scale-card">
-      <div class="algover-scale">
-        <div class="algover-scale-segment seg-normal"><div class="seg-label">0.5–0.7</div><div class="seg-title">Норма</div></div>
-        <div class="algover-scale-segment seg-sub"><div class="seg-label">0.7–1.0</div><div class="seg-title">Субкомп.</div></div>
-        <div class="algover-scale-segment seg-mod"><div class="seg-label">1.0–1.5</div><div class="seg-title">Средний</div></div>
-        <div class="algover-scale-segment seg-sev"><div class="seg-label">1.5–2.0</div><div class="seg-title">Тяжёлый</div></div>
-        <div class="algover-scale-segment seg-crit"><div class="seg-label">>2.0</div><div class="seg-title">Крит.</div></div>
-        <div class="algover-scale-marker" id="algoverMarker" style="display:none;"></div>
-      </div>
-    </section>
-
+    <div id="algoverInputs"></div>
     <div id="resultPanel" class="result-panel"></div>
   </main>
 
   <script src="../js/core/theme.js"></script>
   <script src="../js/core/back.js"></script>
   <script src="../js/calculators/calculator-utils.js"></script>
+  <script src="../js/core/ref-markdown.js"></script>
+  <script src="../js/references/ref-algover.js"></script>
   <script src="../js/calculators/calc-algover.js"></script>
   <script src="../js/core/sw-register.js"></script>
 </body>
