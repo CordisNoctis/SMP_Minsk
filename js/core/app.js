@@ -32,6 +32,11 @@
     if (el && window.SMP_VERSION) {
       el.textContent = "v" + window.SMP_VERSION;
     }
+    // Версия в модалке «О приложении»
+    var aboutEl = document.getElementById("aboutVersion");
+    if (aboutEl && window.SMP_VERSION) {
+      aboutEl.textContent = window.SMP_VERSION;
+    }
   }
 
   function init() {

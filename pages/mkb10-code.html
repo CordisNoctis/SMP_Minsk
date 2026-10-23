@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content">
+  <title>Код МКБ-10 — СМП Минск</title>
+  <meta name="theme-color" content="#7A1F2B">
+
+  <script src="../js/core/theme-init.js"></script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/mkb10.css">
+
+  <link rel="icon" href="../icons/favicon.ico" sizes="any">
+  <link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+</head>
+
+<body>
+  <header class="page-header">
+    <button type="button" class="back-button" data-back data-back-fallback="mkb10.html" aria-label="Назад к списку">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+    <h1 class="page-title-centered" id="codeTitle">Код МКБ-10</h1>
+    <span class="header-spacer" aria-hidden="true"></span>
+  </header>
+
+  <main class="page">
+    <div id="codeContent"></div>
+    <p id="codeNotFound" class="muted" style="text-align:center; padding:40px 20px;" hidden>
+      Код не найден
+    </p>
+  </main>
+
+  <script src="../js/core/theme.js"></script>
+  <script src="../js/core/back.js"></script>
+  <script src="../js/cheats/mkb10-db.js"></script>
+  <script>
+    (function () {
+      "use strict";
+
+      var params = new URLSearchParams(window.location.search);
+      var code = params.get("code");
+      var contentEl = document.getElementById("codeContent");
+      var notFoundEl = document.getElementById("codeNotFound");
+      var titleEl = document.getElementById("codeTitle");
+
+      if (!code || !window.SMP || !window.SMP.mkb10DB) {
+        notFoundEl.hidden = false;
+        return;
+      }
+
+      window.SMP.mkb10DB.get(code).then(function (data) {
+        if (!data) {
+          notFoundEl.hidden = false;
+          return;
+        }
+
+        titleEl.textContent = data.code;
+        document.title = data.code + " — МКБ-10 — СМП Минск";
+
+        var html = '<div class="mkb10-code-card">';
+
+        // Хлебные крошки
+        if (data.breadcrumbs.length > 1) {
+          html += '<div class="mkb10-breadcrumbs">';
+          data.breadcrumbs.forEach(function (crumb, idx) {
+            var isCurrent = idx === data.breadcrumbs.length - 1;
+            if (isCurrent) {
+              html += '<span class="mkb10-crumb-current">' + escapeHtml(crumb.code) + '</span>';
+            } else {
+              html += '<a class="mkb10-crumb" href="mkb10-code.html?code=' + encodeURIComponent(crumb.code) + '">' + escapeHtml(crumb.code) + '</a>';
+              html += '<span class="mkb10-crumb-sep">›</span>';
+            }
+          });
+          html += '</div>';
+        }
+
+        html += '<h2 class="mkb10-code-main">' + escapeHtml(data.code) + '</h2>';
+        html += '<p class="mkb10-code-name">' + escapeHtml(data.name) + '</p>';
+        html += '</div>';
+
+        contentEl.innerHTML = html;
+      });
+
+      function escapeHtml(s) {
+        return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+      }
+    })();
+  </script>
+  <script src="../js/core/sw-register.js"></script>
+</body>
+</html>

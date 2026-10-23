@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content">
+  <title>Коды МКБ-10 — СМП Минск</title>
+  <meta name="theme-color" content="#7A1F2B">
+
+  <script src="../js/core/theme-init.js"></script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/mkb10.css">
+
+  <link rel="icon" href="../icons/favicon.ico" sizes="any">
+  <link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+</head>
+
+<body>
+  <header class="page-header">
+    <button type="button" class="back-button" data-back data-back-fallback="cheatsheets.html" aria-label="Назад">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+    <h1 class="page-title-centered">Коды МКБ-10</h1>
+    <span class="header-spacer" aria-hidden="true"></span>
+  </header>
+
+  <main class="page">
+    <div class="mkb10-search-wrap">
+      <input type="search" id="mkb10Search" class="drugs-search"
+        placeholder="Поиск по коду или названию..."
+        autocomplete="off" autocapitalize="off" spellcheck="false">
+    </div>
+
+    <!-- Шапка текущего раздела (хлебные крошки + название) -->
+    <div id="mkb10SectionHeader" class="mkb10-section-header" hidden></div>
+
+    <!-- Строгий список-таблица -->
+    <div id="mkb10Tree" class="mkb10-list"></div>
+
+    <p id="mkb10Empty" class="muted" style="text-align:center; padding:20px 0;" hidden>
+      По запросу ничего не найдено
+    </p>
+
+    <button id="mkb10ShowMore" class="btn-secondary mkb10-show-more" hidden>
+      Показать ещё
+    </button>
+  </main>
+
+  <script src="../js/core/theme.js"></script>
+  <script src="../js/core/back.js"></script>
+  <script src="../js/cheats/mkb10-db.js"></script>
+  <script>
+    (function () {
+      "use strict";
+
+      var searchEl = document.getElementById("mkb10Search");
+      var treeEl = document.getElementById("mkb10Tree");
+      var emptyEl = document.getElementById("mkb10Empty");
+      var headerEl = document.getElementById("mkb10SectionHeader");
+      var showMoreEl = document.getElementById("mkb10ShowMore");
+
+      var SEARCH_LIMIT = 200;
+      var searchLimit = SEARCH_LIMIT;
+      var searchTimeout = null;
+
+      var params = new URLSearchParams(window.location.search);
+      var sectionCode = params.get("section");
+
+      function escapeHtml(s) {
+        return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+      }
+
+      // ===== Строгая строка-колонка: код | наименование | стрелка =====
+      function renderRows(records) {
+        var frag = document.createDocumentFragment();
+        records.forEach(function (r) {
+          var a = document.createElement("a");
+          a.className = "mkb10-row mkb10-row-level-" + r.level;
+          a.href = r.hasChildren
+            ? "mkb10.html?section=" + encodeURIComponent(r.code)
+            : "mkb10-code.html?code=" + encodeURIComponent(r.code);
+          a.innerHTML =
+            '<span class="mkb10-row-code">' + escapeHtml(r.code) + '</span>' +
+            '<span class="mkb10-row-name">' + escapeHtml(r.name) + '</span>' +
+            '<span class="mkb10-row-arrow">›</span>';
+          frag.appendChild(a);
+        });
+        treeEl.innerHTML = "";
+        treeEl.appendChild(frag);
+      }
+
+      // ===== Шапка раздела с хлебными крошками =====
+      function renderSectionHeader() {
+        window.SMP.mkb10DB.get(sectionCode).then(function (data) {
+          if (!data) return;
+          document.title = data.code + " — МКБ-10 — СМП Минск";
+
+          var crumbs = '<a href="mkb10.html">МКБ-10</a>';
+          data.breadcrumbs.forEach(function (c, idx) {
+            var isLast = idx === data.breadcrumbs.length - 1;
+            crumbs += '<span class="mkb10-crumb-sep">›</span>';
+            crumbs += isLast
+              ? '<span class="mkb10-crumb-current">' + escapeHtml(c.code) + '</span>'
+              : '<a href="mkb10.html?section=' + encodeURIComponent(c.code) + '">' + escapeHtml(c.code) + '</a>';
+          });
+
+          headerEl.innerHTML =
+            '<div class="mkb10-crumbs">' + crumbs + '</div>' +
+            '<div class="mkb10-section-title">' + escapeHtml(data.name) + '</div>';
+          headerEl.hidden = false;
+        });
+      }
+
+      // ===== Загрузка списка (корни или дети раздела) =====
+      function loadList() {
+        emptyEl.hidden = true;
+        showMoreEl.hidden = true;
+
+        var loader = sectionCode
+          ? window.SMP.mkb10DB.getChildren(sectionCode)
+          : window.SMP.mkb10DB.getRoots();
+
+        loader.then(function (records) {
+          if (sectionCode) renderSectionHeader();
+
+          if (!records || records.length === 0) {
+            treeEl.innerHTML =
+              '<div class="mkb10-empty-card">Раздел готовится к заполнению</div>';
+            return;
+          }
+          renderRows(records);
+        }).catch(function (err) {
+          treeEl.innerHTML =
+            '<div class="mkb10-empty-card">⚠️ Ошибка загрузки: ' +
+            escapeHtml(String(err && err.message || err)) + '</div>';
+        });
+      }
+
+      // ===== Поиск =====
+      function doSearch(query) {
+        query = (query || "").trim();
+        if (!query) {
+          emptyEl.hidden = true;
+          showMoreEl.hidden = true;
+          searchLimit = SEARCH_LIMIT;
+          loadList();
+          return;
+        }
+
+        window.SMP.mkb10DB.search(query, searchLimit).then(function (results) {
+          if (results.length === 0) {
+            treeEl.innerHTML = "";
+            emptyEl.hidden = false;
+            showMoreEl.hidden = true;
+          } else {
+            emptyEl.hidden = true;
+            renderRows(results);
+            showMoreEl.hidden = results.length < searchLimit;
+          }
+        });
+      }
+
+      searchEl.addEventListener("input", function () {
+        clearTimeout(searchTimeout);
+        var val = this.value;
+        searchTimeout = setTimeout(function () { doSearch(val); }, 150);
+      });
+
+      searchEl.addEventListener("search", function () { doSearch(this.value); });
+
+      showMoreEl.addEventListener("click", function () {
+        searchLimit += SEARCH_LIMIT;
+        doSearch(searchEl.value);
+      });
+
+      loadList();
+    })();
+  </script>
+  <script src="../js/core/sw-register.js"></script>
+</body>
+</html>

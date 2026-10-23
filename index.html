@@ -123,30 +123,85 @@
     </section>
   </div>
 
-    <!-- ===== МОДАЛКА «О ПРИЛОЖЕНИИ» ===== -->
+  <!-- ===== МОДАЛКА «О ПРИЛОЖЕНИИ» ===== -->
   <div class="modal" id="about-modal" hidden aria-hidden="true">
     <div class="modal-backdrop" data-modal-close></div>
-    <section class="modal-panel" role="dialog" aria-modal="true">
+    <section class="modal-panel about-panel" role="dialog" aria-modal="true">
       <header class="modal-header">
         <h2>О приложении</h2>
-        <button type="button" class="modal-close" data-modal-close aria-label="Закрыть">×</button>
+        <button type="button" class="modal-close" data-modal-close aria-label="Закрыт">×</button>
       </header>
       <div class="modal-body about-modal-body">
-        <p>«СМП Минск» — неофициальная информационно-справочная база сотрудника скорой медицинской помощи, созданная для удобства медицинских работников СМП г. Минска.</p>
-        <p>В первую очередь следует руководствоваться официальными приказами, постановлениями и клиническими протоколами Министерства здравоохранения Республики Беларусь. Данные в приложении носят справочный характер. Разработчик не несёт ответственности за возможные последствия использования информации из приложения в клинической практике.</p>
 
-        <h3 class="about-subtitle">Обратная связь</h3>
-        <p>Заметили ошибку? Хотите предложить улучшение или новый раздел? Пишите, не стесняйтесь:</p>
-        <div class="about-contacts">
-          <a class="about-contact-link" href="https://t.me/telega" target="_blank" rel="noopener">
-            <span class="about-contact-label">Телеграм</span>
-            <span class="about-contact-value">@telega</span>
-          </a>
+        <!-- Hero-блок с логотипом -->
+        <div class="about-hero">
+          <img src="icons/icon-192.png" alt="СМП Минск" class="about-hero-icon">
+          <h3 class="about-hero-title">СМП Минск</h3>
+          <p class="about-hero-tagline">Информационно-справочная база<br>сотрудника скорой медицинской помощи</p>
+          <div class="about-version-badge">
+            <span class="about-version-dot"></span>
+            Версия <span id="aboutVersion">—</span>
+          </div>
         </div>
 
-        <h3 class="about-subtitle">Поддержать проект</h3>
-        <p>Если приложение полезно — Вы можете поддержать его развитие:</p>
-        <a class="about-support-btn" href="#" target="_blank" rel="noopener">Поддержать проект</a>
+        <!-- Поддержать проект — ВЫШЕ, на первом экране -->
+        <section class="about-section about-section--support">
+          <h3 class="about-subtitle">
+            <span class="about-subtitle-icon">❤️</span>
+            Поддержать проект
+          </h3>
+          <p class="about-text">
+            Приложение разрабатывается в свободное время. Если оно полезно в вашей работе — вы можете поддержать его дальнейшее развитие:
+          </p>
+          <a class="about-support-btn" href="https://pay.raschet.by/#00020132570010by.raschet010753586611028BY95AKBB3014003331237007000053039335802BY63043473" target="_blank" rel="noopener">
+            <span class="about-support-icon">💖</span>
+            <span class="about-support-text">
+              <span class="about-support-title">Поддержать проект</span>
+              <span class="about-support-sub">Спасибо за вклад в развитие!</span>
+            </span>
+          </a>
+        </section>
+
+        <!-- О приложении -->
+        <section class="about-section">
+          <h3 class="about-subtitle">
+            <span class="about-subtitle-icon">ℹ️</span>
+            О приложении
+          </h3>
+          <p class="about-text">
+            «СМП Минск» — неофициальная информационно-справочная база, созданная для удобства медицинских работников СМП г. Минска. Все инструменты собраны в одном месте.
+          </p>
+        </section>
+
+        <!-- Обратная связь -->
+        <section class="about-section">
+          <h3 class="about-subtitle">
+            <span class="about-subtitle-icon">💬</span>
+            Обратная связь
+          </h3>
+          <p class="about-text">
+            Заметили ошибку или хотите предложить улучшение?
+          </p>
+          <div class="about-contact-grid">
+            <a class="about-contact-card about-tg" href="https://t.me/cordisnoctis_smp" target="_blank" rel="noopener">
+              <span class="about-contact-icon">✈️</span>
+              <span class="about-contact-body">
+                <span class="about-contact-label">Telegram</span>
+                <span class="about-contact-value">@cordisnoctis_smp</span>
+              </span>
+              <span class="about-contact-arrow">›</span>
+            </a>
+          </div>
+        </section>
+
+        <!-- Дисклеймер -->
+        <section class="about-section about-disclaimer">
+          <div class="about-disclaimer-icon"></div>
+          <p class="about-disclaimer-text">
+            <strong>Важно:</strong> в первую очередь руководствуйтесь официальными приказами и клиническими протоколами МЗ РБ. Данные носят <em>справочный характер</em>. Разработчик не несёт ответственности за последствия использования в клинической практике.
+          </p>
+        </section>
+
       </div>
       <footer class="modal-footer update-notice-footer">
         <button type="button" class="btn-primary" data-modal-close>Закрыть</button>

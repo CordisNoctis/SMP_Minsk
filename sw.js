@@ -82,6 +82,10 @@ const APP_SHELL = [
   "./js/cheats/cheatsheet.js",
   "./js/cheats/drugs-data.js",
   "./js/cheats/drugs-db.js",
+  "./js/cheats/mkb10-db.js",
+
+  // === Cheats: markdown-файлы (шпаргалки) ===
+  "./js/cheats/md/mkb10.md",
 
   // === JS: calculators ===
   "./js/calculators/calculators-list.js",
@@ -155,9 +159,11 @@ const APP_SHELL = [
   "./pages/calc-infusomat.html",
   "./pages/calc-odn.html",
   "./pages/calc-pediatric.html",
+  "./pages/mkb10.html",
+  "./pages/mkb10-code.html",
 
   // === Vendor ===
-  "./vendor/html2canvas.min.js"
+  "./vendor/html2canvas.min.js",
 ];
 
 const OPTIONAL_ASSETS = [

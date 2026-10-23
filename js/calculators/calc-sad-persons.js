@@ -4,7 +4,7 @@
 
   // ===== ПУНКТЫ ШКАЛЫ =====
   var ITEMS = [
-    { id: "sex",    title: "Пол",                                description: "", points: 1 },
+    { id: "sex",    title: "Пол мужской",                                description: "", points: 1 },
     { id: "age",    title: "Возраст до 19 лет или старше 45 лет", description: "", points: 1 },
     { id: "depr",   title: "Депрессия",                           description: "", points: 1 },
     { id: "prev",   title: "Парасуициды в анамнезе",              description: "", points: 1 },
