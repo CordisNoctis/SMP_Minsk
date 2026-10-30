@@ -213,7 +213,16 @@
   <script src="js/core/modal.js"></script>
   <script src="js/core/app.js"></script>
   <script src="js/core/changelog.js"></script>
+  <script src="js/core/changelog-render.js"></script>
   <script src="js/core/update-notice.js"></script>
   <script src="js/core/sw-register.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      if (window.SMP && window.SMP.renderChangelog) {
+        var target = document.getElementById("changelogContent");
+        if (target) window.SMP.renderChangelog(target);
+      }
+    });
+  </script>
 </body>
 </html>

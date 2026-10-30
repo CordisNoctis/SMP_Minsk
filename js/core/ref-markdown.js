@@ -8,6 +8,12 @@
   }
 
   function inline(s) {
+    // Картинки ![альт](адрес) — до ссылок, иначе синтаксис совпадает
+    s = s.replace(/!\[([^\]]*)\]\(([^)\s]+)\)/g, '<img class="ref-md-img" src="$2" alt="$1">');
+
+    // Ссылки [текст](адрес)
+    s = s.replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, '<a class="ref-md-link" href="$2" target="_blank" rel="noopener">$1 ↗</a>');
+
     // Если строка уже содержит HTML-теги, не экранируем их
     if (s.indexOf('<') !== -1 && s.indexOf('>') !== -1) {
       // Обрабатываем только markdown-разметку, оставляя HTML как есть
@@ -16,7 +22,7 @@
         .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
         .replace(/\*([^*]+)\*/g, "<em>$1</em>");
     }
-    
+
     return s
       .replace(/`([^`]+)`/g, '<code class="ref-md-code">$1</code>')
       .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
@@ -85,7 +91,7 @@
 
       if (/^-{3,}$/.test(line)) { closeList(); out.push('<hr class="ref-md-hr">'); i++; continue; }
 
-      var h = line.match(/^(#{2,4})\s+(.*)$/);
+      var h = line.match(/^(#{2,6})\s+(.*)$/);
       if (h) {
         closeList();
         var lvl = h[1].length;
@@ -125,7 +131,7 @@
       i++;
       while (i < lines.length) {
         var nl = lines[i].trim();
-        if (!nl || nl.indexOf("```") === 0 || /^[-*]\s/.test(nl) || /^\d+\.\s/.test(nl) || nl.indexOf("|") === 0 || nl.indexOf(">") === 0 || /^#{2,4}\s/.test(nl) || /^-{3,}$/.test(nl)) break;
+        if (!nl || nl.indexOf("```") === 0 || /^[-*]\s/.test(nl) || /^\d+\.\s/.test(nl) || nl.indexOf("|") === 0 || nl.indexOf(">") === 0 || /^#{2,6}\s/.test(nl) || /^-{3,}$/.test(nl)) break;
         para.push(nl);
         i++;
       }

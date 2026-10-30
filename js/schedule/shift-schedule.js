@@ -2212,6 +2212,14 @@
       templateEditSaveBtn.addEventListener("click", saveTemplateEdit);
     }
 
+    // «Отмена», крестик и фон в редакторе шаблона — возвращаемся к выбору
+    // шаблона (как после «Сохранить»), а не в массовое добавление
+    document.querySelectorAll("#template-edit-modal [data-modal-close]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        closeTemplateEditModal();
+      });
+    });
+
     // Барабаны времени в окне редактирования шаблона
     document.addEventListener("click", function (event) {
       var adjacent = event.target.closest("[data-template-edit-field]");

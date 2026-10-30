@@ -1,0 +1,37 @@
+name: Автосборка офлайн-кэша (sw.js)
+
+# Запускается автоматически после каждого push.
+# Пересобирает список файлов и хэш сборки в sw.js (блок между маркерами
+# ===@smp-build-start/end===) и коммитит изменение, если что-то поменялось.
+# Благодаря этому любое изменение любого файла проекта приводит к
+# автоматическому обновлению приложения у всех пользователей.
+
+on:
+  push:
+    branches: ["**"]
+
+permissions:
+  contents: write
+
+jobs:
+  sw-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Получить код репозитория
+        uses: actions/checkout@v4
+
+      - name: Пересобрать офлайн-кэш в sw.js
+        run: bash .github/scripts/sw-build.sh
+
+      - name: Закоммитить, если sw.js изменился
+        run: |
+          if git diff --quiet -- sw.js; then
+            echo "sw.js актуален — изменений нет"
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add sw.js
+          git commit -m "chore: автоматическая сборка офлайн-кэша (sw.js)"
+          git pull --rebase
+          git push

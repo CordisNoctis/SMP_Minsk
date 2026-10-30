@@ -315,6 +315,25 @@ button.menu-card:focus-visible {
   font-weight: 650;
 }
 
+/* Ссылка с названием и подписью (нормативная база): заголовок сверху,
+   реквизиты приказа под ним */
+.submenu-link:has(.submenu-main) {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+}
+
+.submenu-link .submenu-sub {
+  font-size: 0.78rem;
+  font-weight: 400;
+  color: var(--muted);
+  line-height: 1.3;
+}
+
+.submenu-link .submenu-sub:empty {
+  display: none;
+}
+
 .app-footer {
   max-width: 1080px;
   margin: 0 auto;

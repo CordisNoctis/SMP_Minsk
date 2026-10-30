@@ -10,13 +10,16 @@
       .replace(/>/g, "&gt;");
   }
 
-  // Инлайн-форматирование: **жирный**, *курсив*, `код`, [ссылка](url)
+  // Инлайн-форматирование: **жирный**, *курсив*, `код`, [ссылка](url), ![картинка](адрес)
   function inlineFormat(line) {
     // Экранируем HTML
     line = escapeHtml(line);
 
     // Код
     line = line.replace(/`([^`]+)`/g, "<code>$1</code>");
+
+    // Картинки ![альт](адрес) — до ссылок, иначе синтаксис совпадает
+    line = line.replace(/!\[([^\]]*)\]\(([^)\s]+)\)/g, '<img class="drug-img" src="$2" alt="$1">');
 
     // Жирный (до курсива!)
     line = line.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
@@ -45,6 +48,19 @@
       if (/^---+\s*$/.test(line)) {
         html += "<hr>";
         i++;
+        continue;
+      }
+
+      // Блок кода ``` (схемы, примеры расчётов)
+      if (/^```/.test(line.trim())) {
+        var codeLines = [];
+        i++;
+        while (i < lines.length && lines[i].trim().indexOf("```") !== 0) {
+          codeLines.push(lines[i]);
+          i++;
+        }
+        i++; // закрывающая ```
+        html += '<pre class="drug-pre"><code>' + escapeHtml(codeLines.join("\n")) + "</code></pre>";
         continue;
       }
 
@@ -129,7 +145,7 @@
 
       // Обычный абзац (собираем подряд идущие непустые строки)
       var paraLines = [];
-      while (i < lines.length && lines[i].trim() !== "" && !/^(#|[-•]|\d+\.\s|>\s|---|\|.*\|)/.test(lines[i])) {
+      while (i < lines.length && lines[i].trim() !== "" && !/^(#|[-•]|\d+\.\s|>\s|---|\|.*\||```)/.test(lines[i])) {
         paraLines.push(lines[i]);
         i++;
       }

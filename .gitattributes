@@ -1,0 +1,5 @@
+# Служебные файлы — всегда с LF-концами строк (иначе bash-скрипт
+# автосборки не запускается после checkout на Windows)
+*.sh text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf

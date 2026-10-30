@@ -126,7 +126,7 @@
       : "./sw.js";
 
     navigator.serviceWorker
-      .register(swPath)
+      .register(swPath, { updateViaCache: "none" })
       .then(function (registration) {
         // Проверка обновлений при загрузке страницы
         registration.update();
@@ -135,6 +135,13 @@
         setInterval(function () {
           registration.update();
         }, 30 * 60 * 1000);
+
+        // Проверка при возврате в приложение (важно для телефона)
+        document.addEventListener("visibilitychange", function () {
+          if (document.visibilityState === "visible") {
+            registration.update();
+          }
+        });
 
         // Если новый SW скачан в прошлой сессии — показываем баннер сразу,
         // но не беспокоим повторно, если пользователь отложил в этой сессии

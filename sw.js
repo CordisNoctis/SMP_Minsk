@@ -1,32 +1,25 @@
-importScripts("./js/core/version.js");
+/*
+ * SMP Minsk — сервис-воркер (офлайн-кэш и обновления).
+ *
+ * Как это работает:
+ * 1. Весь список файлов приложения и хэш сборки (SW_BUILD) записываются
+ *    автоматически в блок между маркерами ===@smp-build-start/end===
+ *    (GitHub Action при каждой публикации — файл .github/scripts/sw-build.sh).
+ * 2. Кэш называется smp-pwa-<хэш>: любое изменение любого файла на GitHub
+ *    меняет хэш → браузер скачивает ЦЕЛИКОМ новую версию в новый кэш.
+ * 3. Все запросы сначала идут в кэш текущей версии — версия приложения
+ *    всегда цельная, смешивания старых и новых файлов не бывает.
+ * 4. Когда новая версия скачана, пользователь видит баннер «Обновить».
+ *    После нажатия приложение целиком переключается на новую версию,
+ *    старый кэш удаляется.
+ */
 
-const VERSION = self.SMP_VERSION || "0.0.0";
-const CACHE_NAME = `smp-pwa-${VERSION}`;
-
-const APP_SHELL = [
-  // === Корень ===
-  "./",
-  "./index.html",
-  "./manifest.webmanifest",
-
-  // === CSS ===
-  "./css/styles.css",
+// ===@smp-build-start===
+// ВНИМАНИЕ: этот блок создаётся автоматически (GitHub Action / .github/scripts/sw-build.sh).
+// Не редактировать вручную — изменения будут перезаписаны при следующей публикации.
+const SW_BUILD = "61c3bef694";
+const PRECACHE_LIST = [
   "./css/base.css",
-  "./css/layout.css",
-  "./css/components.css",
-  "./css/schedule.css",
-  "./css/checklist.css",
-  "./css/medical-picker.css",
-  "./css/changelog.css",
-  "./css/cheatsheet.css",
-  "./css/result-panel.css",
-
-  // === CSS: калькуляторы (общий + страница списка) ===
-  "./css/calculators-common.css",
-  "./css/calculators-list.css",
-  "./css/ref-markdown.css",
-
-  // === CSS: калькуляторы (персональные) ===
   "./css/calc-algover.css",
   "./css/calc-apgar.css",
   "./css/calc-ciwa.css",
@@ -35,61 +28,45 @@ const APP_SHELL = [
   "./css/calc-four.css",
   "./css/calc-geneva.css",
   "./css/calc-glasgow.css",
-  "./css/calc-killip.css",
-  "./css/calc-qtc.css",
-  "./css/calc-sgarbossa.css",
-  "./css/calc-pesi.css",
-  "./css/calc-nihss.css",
-  "./css/calc-vas.css",
-  "./css/calc-sad-persons.css",
-  "./css/calc-shsn.css",
   "./css/calc-infusomat.css",
+  "./css/calc-killip.css",
+  "./css/calc-nihss.css",
   "./css/calc-odn.css",
   "./css/calc-pediatric.css",
-
- // === JS: core ===
-  "./js/core/version.js",
-  "./js/core/theme-init.js",
-  "./js/core/theme.js",
-  "./js/core/app.js",
-  "./js/core/modal.js",
-  "./js/core/back.js",
-  "./js/core/ref-markdown.js",
-  "./js/core/exporter.js",
-  "./js/core/sw-register.js",
-  "./js/core/changelog.js",
-  "./js/core/update-notice.js",
-  "./js/core/settings-backup.js",
-  "./js/core/confirm.js",
-
-  // === JS: schedule ===
-  "./js/schedule/templates.js",
-  "./js/schedule/shift-schedule.js",
-  "./js/schedule/templates-admin.js",
-  "./js/schedule/calendar-export.js",
-  "./js/schedule/time-picker.js",
-
-  // === JS: checklist ===
-  "./js/checklist/equipment-data.js",
-  "./js/checklist/equipment-checklist.js",
-  "./js/checklist/used-items.js",
-  "./js/checklist/medical-picker.js",
-  "./js/checklist/medical-items.js",
-  "./js/checklist/medical-tables.js",
-
-  // === JS: cheats ===
-  "./js/cheats/markdown.js",
-  "./js/cheats/cheatsheet.js",
-  "./js/cheats/drugs-data.js",
-  "./js/cheats/drugs-db.js",
-  "./js/cheats/mkb10-db.js",
-
-  // === Cheats: markdown-файлы (шпаргалки) ===
-  "./js/cheats/md/mkb10.md",
-
-  // === JS: calculators ===
-  "./js/calculators/calculators-list.js",
-  "./js/calculators/calculator-utils.js",
+  "./css/calc-pesi.css",
+  "./css/calc-qtc.css",
+  "./css/calc-sad-persons.css",
+  "./css/calc-sgarbossa.css",
+  "./css/calc-shsn.css",
+  "./css/calc-vas.css",
+  "./css/calculators-common.css",
+  "./css/calculators-list.css",
+  "./css/calculators.css",
+  "./css/changelog.css",
+  "./css/cheatsheet.css",
+  "./css/checklist.css",
+  "./css/components.css",
+  "./css/layout.css",
+  "./css/medical-picker.css",
+  "./css/mkb10.css",
+  "./css/modals.css",
+  "./css/ref-markdown.css",
+  "./css/result-panel.css",
+  "./css/schedule.css",
+  "./css/styles.css",
+  "./data/content.json",
+  "./data/drugs-index.json",
+  "./data/drugs.schema.json",
+  "./icons/apple-touch-icon.png",
+  "./icons/favicon-16.png",
+  "./icons/favicon-32.png",
+  "./icons/favicon.ico",
+  "./icons/favicon.svg",
+  "./icons/icon-192.png",
+  "./icons/icon-512.png",
+  "./icons/icon-maskable-192.png",
+  "./icons/icon-maskable-512.png",
+  "./index.html",
   "./js/calculators/calc-algover.js",
   "./js/calculators/calc-apgar.js",
   "./js/calculators/calc-ciwa.js",
@@ -98,33 +75,69 @@ const APP_SHELL = [
   "./js/calculators/calc-four.js",
   "./js/calculators/calc-geneva.js",
   "./js/calculators/calc-glasgow.js",
-  "./js/calculators/calc-killip.js",
-  "./js/calculators/calc-qtc.js",
-  "./js/calculators/calc-sgarbossa.js",
-  "./js/calculators/calc-pesi.js",
-  "./js/calculators/calc-nihss.js",
-  "./js/calculators/calc-vas.js",
-  "./js/calculators/calc-sad-persons.js",
-  "./js/calculators/calc-shsn.js",
   "./js/calculators/calc-infusomat.js",
+  "./js/calculators/calc-killip.js",
+  "./js/calculators/calc-nihss.js",
   "./js/calculators/calc-odn.js",
   "./js/calculators/calc-pediatric.js",
-
-  // === JS: references (markdown-справки) ===
+  "./js/calculators/calc-pesi.js",
+  "./js/calculators/calc-qtc.js",
+  "./js/calculators/calc-sad-persons.js",
+  "./js/calculators/calc-sgarbossa.js",
+  "./js/calculators/calc-shsn.js",
+  "./js/calculators/calc-vas.js",
+  "./js/calculators/calculator-utils.js",
+  "./js/calculators/calculators-list.js",
+  "./js/cheats/cheatsheet.js",
+  "./js/cheats/drugs-data.js",
+  "./js/cheats/drugs-db.js",
+  "./js/cheats/markdown.js",
+  "./js/cheats/md/mkb10.md",
+  "./js/cheats/mkb10-db.js",
+  "./js/checklist/equipment-checklist.js",
+  "./js/checklist/equipment-data.js",
+  "./js/checklist/medical-items.js",
+  "./js/checklist/medical-picker.js",
+  "./js/checklist/medical-tables.js",
+  "./js/checklist/used-items.js",
+  "./js/core/app.js",
+  "./js/core/back.js",
+  "./js/core/changelog.js",
+  "./js/core/confirm.js",
+  "./js/core/exporter.js",
+  "./js/core/modal.js",
+  "./js/core/ref-markdown.js",
+  "./js/core/settings-backup.js",
+  "./js/core/sw-register.js",
+  "./js/core/theme-init.js",
+  "./js/core/theme.js",
+  "./js/core/update-notice.js",
+  "./js/core/version.js",
+  "./js/documents/doc-death-confirmation.js",
+  "./js/documents/doc-suicide-report.js",
+  "./js/pages/calculators.js",
   "./js/references/ref-algover.js",
   "./js/references/ref-apgar.js",
   "./js/references/ref-ciwa.js",
   "./js/references/ref-drug-converter.js",
   "./js/references/ref-fast-ed.js",
+  "./js/references/ref-four.js",
+  "./js/references/ref-geneva.js",
+  "./js/references/ref-glasgow.js",
+  "./js/references/ref-infusomat.js",
   "./js/references/ref-killip.js",
+  "./js/references/ref-nihss.js",
+  "./js/references/ref-odn.js",
   "./js/references/ref-qtc.js",
   "./js/references/ref-sgarbossa.js",
   "./js/references/ref-shsn.js",
   "./js/references/ref-vas.js",
-  "./js/documents/doc-death-confirmation.js",
-
-  // === Pages ===
-  "./pages/calculators.html",
+  "./js/schedule/calendar-export.js",
+  "./js/schedule/shift-schedule.js",
+  "./js/schedule/templates-admin.js",
+  "./js/schedule/templates.js",
+  "./js/schedule/time-picker.js",
+  "./manifest.webmanifest",
   "./pages/calc-algover.html",
   "./pages/calc-apgar.html",
   "./pages/calc-ciwa.html",
@@ -133,95 +146,85 @@ const APP_SHELL = [
   "./pages/calc-four.html",
   "./pages/calc-geneva.html",
   "./pages/calc-glasgow.html",
-  "./pages/cheatsheets.html",
-  "./pages/settings.html",
-  "./pages/shift-schedule.html",
-  "./pages/templates.html",
-  "./pages/shift-checklist.html",
-  "./pages/equipment-checklist.html",
-  "./pages/used-items.html",
-  "./pages/drug.html",
-  "./pages/drugs.html",
-  "./pages/coming-soon.html",
-  "./pages/policlinic.html",
-  "./pages/inform-grounds.html",
-  "./pages/unconscious-public.html",
-  "./pages/call-card-110.html",
-  "./pages/inform-death-confirmation.html",
-  "./pages/calc-killip.html",
-  "./pages/calc-qtc.html",
-  "./pages/calc-sgarbossa.html",
-  "./pages/calc-pesi.html",
-  "./pages/calc-nihss.html",
-  "./pages/calc-vas.html",
-  "./pages/calc-sad-persons.html",
-  "./pages/calc-shsn.html",
   "./pages/calc-infusomat.html",
+  "./pages/calc-killip.html",
+  "./pages/calc-nihss.html",
   "./pages/calc-odn.html",
   "./pages/calc-pediatric.html",
-  "./pages/mkb10.html",
+  "./pages/calc-pesi.html",
+  "./pages/calc-qtc.html",
+  "./pages/calc-sad-persons.html",
+  "./pages/calc-sgarbossa.html",
+  "./pages/calc-shsn.html",
+  "./pages/calc-vas.html",
+  "./pages/calculators.html",
+  "./pages/call-card-110.html",
+  "./pages/cheatsheets.html",
+  "./pages/coming-soon.html",
+  "./pages/drug.html",
+  "./pages/drugs.html",
+  "./pages/equipment-checklist.html",
+  "./pages/inform-death-confirmation.html",
+  "./pages/inform-grounds.html",
   "./pages/mkb10-code.html",
-
-  // === Vendor ===
+  "./pages/mkb10.html",
+  "./pages/normative-base.html",
+  "./pages/policlinic.html",
+  "./pages/settings.html",
+  "./pages/shift-checklist.html",
+  "./pages/shift-schedule.html",
+  "./pages/templates.html",
+  "./pages/unconscious-public.html",
+  "./pages/used-items.html",
+  "./pages/inform-suicide-report.html",
   "./vendor/html2canvas.min.js",
 ];
+// ===@smp-build-end===
 
-const OPTIONAL_ASSETS = [
-  "./icons/apple-touch-icon.png",
-  "./icons/favicon.svg",
-  "./icons/favicon.ico",
-  "./icons/favicon-16.png",
-  "./icons/favicon-32.png",
-  "./icons/icon-192.png",
-  "./icons/icon-512.png",
-  "./icons/icon-maskable-192.png",
-  "./icons/icon-maskable-512.png"
-];
+const CACHE_NAME = "smp-pwa-" + SW_BUILD;
 
-const DATA_ASSETS = [
-  "./data/drugs-index.json",
-  "./data/content.json"              // ← добавьте, если используется в приложении
-];
-
-caches.open(CACHE_NAME).then(function (cache) {
-  return Promise.all(APP_SHELL.map(function (url) {
-    return fetch(url, { cache: "no-cache" })
-      .then(function (resp) {
-        if (!resp.ok) {
-          console.warn("[SW] APP_SHELL пропущен (HTTP " + resp.status + "):", url);
-          return null;
-        }
-        return cache.put(url, resp);
-      })
-      .catch(function (err) {
-        console.warn("[SW] APP_SHELL пропущен (fetch error):", url, err);
-        return null;
-      });
-  }));
-}).catch(function (err) {
-  console.error("APP_SHELL cache failed:", err);
+// ===== Установка: заранее скачиваем все файлы приложения в новый кэш =====
+// (выполняется один раз при появлении новой версии, а не при каждом запуске)
+self.addEventListener("install", (event) => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) =>
+      Promise.all(
+        PRECACHE_LIST.map((url) =>
+          fetch(url, { cache: "reload" })
+            .then((resp) => {
+              if (resp.ok) return cache.put(url, resp);
+              console.warn("[SW] пропущен (HTTP " + resp.status + "):", url);
+            })
+            .catch((err) => console.warn("[SW] не удалось скачать:", url, err))
+        )
+      )
+    )
+  );
 });
 
+// ===== Активация: удаляем кэши всех старых версий =====
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys()
-      .then((keys) => {
-        return Promise.all(
+      .then((keys) =>
+        Promise.all(
           keys
             .filter((key) => key !== CACHE_NAME)
             .map((key) => caches.delete(key))
-        );
-      })
+        )
+      )
       .then(() => self.clients.claim())
   );
 });
 
+// ===== Команда от баннера обновления =====
 self.addEventListener("message", (event) => {
   if (event.data === "SKIP_WAITING") {
     self.skipWaiting();
   }
 });
 
+// ===== Запросы: кэш текущей версии → сеть → офлайн-заглушка =====
 self.addEventListener("fetch", (event) => {
   const request = event.request;
 
@@ -230,14 +233,19 @@ self.addEventListener("fetch", (event) => {
   const url = new URL(request.url);
   if (url.origin !== location.origin) return;
 
-  // Данные — network-first с fallback на кэш
-  if (url.pathname.includes("/data/")) {
+  // Документы: network-first с fallback на кэш (всегда свежие при сети)
+  const isDocument = url.pathname.indexOf("/js/documents/") !== -1 ||
+                     url.pathname.indexOf("/pages/inform-") !== -1;
+
+  if (isDocument) {
     event.respondWith(
-      fetch(request)
+      fetch(request, { cache: "no-store" })
         .then((response) => {
-          if (response.ok) {
-            const copy = response.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
+          // Обновляем кэш свежей копией
+          if (response.ok && response.type === "basic") {
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(request, response.clone()).catch(() => {});
+            });
           }
           return response;
         })
@@ -246,34 +254,30 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // Навигация — network-first с fallback на кэш или index.html
-  if (request.mode === "navigate") {
-    event.respondWith(
-      fetch(request)
-        .then((response) => {
-          if (response.ok) {
-            const copy = response.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
-          }
-          return response;
-        })
-        .catch(() => caches.match(request).then((cached) => {
-          return cached || caches.match("./index.html");
-        }))
-    );
-    return;
-  }
-
-  // Остальные ресурсы — network-first с fallback на кэш (всегда свежие CSS/JS при сети, офлайн — из кэша)
   event.respondWith(
-    fetch(request)
-      .then((response) => {
-        if (response.ok && response.type === "basic") {
-          const copy = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
-        }
-        return response;
+    caches.open(CACHE_NAME).then((cache) =>
+      cache.match(request).then((cached) => {
+        // Файл есть в кэше текущей версии — отдаём мгновенно.
+        if (cached) return cached;
+
+        // Файла нет (например, новый файл ещё не попал в список) — берём из сети
+        // и сохраняем в кэш, чтобы он был доступен офлайн.
+        return fetch(request)
+          .then((response) => {
+            if (response.ok && response.type === "basic") {
+              cache.put(request, response.clone()).catch(() => {});
+            }
+            return response;
+          })
+          .catch(() => {
+            // Сети нет и в кэше нет: для страницы показываем главную,
+            // для остальных файлов — ошибку.
+            if (request.mode === "navigate") {
+              return cache.match("./index.html").then((page) => page || Response.error());
+            }
+            return Response.error();
+          });
       })
-      .catch(() => caches.match(request))
+    )
   );
 });
