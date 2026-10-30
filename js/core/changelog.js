@@ -6,7 +6,7 @@
 
 window.APP_CHANGELOG = [
   {
-    version: "0.00.051",
+    version: "0.00.054",
     date: "30.10.2026",
     current: true,
     changes: [
