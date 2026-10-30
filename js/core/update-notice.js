@@ -66,10 +66,18 @@
       var list = document.createElement("ul");
       list.className = "changelog-list";
       (entry.changes || []).forEach(function (change) {
+        // Тип записи: новый формат (type) или старый (icon → type)
+        var type = change.type;
+        if (!type && change.icon && window.APP_CHANGELEG_ICON_MAP) {
+          type = window.APP_CHANGELEG_ICON_MAP[change.icon];
+        }
+        var info = (window.APP_CHANGELOG_TYPES || {})[type] || {};
         var li = document.createElement("li");
         li.className = "changelog-item";
         li.innerHTML =
-          '<span class="changelog-icon" aria-hidden="true">' + change.icon + '</span>' +
+          '<span class="changelog-icon" aria-hidden="true" style="color:' + (info.color || "inherit") + ';">' +
+            (change.icon || info.icon || "•") +
+          '</span>' +
           '<span class="changelog-text">' + change.text + '</span>';
         list.appendChild(li);
       });

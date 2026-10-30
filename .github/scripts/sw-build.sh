@@ -39,7 +39,7 @@ fi
 
 FILES=$(
   printf "%s\n" "$ALL_FILES" |
-  grep -E "\.(html|css|js|json|webmanifest|md|png|svg|ico|jpg|jpeg|gif|woff2?|ttf)$" |
+  grep -E "\.(html|css|js|json|webmanifest|md|png|svg|ico|jpg|jpeg|gif|webp|avif|woff2?|ttf)$" |
   grep -v -E "^(\.github/|sw\.js$|README)" |
   sort
 )

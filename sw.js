@@ -254,29 +254,38 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
+  // Загрузка из сети с сохранением в кэш; офлайн — заглушка
+  const fromNetwork = (cache) =>
+    fetch(request)
+      .then((response) => {
+        if (response.ok && response.type === "basic") {
+          cache.put(request, response.clone()).catch(() => {});
+        }
+        return response;
+      })
+      .catch(() => {
+        // Сети нет и в кэше нет: для страницы показываем главную,
+        // для остальных файлов — ошибку.
+        if (request.mode === "navigate") {
+          return cache.match("./index.html").then((page) => page || Response.error());
+        }
+        return Response.error();
+      });
+
   event.respondWith(
     caches.open(CACHE_NAME).then((cache) =>
       cache.match(request).then((cached) => {
         // Файл есть в кэше текущей версии — отдаём мгновенно.
         if (cached) return cached;
 
-        // Файла нет (например, новый файл ещё не попал в список) — берём из сети
-        // и сохраняем в кэш, чтобы он был доступен офлайн.
-        return fetch(request)
-          .then((response) => {
-            if (response.ok && response.type === "basic") {
-              cache.put(request, response.clone()).catch(() => {});
-            }
-            return response;
-          })
-          .catch(() => {
-            // Сети нет и в кэше нет: для страницы показываем главную,
-            // для остальных файлов — ошибку.
-            if (request.mode === "navigate") {
-              return cache.match("./index.html").then((page) => page || Response.error());
-            }
-            return Response.error();
-          });
+        // Переход на страницу с параметрами (например, doc-md.html?file=…)
+        // ищем в кэше без учёта части после «?»
+        if (request.mode === "navigate") {
+          return cache
+            .match(request, { ignoreSearch: true })
+            .then((page) => page || fromNetwork(cache));
+        }
+        return fromNetwork(cache);
       })
     )
   );

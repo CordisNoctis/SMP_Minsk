@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content">
+  <title>Документ — СМП Минск</title>
+  <meta name="theme-color" content="#7A1F2B">
+
+  <script src="../js/core/theme-init.js"></script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/cheatsheet.css">
+
+  <link rel="icon" href="../icons/favicon.ico" sizes="any">
+  <link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+
+  <style>
+    /* Длинные названия документов: переносим на несколько строк */
+    .docmd-title {
+      white-space: normal;
+      line-height: 1.25;
+      font-size: 0.95rem;
+    }
+    @media (max-width: 480px) {
+      .docmd-title { font-size: 0.85rem; }
+    }
+    .docmd-error {
+      padding: 20px 16px;
+      text-align: center;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+  </style>
+</head>
+
+<body>
+  <header class="page-header">
+    <button type="button" class="back-button" data-back data-back-fallback="normative-base.html" aria-label="Назад">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+    <h1 class="page-title-centered docmd-title" id="docMdTitle">Документ</h1>
+    <span class="header-spacer" aria-hidden="true"></span>
+  </header>
+
+  <main class="page">
+    <div class="drug-content" id="docMdContent">
+      <p class="docmd-error">Загрузка документа…</p>
+    </div>
+  </main>
+
+  <script src="../js/core/theme.js"></script>
+  <script src="../js/core/back.js"></script>
+  <script src="../js/cheats/markdown.js"></script>
+  <script src="../js/core/sw-register.js"></script>
+  <script>
+    (function () {
+      "use strict";
+
+      var titleEl = document.getElementById("docMdTitle");
+      var contentEl = document.getElementById("docMdContent");
+
+      function showError(msg) {
+        contentEl.innerHTML = '<p class="docmd-error">' + msg + "</p>";
+      }
+
+      var params = new URLSearchParams(window.location.search);
+      var file = params.get("file") || "";
+
+      // Безопасность: только имя файла — латиница, цифры, дефис, .md
+      if (!/^[a-z0-9-]+\.md$/i.test(file)) {
+        showError("Документ не указан.");
+        return;
+      }
+
+      fetch("../docs/" + file)
+        .then(function (resp) {
+          if (!resp.ok) throw new Error("HTTP " + resp.status);
+          return resp.text();
+        })
+        .then(function (md) {
+          // Заголовок документа: параметр ?title= или первая строка «## …»
+          var lines = md.split(/\r?\n/);
+          var title = params.get("title");
+          if (!title) {
+            for (var k = 0; k < lines.length; k++) {
+              var m = lines[k].trim().match(/^##\s+(.*)$/);
+              if (m) { title = m[1]; lines.splice(k, 1); break; }
+            }
+          }
+          if (title) {
+            titleEl.textContent = title;
+            document.title = title + " — СМП Минск";
+          }
+
+          contentEl.innerHTML = window.SMP.markdown.parse(lines.join("\n"));
+
+          // Картинки, указанные в markdown просто именем файла
+          // (![схема](risunok.png)), ищем в папке docs/img/
+          contentEl.querySelectorAll("img.drug-img").forEach(function (img) {
+            var src = img.getAttribute("src") || "";
+            if (!/^(https?:|\/|data:|\.\.\/)/i.test(src)) {
+              img.src = "../docs/img/" + src;
+            }
+          });
+        })
+        .catch(function () {
+          showError("Не удалось загрузить документ. Проверьте подключение к интернету и обновите приложение — новые документы появляются после обновления.");
+        });
+    })();
+  </script>
+</body>
+</html>
