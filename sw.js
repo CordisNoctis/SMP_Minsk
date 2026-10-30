@@ -17,7 +17,7 @@
 // ===@smp-build-start===
 // ВНИМАНИЕ: этот блок создаётся автоматически (GitHub Action / .github/scripts/sw-build.sh).
 // Не редактировать вручную — изменения будут перезаписаны при следующей публикации.
-const SW_BUILD = "61c3bef694";
+const SW_BUILD = "dcf151bba6";
 const PRECACHE_LIST = [
   "./css/base.css",
   "./css/calc-algover.css",
@@ -102,6 +102,7 @@ const PRECACHE_LIST = [
   "./js/checklist/used-items.js",
   "./js/core/app.js",
   "./js/core/back.js",
+  "./js/core/changelog-render.js",
   "./js/core/changelog.js",
   "./js/core/confirm.js",
   "./js/core/exporter.js",
@@ -166,6 +167,7 @@ const PRECACHE_LIST = [
   "./pages/equipment-checklist.html",
   "./pages/inform-death-confirmation.html",
   "./pages/inform-grounds.html",
+  "./pages/inform-suicide-report.html",
   "./pages/mkb10-code.html",
   "./pages/mkb10.html",
   "./pages/normative-base.html",
@@ -176,7 +178,6 @@ const PRECACHE_LIST = [
   "./pages/templates.html",
   "./pages/unconscious-public.html",
   "./pages/used-items.html",
-  "./pages/inform-suicide-report.html",
   "./vendor/html2canvas.min.js",
 ];
 // ===@smp-build-end===
