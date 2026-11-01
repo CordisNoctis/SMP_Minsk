@@ -17,7 +17,7 @@
 // ===@smp-build-start===
 // ВНИМАНИЕ: этот блок создаётся автоматически (GitHub Action / .github/scripts/sw-build.sh).
 // Не редактировать вручную — изменения будут перезаписаны при следующей публикации.
-const SW_BUILD = "6d1706b66b";
+const SW_BUILD = "b1f0fd1de9";
 const PRECACHE_LIST = [
   "./css/base.css",
   "./css/calc-algover.css",
@@ -57,6 +57,7 @@ const PRECACHE_LIST = [
   "./data/content.json",
   "./data/drugs-index.json",
   "./data/drugs.schema.json",
+  "./docs/img/posmertnyj_epikriz.svg",
   "./docs/prikaz-713-konstataciya-smerti.md",
   "./icons/apple-touch-icon.png",
   "./icons/favicon-16.png",
