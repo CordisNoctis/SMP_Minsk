@@ -17,7 +17,7 @@
 // ===@smp-build-start===
 // ВНИМАНИЕ: этот блок создаётся автоматически (GitHub Action / .github/scripts/sw-build.sh).
 // Не редактировать вручную — изменения будут перезаписаны при следующей публикации.
-const SW_BUILD = "b1f0fd1de9";
+const SW_BUILD = "230f640fff";
 const PRECACHE_LIST = [
   "./css/base.css",
   "./css/calc-algover.css",
@@ -102,6 +102,7 @@ const PRECACHE_LIST = [
   "./js/checklist/medical-picker.js",
   "./js/checklist/medical-tables.js",
   "./js/checklist/used-items.js",
+  "./js/core/analytics.js",
   "./js/core/app.js",
   "./js/core/back.js",
   "./js/core/changelog-render.js",
