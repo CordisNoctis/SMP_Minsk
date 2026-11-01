@@ -30,6 +30,13 @@ if ! grep -q "// ===@smp-build-start===" "$SW_FILE" || ! grep -q "// ===@smp-bui
   exit 1
 fi
 
+# Защита: файл закоммичен с маркерами конфликта слияния (после pull/sync)
+if grep -qE "^(<{7}|={7}|>{7})" "$SW_FILE"; then
+  echo "ОШИБКА: в sw.js остались маркеры конфликта слияния (<<<<<<< / ======= / >>>>>>>)." >&2
+  echo "Откройте sw.js в VS Code, выделите всё (Ctrl+A) и вставьте чистую версию файла целиком, затем закоммитьте." >&2
+  exit 1
+fi
+
 # --- 1. Список файлов приложения ---
 if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
   ALL_FILES=$(git ls-files)

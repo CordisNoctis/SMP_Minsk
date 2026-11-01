@@ -31,6 +31,68 @@
       color: var(--muted);
       line-height: 1.5;
     }
+
+    /* Картинки в документе: клик открывает полноэкранный просмотр */
+    #docMdContent img.drug-img { cursor: zoom-in; }
+
+    /* SVG с чёрным текстом: в тёмной теме чёрное становится белым,
+       в светлой теме остаётся как есть */
+    [data-theme="dark"] img.docmd-svg-invert {
+      filter: invert(1) hue-rotate(180deg);
+    }
+
+    /* ===== Полноэкранный просмотр картинки ===== */
+    .docmd-lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 400;
+      display: flex;
+      flex-direction: column;
+      background: rgba(0, 0, 0, 0.92);
+    }
+    .docmd-lightbox[hidden] { display: none; }
+
+    .docmd-lightbox-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+      padding-top: calc(10px + env(safe-area-inset-top));
+      color: #fff;
+    }
+    .docmd-lightbox-bar span {
+      min-width: 52px;
+      text-align: center;
+      font-size: 0.85rem;
+    }
+    .docmd-lightbox-btn {
+      width: 40px;
+      height: 40px;
+      border: 0;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.14);
+      color: #fff;
+      font-size: 1.15rem;
+      cursor: pointer;
+    }
+    .docmd-lightbox-btn:active { background: rgba(255, 255, 255, 0.28); }
+    .docmd-lightbox-close { margin-left: auto; }
+
+    .docmd-lightbox-stage {
+      flex: 1;
+      overflow: hidden;
+      touch-action: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .docmd-lightbox-stage img {
+      max-width: 100%;
+      max-height: 100%;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+    .docmd-lightbox-stage img.is-pannable { cursor: grab; }
   </style>
 </head>
 
@@ -50,6 +112,19 @@
       <p class="docmd-error">Загрузка документа…</p>
     </div>
   </main>
+
+  <!-- Полноэкранный просмотр картинки -->
+  <div class="docmd-lightbox" id="docmdLightbox" hidden>
+    <div class="docmd-lightbox-bar">
+      <button type="button" class="docmd-lightbox-btn" id="docmdZoomOut" aria-label="Уменьшить">−</button>
+      <span id="docmdZoomLabel">100%</span>
+      <button type="button" class="docmd-lightbox-btn" id="docmdZoomIn" aria-label="Увеличить">+</button>
+      <button type="button" class="docmd-lightbox-btn docmd-lightbox-close" id="docmdLightboxClose" aria-label="Закрыть">✕</button>
+    </div>
+    <div class="docmd-lightbox-stage" id="docmdLightboxStage">
+      <img id="docmdLightboxImg" alt="">
+    </div>
+  </div>
 
   <script src="../js/core/theme.js"></script>
   <script src="../js/core/back.js"></script>
@@ -104,11 +179,136 @@
             if (!/^(https?:|\/|data:|\.\.\/)/i.test(src)) {
               img.src = "../docs/img/" + src;
             }
+            // SVG инвертируется в тёмной теме (чёрный текст → белый)
+            if (/\.svg(\?|$)/i.test(img.src)) {
+              img.classList.add("docmd-svg-invert");
+            }
           });
         })
         .catch(function () {
           showError("Не удалось загрузить документ. Проверьте подключение к интернету и обновите приложение — новые документы появляются после обновления.");
         });
+    })();
+  </script>
+
+  <script>
+    // ===== Полноэкранный просмотр картинок документа =====
+    (function () {
+      "use strict";
+
+      var contentEl = document.getElementById("docMdContent");
+      var lb = document.getElementById("docmdLightbox");
+      var lbImg = document.getElementById("docmdLightboxImg");
+      var stage = document.getElementById("docmdLightboxStage");
+      var zoomLabel = document.getElementById("docmdZoomLabel");
+      if (!contentEl || !lb || !lbImg || !stage) return;
+
+      var scale = 1, tx = 0, ty = 0;
+      var pointers = new Map();
+      var lastDist = 0, lastMid = null;
+
+      function apply() {
+        if (scale <= 1.01) { scale = Math.max(scale, 0.2); if (scale <= 1.01) { scale = 1; tx = 0; ty = 0; } }
+        lbImg.style.transform = "translate(" + tx + "px," + ty + "px) scale(" + scale + ")";
+        lbImg.classList.toggle("is-pannable", scale > 1);
+        if (zoomLabel) zoomLabel.textContent = Math.round(scale * 100) + "%";
+      }
+
+      function setScale(s) {
+        scale = Math.min(8, Math.max(0.2, s));
+        if (scale <= 1) { tx = 0; ty = 0; }
+        apply();
+      }
+
+      function open(img) {
+        lbImg.src = img.currentSrc || img.src;
+        lbImg.alt = img.alt || "";
+        lbImg.classList.toggle("docmd-svg-invert", img.classList.contains("docmd-svg-invert"));
+        scale = 1; tx = 0; ty = 0;
+        apply();
+        lb.hidden = false;
+        document.body.classList.add("modal-open");
+      }
+
+      function close() {
+        lb.hidden = true;
+        document.body.classList.remove("modal-open");
+        pointers.clear();
+      }
+
+      // Открытие по клику на картинку в документе
+      contentEl.addEventListener("click", function (e) {
+        var img = e.target.closest("img.drug-img");
+        if (img) { e.preventDefault(); open(img); }
+      });
+
+      document.getElementById("docmdLightboxClose").addEventListener("click", close);
+      document.getElementById("docmdZoomIn").addEventListener("click", function () { setScale(scale * 1.25); });
+      document.getElementById("docmdZoomOut").addEventListener("click", function () { setScale(scale / 1.25); });
+
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape" && !lb.hidden) close();
+      });
+
+      // Закрытие по клику на фон (не по картинке)
+      stage.addEventListener("click", function (e) {
+        if (e.target === stage) close();
+      });
+
+      // Двойной клик/тап: переключение 100% ↔ 250%
+      stage.addEventListener("dblclick", function (e) {
+        e.preventDefault();
+        if (scale > 1.01) { setScale(1); } else { setScale(2.5); }
+      });
+
+      // Колесо мыши: масштаб
+      stage.addEventListener("wheel", function (e) {
+        e.preventDefault();
+        setScale(scale * (e.deltaY < 0 ? 1.2 : 1 / 1.2));
+      }, { passive: false });
+
+      function dist(a, b) { return Math.hypot(a.x - b.x, a.y - b.y); }
+      function mid(a, b) { return { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 }; }
+
+      // Перетаскивание (один палец/мышь) и щипок (два пальца)
+      stage.addEventListener("pointerdown", function (e) {
+        stage.setPointerCapture(e.pointerId);
+        pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+        if (pointers.size === 2) {
+          var p = Array.from(pointers.values());
+          lastDist = dist(p[0], p[1]);
+          lastMid = mid(p[0], p[1]);
+        }
+      });
+
+      stage.addEventListener("pointermove", function (e) {
+        if (!pointers.has(e.pointerId)) return;
+        var prev = pointers.get(e.pointerId);
+        pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+        if (pointers.size === 1 && scale > 1) {
+          tx += e.clientX - prev.x;
+          ty += e.clientY - prev.y;
+          apply();
+        } else if (pointers.size === 2) {
+          var p = Array.from(pointers.values());
+          var d = dist(p[0], p[1]);
+          var m = mid(p[0], p[1]);
+          if (lastDist > 0) setScale(scale * d / lastDist);
+          tx += m.x - lastMid.x;
+          ty += m.y - lastMid.y;
+          lastDist = d;
+          lastMid = m;
+          apply();
+        }
+      });
+
+      function endPointer(e) {
+        pointers.delete(e.pointerId);
+        lastDist = 0;
+      }
+      stage.addEventListener("pointerup", endPointer);
+      stage.addEventListener("pointercancel", endPointer);
     })();
   </script>
 </body>
