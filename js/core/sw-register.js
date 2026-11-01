@@ -1,6 +1,16 @@
 (function () {
   "use strict";
 
+  // ===== Веб-аналитика (Google Analytics / Яндекс Метрика) =====
+  // Загружается на всех страницах; идентификаторы — в js/core/analytics.js
+  try {
+    var analyticsScript = document.createElement("script");
+    analyticsScript.src = (window.location.pathname.indexOf("/pages/") !== -1
+      ? "../js/core/analytics.js"
+      : "./js/core/analytics.js");
+    document.head.appendChild(analyticsScript);
+  } catch (e) { /* аналитика не должна влиять на приложение */ }
+
   if (!("serviceWorker" in navigator)) {
     return;
   }

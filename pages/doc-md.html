@@ -42,13 +42,14 @@
     }
 
     /* ===== Полноэкранный просмотр картинки ===== */
+    /* Светлая тема: светлый фон, чтобы чёрный текст SVG был читаем */
     .docmd-lightbox {
       position: fixed;
       inset: 0;
       z-index: 400;
       display: flex;
       flex-direction: column;
-      background: rgba(0, 0, 0, 0.92);
+      background: #ffffff;
     }
     .docmd-lightbox[hidden] { display: none; }
 
@@ -58,7 +59,7 @@
       gap: 8px;
       padding: 10px 12px;
       padding-top: calc(10px + env(safe-area-inset-top));
-      color: #fff;
+      color: #1a1a1a;
     }
     .docmd-lightbox-bar span {
       min-width: 52px;
@@ -70,13 +71,22 @@
       height: 40px;
       border: 0;
       border-radius: 10px;
-      background: rgba(255, 255, 255, 0.14);
-      color: #fff;
+      background: rgba(0, 0, 0, 0.08);
+      color: #1a1a1a;
       font-size: 1.15rem;
       cursor: pointer;
     }
-    .docmd-lightbox-btn:active { background: rgba(255, 255, 255, 0.28); }
+    .docmd-lightbox-btn:active { background: rgba(0, 0, 0, 0.16); }
     .docmd-lightbox-close { margin-left: auto; }
+
+    /* Тёмная тема: непрозрачный фон в цвет приложения (SVG инвертируется в белый) */
+    [data-theme="dark"] .docmd-lightbox { background: #151012; }
+    [data-theme="dark"] .docmd-lightbox-bar { color: #fff; }
+    [data-theme="dark"] .docmd-lightbox-btn {
+      background: rgba(255, 255, 255, 0.14);
+      color: #fff;
+    }
+    [data-theme="dark"] .docmd-lightbox-btn:active { background: rgba(255, 255, 255, 0.28); }
 
     .docmd-lightbox-stage {
       flex: 1;
