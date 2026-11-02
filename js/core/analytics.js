@@ -15,9 +15,9 @@
 (function () {
   "use strict";
 
-  var GA4_ID = "G-7J9LC1EG4R";      // ← вставьте сюда "G-XXXXXXXXXX"
-  var METRIKA_ID = "113976097";  // ← вставьте сюда номер счётчика, например "98765432"
-
+  var GA4_ID = "G-7J9LC1EG4R";      // Google Analytics 4
+  var METRIKA_ID = "113976097";     // Яндекс Метрика
+  
   try {
     if (GA4_ID) initGa4();
   } catch (e) { /* аналитика не должна влиять на работу приложения */ }

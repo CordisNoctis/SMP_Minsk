@@ -57,6 +57,14 @@
       <button type="button" class="filter-summary-clear" id="clearActiveFiltersBtn">Сбросить</button>
     </div>
 
+    <!-- ===== Сортировка ===== -->
+    <div class="calc-sort-bar" id="calcSortBar">
+      <span class="calc-sort-label">Сортировка:</span>
+      <button type="button" class="calc-sort-chip active" data-sort="default">Обычная</button>
+      <button type="button" class="calc-sort-chip" data-sort="alpha">А–Я</button>
+      <button type="button" class="calc-sort-chip" data-sort="recent">Недавние</button>
+    </div>
+
     <!-- ===== Список калькуляторов ===== -->
     <div class="calculators-list-compact" id="calculatorsList"></div>
 
@@ -103,7 +111,6 @@
   <script src="../js/core/theme.js"></script>
   <script src="../js/core/back.js"></script>
   <script src="../js/calculators/calculators-list.js"></script>
-  <script src="../js/pages/calculators.js"></script>
   <script src="../js/core/sw-register.js"></script>
 </body>
 </html>

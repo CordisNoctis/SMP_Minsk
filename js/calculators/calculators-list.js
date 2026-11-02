@@ -41,14 +41,40 @@
   var state = {
     search: "",
     draftCategories: [],  // временные (в модалке, не применены)
-    appliedCategories: [] // применённые
+    appliedCategories: [], // применённые
+    sort: "default"
   };
+
+  // ===== ИЗБРАННОЕ / НЕДАВНИЕ / СОРТИРОВКА (хранение) =====
+  var FAV_KEY = "smp-calc-favorites";
+  var USAGE_KEY = "smp-calc-usage";
+  var SORT_KEY = "smp-calc-sort";
+
+  function loadFavorites() {
+    try { return JSON.parse(localStorage.getItem(FAV_KEY)) || []; } catch (e) { return []; }
+  }
+  function saveFavorites(list) {
+    try { localStorage.setItem(FAV_KEY, JSON.stringify(list)); } catch (e) {}
+  }
+  function loadUsage() {
+    try { return JSON.parse(localStorage.getItem(USAGE_KEY)) || {}; } catch (e) { return {}; }
+  }
+  function recordUsage(id) {
+    var usage = loadUsage();
+    usage[id] = Date.now();
+    try { localStorage.setItem(USAGE_KEY, JSON.stringify(usage)); } catch (e) {}
+  }
+  function loadSort() {
+    var saved = null;
+    try { saved = localStorage.getItem(SORT_KEY); } catch (e) {}
+    return ["default", "alpha", "recent"].indexOf(saved) !== -1 ? saved : "default";
+  }
 
   // ===== DOM =====
   var listEl, emptyEl, filterSummaryEl, filterSummaryText, filterBadge;
   var openFiltersBtn, searchInput, searchClearBtn, clearActiveFiltersBtn, emptyResetBtn;
   var modal, backdrop, closeBtn, resetBtn, applyBtn;
-  var filterCategoriesEl;
+  var filterCategoriesEl, sortBar;
 
   // ===== РЕНДЕР ЧИПСОВ В МОДАЛКЕ =====
   function renderFilterChips() {
@@ -87,6 +113,40 @@
     });
   }
 
+  // ===== Сортировка списка =====
+  function sortList(list) {
+    var arr = list.slice();
+    if (state.sort === "alpha") {
+      arr.sort(function (a, b) { return a.title.localeCompare(b.title, "ru"); });
+    } else if (state.sort === "recent") {
+      var usage = loadUsage();
+      arr.sort(function (a, b) { return (usage[b.id] || 0) - (usage[a.id] || 0); });
+    }
+    return arr; // "default" — порядок из общего списка
+  }
+
+  function renderCards(list, favorites) {
+    return list.map(function (calc) {
+      var fav = favorites.indexOf(calc.id) !== -1;
+      var catsText = (calc.categories || []).slice(0, 2).join(" · ");
+      return '<a class="calc-compact-card" href="' + calc.page + '" data-id="' + calc.id + '">' +
+        '<div class="calc-compact-icon"><span>' + calc.emoji + '</span></div>' +
+        '<div class="calc-compact-title">' +
+          '<div class="calc-card-main">' + calc.title + '</div>' +
+          '<div class="calc-card-meta">' +
+            '<span class="calc-card-cats">' + catsText + '</span>' +
+          '</div>' +
+        '</div>' +
+        '<button type="button" class="calc-fav-btn' + (fav ? " active" : "") + '" data-fav="' + calc.id + '"' +
+          ' aria-label="' + (fav ? "Убрать из избранного" : "Добавить в избранное") + '"' +
+          ' title="' + (fav ? "Убрать из избранного" : "Добавить в избранное") + '">' +
+          (fav ? "★" : "☆") +
+        '</button>' +
+        '<div class="calc-compact-arrow">›</div>' +
+      '</a>';
+    }).join("");
+  }
+
   function renderList() {
     var filtered = filterList();
 
@@ -97,19 +157,24 @@
     }
 
     emptyEl.hidden = true;
-    listEl.innerHTML = filtered.map(function (calc) {
-      var catsText = (calc.categories || []).slice(0, 2).join(" · ");
-      return '<a class="calc-compact-card" href="' + calc.page + '" data-id="' + calc.id + '">' +
-        '<div class="calc-compact-icon"><span>' + calc.emoji + '</span></div>' +
-        '<div class="calc-compact-title">' +
-          '<div class="calc-card-main">' + calc.title + '</div>' +
-          '<div class="calc-card-meta">' +
-            '<span class="calc-card-cats">' + catsText + '</span>' +
-          '</div>' +
-        '</div>' +
-        '<div class="calc-compact-arrow">›</div>' +
-      '</a>';
-    }).join("");
+
+    var favorites = loadFavorites();
+    var isFav = function (calc) { return favorites.indexOf(calc.id) !== -1; };
+
+    var favCards = filtered.filter(isFav);
+    var restCards = filtered.filter(function (c) { return !isFav(c); });
+
+    var html = "";
+    if (favCards.length > 0) {
+      html += '<div class="calc-group-title">⭐ Избранные</div>';
+      html += renderCards(favCards, favorites);
+      if (restCards.length > 0) {
+        html += '<div class="calc-group-title">Все калькуляторы</div>';
+      }
+    }
+    html += renderCards(sortList(restCards), favorites);
+
+    listEl.innerHTML = html;
   }
 
   // ===== СВОДКА ФИЛЬТРОВ =====
@@ -241,6 +306,45 @@
         else state.draftCategories.push(catId);
       }
       renderFilterChips();
+    });
+
+    // Сортировка (чипсы над списком)
+    sortBar = document.getElementById("calcSortBar");
+    state.sort = loadSort();
+    if (sortBar) {
+      sortBar.querySelectorAll(".calc-sort-chip").forEach(function (chip) {
+        chip.classList.toggle("active", chip.getAttribute("data-sort") === state.sort);
+      });
+      sortBar.addEventListener("click", function (e) {
+        var chip = e.target.closest(".calc-sort-chip");
+        if (!chip) return;
+        state.sort = chip.getAttribute("data-sort");
+        try { localStorage.setItem(SORT_KEY, state.sort); } catch (err) {}
+        sortBar.querySelectorAll(".calc-sort-chip").forEach(function (c) {
+          c.classList.toggle("active", c === chip);
+        });
+        renderList();
+      });
+    }
+
+    // Звёздочка избранного + учёт недавно открытых
+    listEl.addEventListener("click", function (e) {
+      var favBtn = e.target.closest(".calc-fav-btn");
+      if (favBtn) {
+        e.preventDefault();
+        e.stopPropagation();
+        var id = favBtn.getAttribute("data-fav");
+        var favorites = loadFavorites();
+        var idx = favorites.indexOf(id);
+        if (idx !== -1) favorites.splice(idx, 1);
+        else favorites.push(id);
+        saveFavorites(favorites);
+        renderList();
+        return;
+      }
+
+      var card = e.target.closest("a.calc-compact-card");
+      if (card) recordUsage(card.getAttribute("data-id"));
     });
 
     // Первый рендер

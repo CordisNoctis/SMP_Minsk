@@ -354,3 +354,62 @@
     color: #fff !important;
   }
 }
+
+/* ===== Сортировка и избранное ===== */
+
+/* Панель сортировки */
+.calc-sort-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 10px 2px 4px;
+}
+.calc-sort-label {
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+.calc-sort-chip {
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--card);
+  color: var(--muted);
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 5px 12px;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+.calc-sort-chip.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+/* Заголовки групп в списке */
+.calc-group-title {
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--muted);
+  margin: 14px 2px 8px;
+}
+.calc-group-title:first-child { margin-top: 6px; }
+
+/* Звёздочка избранного на карточке */
+.calc-fav-btn {
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+}
+.calc-fav-btn.active { color: #e6a817; }
+.calc-fav-btn:active { transform: scale(0.88); }

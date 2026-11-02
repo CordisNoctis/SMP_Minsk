@@ -11,6 +11,16 @@
     document.head.appendChild(analyticsScript);
   } catch (e) { /* аналитика не должна влиять на приложение */ }
 
+  // ===== Установка PWA: инструкция по системам =====
+  // Логика и тексты — в js/core/install-prompt.js
+  try {
+    var installScript = document.createElement("script");
+    installScript.src = (window.location.pathname.indexOf("/pages/") !== -1
+      ? "../js/core/install-prompt.js"
+      : "./js/core/install-prompt.js");
+    document.head.appendChild(installScript);
+  } catch (e) { /* установка не должна влиять на приложение */ }
+
   if (!("serviceWorker" in navigator)) {
     return;
   }
