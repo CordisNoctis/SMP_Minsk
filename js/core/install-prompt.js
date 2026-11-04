@@ -1,13 +1,17 @@
-/* ===== Установка PWA: всплывающая инструкция по системам =====
+/* ===== Установка PWA: мини-уведомление + полная инструкция =====
  *
- * Показывается при открытии приложения в обычной вкладке браузера:
- *  - если браузер умеет (Android, Windows/Linux/macOS в Chrome/Edge) —
- *    предлагается нативная установка одной кнопкой;
- *  - для iOS — пошаговая инструкция (Safari не даёт установить программно).
- * Вкладка системы выбирается автоматически.
+ * При первом посещении (в обычной вкладке браузера) внизу экрана
+ * появляется МИНИ-ПЛАШКА: «приложение можно установить» с кнопками:
+ *   «Установить» (нативная, где браузер умеет) / «Как установить» / «✕».
+ * «✕» прячет плашку на RE_SHOW_DAYS дней.
  *
- * После «Понятно» окно не показывается RE_SHOW_DAYS дней.
- * В установленном приложении (автономный режим) окно не появляется вовсе.
+ * Полная инструкция (вкладки Android / iOS / Windows / Linux / macOS)
+ * открывается:
+ *   - по кнопке «Как установить» на мини-плашке;
+ *   - по кнопке «Установить приложение» на главной странице
+ *     (кнопка видна только в браузере, не в установленном приложении).
+ *
+ * В установленном приложении ничего не показывается.
  */
 (function () {
   "use strict";
@@ -15,6 +19,7 @@
   var DISMISS_KEY = "smp-install-dismissed-at";
   var RE_SHOW_DAYS = 30;
   var SHOW_DELAY_MS = 1500;
+  var NOTICE_AUTOHIDE_MS = 60000; // мини-плашка сама скрывается через минуту
 
   // ===== Инструкции по системам =====
 
@@ -231,10 +236,27 @@
     "#installPromptBtn{" +
       "display:block;width:100%;margin:0 0 14px;padding:12px;" +
       "border:0;border-radius:12px;background:var(--accent);color:#fff;" +
-      "font:inherit;font-weight:800;font-size:0.95rem;cursor:pointer;}";
+      "font:inherit;font-weight:800;font-size:0.95rem;cursor:pointer;}" +
+
+    /* ===== Мини-плашка внизу экрана ===== */
+    "#installNotice{" +
+      "position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));" +
+      "z-index:90;display:flex;align-items:center;gap:10px;" +
+      "padding:10px 12px;background:var(--card);border:1px solid var(--border);" +
+      "border-radius:14px;box-shadow:var(--shadow);}" +
+    "#installNotice[hidden]{display:none;}" +
+    ".install-notice-text{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;" +
+      "font-size:0.78rem;line-height:1.3;color:var(--muted);}" +
+    ".install-notice-text b{font-size:0.85rem;color:var(--text);}" +
+    ".install-notice-btn{flex-shrink:0;border:0;border-radius:10px;background:var(--accent);" +
+      "color:#fff;font:inherit;font-weight:800;font-size:0.8rem;padding:9px 12px;cursor:pointer;}" +
+    ".install-notice-btn.secondary{background:var(--menu-icon-bg);color:var(--text);font-weight:700;}" +
+    ".install-notice-close{flex-shrink:0;border:0;background:transparent;color:var(--muted);" +
+      "width:28px;height:28px;border-radius:8px;font-size:15px;cursor:pointer;}";
 
   var activeTab = null;
   var deferredPrompt = null;
+  var noticeTimer = null;
 
   // ===== Состояния: установлено / недавно закрывали =====
 
@@ -255,19 +277,37 @@
     try { localStorage.setItem(DISMISS_KEY, String(Date.now())); } catch (e) {}
   }
 
-  // ===== Нативная установка (Android, Windows, Linux, macOS в Chrome/Edge) =====
+  // ===== Нативная установка =====
 
   window.addEventListener("beforeinstallprompt", function (e) {
     e.preventDefault();
     deferredPrompt = e;
-    var btn = document.getElementById("installPromptBtn");
+
+    var noticeBtn = document.getElementById("installNoticeInstallBtn");
+    var notice = document.getElementById("installNotice");
+    if (noticeBtn && notice && !notice.hidden) noticeBtn.hidden = false;
+
+    var modalBtn = document.getElementById("installPromptBtn");
     var modal = document.getElementById("installPromptModal");
-    if (btn && modal && !modal.hidden) btn.hidden = false;
+    if (modalBtn && modal && !modal.hidden) modalBtn.hidden = false;
   });
 
   window.addEventListener("appinstalled", function () {
+    hideNotice(false);
     closeModal();
   });
+
+  function nativeInstall() {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(function (choice) {
+      if (choice && choice.outcome === "accepted") {
+        hideNotice(false);
+        closeModal();
+      }
+      deferredPrompt = null;
+    }).catch(function () { deferredPrompt = null; });
+  }
 
   // ===== Определение системы для стартовой вкладки =====
 
@@ -283,14 +323,20 @@
     return "windows";
   }
 
-  // ===== Разметка =====
+  // ===== ПОЛНАЯ ИНСТРУКЦИЯ (модалка с вкладками) =====
 
-  function build() {
-    if (document.getElementById("installPromptModal")) return;
-
+  function ensureStyles() {
+    if (document.getElementById("installPromptStyles")) return;
     var style = document.createElement("style");
+    style.id = "installPromptStyles";
     style.textContent = STYLES;
     document.head.appendChild(style);
+  }
+
+  function buildModal() {
+    if (document.getElementById("installPromptModal")) return;
+
+    ensureStyles();
 
     var detected = detectOs();
 
@@ -320,7 +366,7 @@
 
     html += '</div>' +
         '<footer class="modal-footer">' +
-          '<button type="button" class="btn-primary" data-install-close>Понятно</button>' +
+          '<button type="button" class="btn-primary" data-install-close>Закрыть</button>' +
         '</footer>' +
       '</section>';
 
@@ -348,14 +394,7 @@
     });
 
     // Нативная установка
-    modal.querySelector("#installPromptBtn").addEventListener("click", function () {
-      if (!deferredPrompt) return;
-      deferredPrompt.prompt();
-      deferredPrompt.userChoice.then(function (choice) {
-        if (choice && choice.outcome === "accepted") closeModal();
-        deferredPrompt = null;
-      }).catch(function () { deferredPrompt = null; });
-    });
+    modal.querySelector("#installPromptBtn").addEventListener("click", nativeInstall);
 
     // Закрытие: свои обработчики (всплывает не через modal.js)
     modal.querySelectorAll("[data-install-close]").forEach(function (el) {
@@ -367,13 +406,14 @@
   }
 
   function openModal() {
-    build();
+    buildModal();
     var modal = document.getElementById("installPromptModal");
     var btn = document.getElementById("installPromptBtn");
     if (btn) btn.hidden = !deferredPrompt;
     modal.hidden = false;
     modal.setAttribute("aria-hidden", "false");
     document.body.classList.add("modal-open");
+    hideNotice(false); // плашка не нужна, пока открыта инструкция
   }
 
   function closeModal() {
@@ -383,23 +423,91 @@
       modal.setAttribute("aria-hidden", "true");
       document.body.classList.remove("modal-open");
     }
-    rememberDismissed();
   }
 
-  // ===== Показ при открытии приложения =====
+  // ===== МИНИ-ПЛАШКА (первый визит) =====
 
-  function maybeShow() {
+  function buildNotice() {
+    if (document.getElementById("installNotice")) return;
+
+    // Стили плашки нужны ДО первого показа (раньше вставлялись
+    // только при открытии полной инструкции — плачка появлялась без оформления)
+    ensureStyles();
+
+    var notice = document.createElement("div");
+    notice.id = "installNotice";
+    notice.className = "install-notice";
+    notice.setAttribute("role", "status");
+    notice.hidden = true;
+    notice.innerHTML =
+      '<div class="install-notice-text">' +
+        '<b>📲 Установите приложение</b>' +
+        '<span>Ярлык на экране, запуск без браузера, работа офлайн.</span>' +
+      '</div>' +
+      '<button type="button" class="install-notice-btn" id="installNoticeInstallBtn" hidden>Установить</button>' +
+      '<button type="button" class="install-notice-btn secondary" id="installNoticeHowBtn">Как установить</button>' +
+      '<button type="button" class="install-notice-close" id="installNoticeCloseBtn" aria-label="Скрыть">✕</button>';
+    document.body.appendChild(notice);
+
+    notice.querySelector("#installNoticeInstallBtn").addEventListener("click", nativeInstall);
+    notice.querySelector("#installNoticeHowBtn").addEventListener("click", openModal);
+    notice.querySelector("#installNoticeCloseBtn").addEventListener("click", function () {
+      hideNotice(true);
+    });
+  }
+
+  function showNotice() {
+    buildNotice();
+    var notice = document.getElementById("installNotice");
+    var btn = document.getElementById("installNoticeInstallBtn");
+    if (btn) btn.hidden = !deferredPrompt;
+    notice.hidden = false;
+
+    if (noticeTimer) clearTimeout(noticeTimer);
+    noticeTimer = setTimeout(function () { hideNotice(false); }, NOTICE_AUTOHIDE_MS);
+  }
+
+  function hideNotice(remember) {
+    var notice = document.getElementById("installNotice");
+    if (notice) notice.hidden = true;
+    if (noticeTimer) { clearTimeout(noticeTimer); noticeTimer = null; }
+    if (remember) rememberDismissed();
+  }
+
+  // ===== Показ при первом визите =====
+
+  function maybeShowNotice() {
     if (isStandalone() || dismissedRecently()) return;
-    // Не выскакиваем поверх окна «Что нового» — ждём его закрытия
+    // Не выскакиваем поверх других окон и баннера обновления
     if (document.body.classList.contains("modal-open")) {
-      setTimeout(maybeShow, 3500);
+      setTimeout(maybeShowNotice, 3500);
       return;
     }
-    openModal();
+    var banner = document.querySelector(".pwa-update-banner");
+    if (banner && !banner.hidden) {
+      setTimeout(maybeShowNotice, 5000);
+      return;
+    }
+    showNotice();
   }
 
+  // ===== Кнопка на главной странице =====
+
+  function initHomeButton() {
+    var btn = document.getElementById("installAppBtn");
+    if (!btn || isStandalone()) return;
+    btn.hidden = false;
+    btn.addEventListener("click", openModal);
+  }
+
+  // ===== Экспорт для других скриптов =====
+
+  window.SMP = window.SMP || {};
+  window.SMP.installPrompt = { open: openModal };
+
   function init() {
-    setTimeout(maybeShow, SHOW_DELAY_MS);
+    initHomeButton();
+    setTimeout(maybeShowNotice, SHOW_DELAY_MS);
   }
 
   if (document.readyState === "loading") {

@@ -413,3 +413,32 @@
 }
 .calc-fav-btn.active { color: #e6a817; }
 .calc-fav-btn:active { transform: scale(0.88); }
+
+/* ===== Сортировка внутри плашки фильтров ===== */
+
+/* Плашка становится двухрядной */
+.calc-toolbar {
+  flex-wrap: wrap;
+}
+
+.toolbar-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-width: 0;
+}
+
+/* Вторая строка: сортировка — отделена тонкой линией */
+.toolbar-sort-row {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+
+.toolbar-sort-row .calc-sort-label {
+  font-size: 0.8rem;
+  font-weight: 650;
+  color: var(--muted);
+}

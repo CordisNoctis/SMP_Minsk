@@ -1,7 +1,7 @@
 (function () {
   "use strict";
 
-  // ===== ДАННЫЕ КАЛЬКУЛЯТОРОВ (Приоритет убран) =====
+  // ===== ДАННЫЕ КАЛЬКУЛЯТОРОВ =====
   window.SMP = window.SMP || {};
   window.SMP.CALCULATORS = [
     { id: "geneva-score",   title: "Клиническая оценка вероятности ТЭЛА (Женевская шкала)",  emoji: "🫀", categories: ["Кардиология", "Реанимация и ИТ"], page: "calc-geneva.html" },
@@ -38,17 +38,22 @@
     { id: "Фармакология",             emoji: "💊" }
   ];
 
+  // Значения сортировки:
+  //   "default"    — порядок из массива CALCULATORS + избранные сверху
+  //   "alpha-asc"  — А→Я
+  //   "alpha-desc" — Я→А
+  //   "recent"     — недавно открытые
   var state = {
     search: "",
-    draftCategories: [],  // временные (в модалке, не применены)
-    appliedCategories: [], // применённые
+    draftCategories: [],
+    appliedCategories: [],
     sort: "default"
   };
 
-  // ===== ИЗБРАННОЕ / НЕДАВНИЕ / СОРТИРОВКА (хранение) =====
-  var FAV_KEY = "smp-calc-favorites";
+  // ===== ХРАНИЛИЩЕ =====
+  var FAV_KEY   = "smp-calc-favorites";
   var USAGE_KEY = "smp-calc-usage";
-  var SORT_KEY = "smp-calc-sort";
+  var SORT_KEY  = "smp-calc-sort";
 
   function loadFavorites() {
     try { return JSON.parse(localStorage.getItem(FAV_KEY)) || []; } catch (e) { return []; }
@@ -67,7 +72,7 @@
   function loadSort() {
     var saved = null;
     try { saved = localStorage.getItem(SORT_KEY); } catch (e) {}
-    return ["default", "alpha", "recent"].indexOf(saved) !== -1 ? saved : "default";
+    return ["default", "alpha-asc", "alpha-desc", "recent"].indexOf(saved) !== -1 ? saved : "default";
   }
 
   // ===== DOM =====
@@ -94,14 +99,12 @@
     var q = state.search.trim().toLowerCase();
 
     return list.filter(function (calc) {
-      // 1. Поиск по тексту
       if (q) {
         var titleMatch = calc.title.toLowerCase().indexOf(q) !== -1;
         var idMatch = calc.id.toLowerCase().indexOf(q) !== -1;
         if (!titleMatch && !idMatch) return false;
       }
 
-      // 2. Фильтр по категориям (AND — должны совпасть ВСЕ выбранные категории)
       if (state.appliedCategories.length > 0) {
         var hasAllCategories = state.appliedCategories.every(function (selectedCat) {
           return calc.categories && calc.categories.indexOf(selectedCat) !== -1;
@@ -113,16 +116,53 @@
     });
   }
 
-  // ===== Сортировка списка =====
+  // ===== Сортировка =====
   function sortList(list) {
     var arr = list.slice();
-    if (state.sort === "alpha") {
+    if (state.sort === "alpha-asc") {
       arr.sort(function (a, b) { return a.title.localeCompare(b.title, "ru"); });
+    } else if (state.sort === "alpha-desc") {
+      arr.sort(function (a, b) { return b.title.localeCompare(a.title, "ru"); });
     } else if (state.sort === "recent") {
       var usage = loadUsage();
       arr.sort(function (a, b) { return (usage[b.id] || 0) - (usage[a.id] || 0); });
     }
-    return arr; // "default" — порядок из общего списка
+    return arr; // "default" — порядок из массива CALCULATORS
+  }
+
+  // ===== Переключение сортировки =====
+  function toggleAlphaSort() {
+    if (state.sort === "default")          state.sort = "alpha-asc";
+    else if (state.sort === "alpha-asc")   state.sort = "alpha-desc";
+    else                                   state.sort = "default";
+    try { localStorage.setItem(SORT_KEY, state.sort); } catch (e) {}
+    updateSortBarUI();
+    renderList();
+  }
+
+  function toggleRecentSort() {
+    state.sort = (state.sort === "recent") ? "default" : "recent";
+    try { localStorage.setItem(SORT_KEY, state.sort); } catch (e) {}
+    updateSortBarUI();
+    renderList();
+  }
+
+  // ===== UI чипов сортировки =====
+  function updateSortBarUI() {
+    if (!sortBar) return;
+
+    sortBar.querySelectorAll(".calc-sort-chip").forEach(function (c) {
+      var mode = c.getAttribute("data-sort");
+      if (mode === "alpha") {
+        c.classList.toggle("active", state.sort === "alpha-asc" || state.sort === "alpha-desc");
+        c.textContent = state.sort === "alpha-desc" ? "Я–А" : "А–Я";
+        c.title = state.sort === "alpha-asc" ? "Сейчас А–Я (клик → Я–А)"
+                : state.sort === "alpha-desc" ? "Сейчас Я–А (клик → сброс)"
+                : "Сортировка по алфавиту";
+      } else if (mode === "recent") {
+        c.classList.toggle("active", state.sort === "recent");
+      }
+    });
   }
 
   function renderCards(list, favorites) {
@@ -139,7 +179,8 @@
         '</div>' +
         '<button type="button" class="calc-fav-btn' + (fav ? " active" : "") + '" data-fav="' + calc.id + '"' +
           ' aria-label="' + (fav ? "Убрать из избранного" : "Добавить в избранное") + '"' +
-          ' title="' + (fav ? "Убрать из избранного" : "Добавить в избранное") + '">' +
+          ' title="' + (fav ? "Убрать из избранного" : "Добавить в избранное") + '"' +
+          ' style="font-size: 2.2rem; width: 40px; height: 40px; padding: 0; line-height: 1; display: flex; align-items: center; justify-content: center;">' +
           (fav ? "★" : "☆") +
         '</button>' +
         '<div class="calc-compact-arrow">›</div>' +
@@ -308,23 +349,21 @@
       renderFilterChips();
     });
 
-    // Сортировка (чипсы над списком)
+    // ===== СОРТИРОВКА =====
     sortBar = document.getElementById("calcSortBar");
     state.sort = loadSort();
     if (sortBar) {
-      sortBar.querySelectorAll(".calc-sort-chip").forEach(function (chip) {
-        chip.classList.toggle("active", chip.getAttribute("data-sort") === state.sort);
-      });
       sortBar.addEventListener("click", function (e) {
         var chip = e.target.closest(".calc-sort-chip");
         if (!chip) return;
-        state.sort = chip.getAttribute("data-sort");
-        try { localStorage.setItem(SORT_KEY, state.sort); } catch (err) {}
-        sortBar.querySelectorAll(".calc-sort-chip").forEach(function (c) {
-          c.classList.toggle("active", c === chip);
-        });
-        renderList();
+        var mode = chip.getAttribute("data-sort");
+        if (mode === "alpha") {
+          toggleAlphaSort();
+        } else if (mode === "recent") {
+          toggleRecentSort();
+        }
       });
+      updateSortBarUI();
     }
 
     // Звёздочка избранного + учёт недавно открытых

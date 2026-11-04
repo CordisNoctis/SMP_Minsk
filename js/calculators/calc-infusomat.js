@@ -27,8 +27,7 @@
   var STORAGE_KEY = "smp-infusomat-state";
   var state = {
     mode: "infusomat",
-    drug: null, form: null, dilution: 0, dose: null, weight: null,
-    dripVolume: 250, dripTimeValue: 60, dripTimeUnit: "minutes"
+    drug: null, form: null, dilution: 0, dose: null, weight: null
   };
 
   function saveState() { CU.saveCalcState(STORAGE_KEY, state); }
@@ -41,9 +40,6 @@
     if (saved.dilution !== undefined) state.dilution = saved.dilution;
     if (saved.dose !== undefined) state.dose = saved.dose;
     if (saved.weight !== undefined) state.weight = saved.weight;
-    if (saved.dripVolume !== undefined) state.dripVolume = saved.dripVolume;
-    if (saved.dripTimeValue !== undefined) state.dripTimeValue = saved.dripTimeValue;
-    if (saved.dripTimeUnit !== undefined) state.dripTimeUnit = saved.dripTimeUnit;
   }
 
   // ===== ВСПОМОГАТЕЛЬНЫЕ =====
@@ -74,11 +70,12 @@
     '</div>';
   }
 
-  function renderInfusomatInputs() {
+  // ===== Общие блоки для режимов «Инфузомат» и «Капельница» =====
+
+  function renderDrugCategory() {
     var d = state.drug ? INFUSOMAT_DRUGS[state.drug] : null;
     var unitLabel = d ? (d.unit === "mcg_kg_min" ? "мкг/кг/мин" : "мг/кг/ч") : "";
 
-    // Выбор препарата (плашками)
     var drugsHtml = '';
     for (var id in INFUSOMAT_DRUGS) {
       var drug = INFUSOMAT_DRUGS[id];
@@ -93,7 +90,7 @@
       '</button>';
     }
 
-    var html = '<div class="geneva-category" style="--cat-color: #1f6e9c;">' +
+    return '<div class="geneva-category" style="--cat-color: #1f6e9c;">' +
       '<div class="geneva-category-header"><div class="geneva-category-left"><span class="geneva-category-icon">💊</span><span class="geneva-category-title">Выбор препарата</span></div></div>' +
       '<div class="geneva-category-items" style="padding: 12px 16px;">' +
         '<div class="inf-drugs-grid">' + drugsHtml + '</div>' +
@@ -102,10 +99,10 @@
           '<div class="inf-drug-info-row"><span class="inf-drug-info-label">Единицы:</span><span class="inf-drug-info-value">' + unitLabel + '</span></div>' +
         '</div>' : '') +
       '</div></div>';
+  }
 
-    if (!d) return html;
-
-    // Форма выпуска
+  function renderFormCategory() {
+    var d = INFUSOMAT_DRUGS[state.drug];
     var formsHtml = d.forms.map(function (f, idx) {
       var active = state.form === idx ? " active" : "";
       return '<button type="button" class="inf-grid-btn' + active + '" data-form="' + idx + '">' +
@@ -113,15 +110,12 @@
         '<div class="inf-grid-btn-desc">' + f.totalMg + ' мг в ' + f.volume + ' мл</div></button>';
     }).join("");
 
-    html += '<div class="geneva-category" style="--cat-color: #e68a2e;">' +
+    return '<div class="geneva-category" style="--cat-color: #e68a2e;">' +
       '<div class="geneva-category-header"><div class="geneva-category-left"><span class="geneva-category-icon">📦</span><span class="geneva-category-title">Форма выпуска</span></div></div>' +
       '<div class="geneva-category-items" style="padding: 12px 16px;"><div class="inf-grid">' + formsHtml + '</div></div></div>';
+  }
 
-    if (state.form === null) return html;
-
-    // Разведение
-    var f = d.forms[state.form];
-    var dilOptions = [{ v: 0, label: "Без разведения", total: f.volume }, { v: 10, label: "До 10 мл", total: 10 }, { v: 20, label: "До 20 мл", total: 20 }, { v: 50, label: "До 50 мл", total: 50 }, { v: 100, label: "До 100 мл", total: 100 }];
+  function renderDilutionCategory(dilOptions) {
     var dilHtml = dilOptions.map(function (o) {
       var active = state.dilution === o.v ? " active" : "";
       return '<button type="button" class="inf-grid-btn' + active + '" data-dilution="' + o.v + '">' +
@@ -129,17 +123,21 @@
         '<div class="inf-grid-btn-desc">Итого: ' + o.total + ' мл</div></button>';
     }).join("");
 
-    html += '<div class="geneva-category" style="--cat-color: #2e8b57;">' +
+    return '<div class="geneva-category" style="--cat-color: #2e8b57;">' +
       '<div class="geneva-category-header"><div class="geneva-category-left"><span class="geneva-category-icon">💧</span><span class="geneva-category-title">Объём растворителя</span></div></div>' +
       '<div class="geneva-category-items" style="padding: 12px 16px;"><div class="inf-grid">' + dilHtml + '</div></div></div>';
+  }
 
-    // Доза и вес
+  function renderDoseCategory() {
+    var d = INFUSOMAT_DRUGS[state.drug];
+    var unitLabel = d.unit === "mcg_kg_min" ? "мкг/кг/мин" : "мг/кг/ч";
+
     var presetsHtml = d.presets.map(function (p) {
       var active = state.dose === p ? " active" : "";
       return '<button type="button" class="inf-preset-btn' + active + '" data-preset="' + p + '">' + p + '</button>';
     }).join("");
 
-    html += '<div class="geneva-category" style="--cat-color: #b42323;">' +
+    return '<div class="geneva-category" style="--cat-color: #b42323;">' +
       '<div class="geneva-category-header"><div class="geneva-category-left"><span class="geneva-category-icon">⚖️</span><span class="geneva-category-title">Дозировка и вес</span></div></div>' +
       '<div class="geneva-category-items" style="padding: 12px 16px;">' +
         '<div class="inf-input-row">' +
@@ -148,57 +146,85 @@
         '</div>' +
         '<div style="margin-top: 12px;"><label class="inf-input-label">Быстрый выбор дозы:</label><div class="inf-presets">' + presetsHtml + '</div></div>' +
       '</div></div>';
+  }
 
+  // Варианты разведения.
+  // Капельница: только флаконы 100/250/500/1000 мл (объём растворителя + объём лекарства).
+  // Инфузомат: малые объёмы шприца (10/20/50/100 мл) + "Без разведения".
+  function dilOptionsFor(mode) {
+    var f = INFUSOMAT_DRUGS[state.drug].forms[state.form];
+
+    if (mode === "drip") {
+      return [
+        { v: 100, label: "100 мл", total: 100 + f.volume },
+        { v: 250, label: "250 мл", total: 250 + f.volume },
+        { v: 500, label: "500 мл", total: 500 + f.volume },
+        { v: 1000, label: "1000 мл", total: 1000 + f.volume }
+      ];
+    } else {
+      var opts = [{ v: 0, label: "Без разведения", total: f.volume }];
+      [10, 20, 50, 100].forEach(function (v) {
+        opts.push({ v: v, label: "До " + v + " мл", total: v });
+      });
+      return opts;
+    }
+  }
+
+  function getDilutionTotal() {
+    var f = INFUSOMAT_DRUGS[state.drug].forms[state.form];
+    var opts = dilOptionsFor(state.mode);
+    var found = opts.find(function(o) { return o.v === state.dilution; });
+    return found ? found.total : f.volume;
+  }
+
+  // Разведение по умолчанию для текущего режима:
+  // в капельнице нет «Без разведения» — сразу флакон 100 мл
+  function defaultDilution() {
+    return state.mode === "drip" ? 100 : 0;
+  }
+
+  function renderInfusomatInputs() {
+    var html = renderDrugCategory();
+    if (!state.drug) return html;
+    html += renderFormCategory();
+    if (state.form === null) return html;
+    html += renderDilutionCategory(dilOptionsFor("infusomat"));
+    html += renderDoseCategory();
     return html;
   }
 
   function renderDripInputs() {
-    return '<div class="geneva-category" style="--cat-color: #1f6e9c;">' +
-      '<div class="geneva-category-header"><div class="geneva-category-left"><span class="geneva-category-icon">💧</span><span class="geneva-category-title">Параметры инфузии</span></div></div>' +
-      '<div class="geneva-category-items" style="padding: 12px 16px;">' +
-        '<div class="inf-input-group" style="margin-bottom: 12px;">' +
-          '<label class="inf-input-label">Объём раствора (мл)</label>' +
-          '<input type="text" id="dripVolume" class="inf-field" inputmode="decimal" placeholder="250" value="' + (state.dripVolume !== null ? state.dripVolume : "") + '">' +
-        '</div>' +
-        '<div class="inf-input-row">' +
-          '<div class="inf-input-group"><label class="inf-input-label">Время</label><input type="text" id="dripTimeValue" class="inf-field" inputmode="decimal" placeholder="60" value="' + (state.dripTimeValue !== null ? state.dripTimeValue : "") + '"></div>' +
-          '<div class="inf-input-group"><label class="inf-input-label">Единица</label>' +
-            '<select id="dripTimeUnit" class="inf-field" style="cursor:pointer;">' +
-              '<option value="minutes"' + (state.dripTimeUnit === "minutes" ? " selected" : "") + '>минуты</option>' +
-              '<option value="hours"' + (state.dripTimeUnit === "hours" ? " selected" : "") + '>часы</option>' +
-            '</select>' +
-          '</div>' +
-        '</div>' +
-      '</div></div>';
+    var html = renderDrugCategory();
+    if (!state.drug) return html;
+    html += renderFormCategory();
+    if (state.form === null) return html;
+    html += renderDilutionCategory(dilOptionsFor("drip"));
+    html += renderDoseCategory();
+    return html;
   }
 
   function renderResult() {
     if (state.mode === "infusomat") {
       if (!state.drug) {
-        return CU.renderResultPanel({ score: "—", scoreLabel: "", color: "incomplete", title: "Выберите препарат", description: "Начните с выбора препарата из списка", extraDescription: "", breakdownHtml: "", onReset: resetAll });
+        return CU.renderResultPanel({ score: "—", scoreLabel: "", color: "incomplete", title: "Выберите препарат", description: "Начните с выбора препарата из списка", extraDescription: "", breakdownHtml: "" });
       }
       if (state.form === null) {
-        return CU.renderResultPanel({ score: "—", scoreLabel: "", color: "incomplete", title: "Выберите форму выпуска", description: "Укажите ампулу или флакон", extraDescription: "", breakdownHtml: "", onReset: resetAll });
+        return CU.renderResultPanel({ score: "—", scoreLabel: "", color: "incomplete", title: "Выберите форму выпуска", description: "Укажите ампулу или флакон", extraDescription: "", breakdownHtml: "" });
       }
       if (state.dose === null || state.weight === null) {
-        return CU.renderResultPanel({ score: "—", scoreLabel: "", color: "incomplete", title: "Введите дозу и вес", description: "Заполните оба поля для расчёта", extraDescription: "", breakdownHtml: "", onReset: resetAll });
+        var missing = (state.dose === null && state.weight === null) ? "дозу и вес"
+          : (state.dose === null ? "дозу" : "вес пациента");
+        return CU.renderResultPanel({ score: "—", scoreLabel: "", color: "incomplete", title: "Введите " + missing, description: "Заполните поле для расчёта", extraDescription: "", breakdownHtml: "" });
       }
 
       var d = INFUSOMAT_DRUGS[state.drug];
       var f = d.forms[state.form];
-      var totalVol = state.dilution === 0 ? f.volume : state.dilution;
+      var totalVol = getDilutionTotal();
       var conc = f.totalMg / totalVol;
 
       var speedH = d.unit === "mcg_kg_min" ? (state.dose * state.weight * 60) / (conc * 1000) : (state.dose * state.weight) / conc;
-      var hours = totalVol / speedH;
 
-      var warnings = [];
-      if (speedH < 0.5) warnings.push("⚠️ Очень низкая скорость! Проверьте концентрацию.");
-      if (speedH > 100) warnings.push("⚠️ Высокая скорость! Проверьте расчёт.");
-      if (hours < 2) warnings.push("⚠️ Объём " + totalVol + " мл закончится через " + round2(hours) + " ч.");
-
-      // Только скорость в одну строку
-      panelEl.innerHTML = 
+      panelEl.innerHTML =
         '<div class="result-content result-success" style="padding: 16px 20px;">' +
           '<div style="display: flex; align-items: baseline; justify-content: space-between; width: 100%;">' +
             '<div style="display: flex; align-items: baseline; gap: 8px;">' +
@@ -211,48 +237,46 @@
 
     } else {
       // Режим капельницы
-      if (state.dripVolume === null || state.dripTimeValue === null || state.dripTimeValue === 0) {
-        return CU.renderResultPanel({ score: "—", scoreLabel: "", color: "incomplete", title: "Введите объём и время", description: "Укажите параметры инфузии", extraDescription: "", breakdownHtml: "", onReset: resetAll });
+      if (!state.drug) {
+        return CU.renderResultPanel({ score: "—", scoreLabel: "", color: "incomplete", title: "Выберите препарат", description: "Начните с выбора препарата из списка", extraDescription: "", breakdownHtml: "" });
+      }
+      if (state.form === null) {
+        return CU.renderResultPanel({ score: "—", scoreLabel: "", color: "incomplete", title: "Выберите форму выпуска", description: "Укажите ампулу или флакон", extraDescription: "", breakdownHtml: "" });
+      }
+      if (state.dose === null || state.weight === null) {
+        var missingDrip = (state.dose === null && state.weight === null) ? "дозу и вес"
+          : (state.dose === null ? "дозу" : "вес пациента");
+        return CU.renderResultPanel({ score: "—", scoreLabel: "", color: "incomplete", title: "Введите " + missingDrip, description: "Заполните поле для расчёта", extraDescription: "", breakdownHtml: "" });
       }
 
-      var timeMin = state.dripTimeUnit === "hours" ? state.dripTimeValue * 60 : state.dripTimeValue;
-      var dropsMin = (state.dripVolume * 20) / timeMin;
-      var mlHour = (state.dripVolume / timeMin) * 60;
-      var mlMin = state.dripVolume / timeMin;
+      var d = INFUSOMAT_DRUGS[state.drug];
+      var f = d.forms[state.form];
+      var totalVol = getDilutionTotal();
+      var conc = f.totalMg / totalVol;
 
-      var suitable = CATHETERS.filter(function (c) { return mlMin <= c.maxMlMin; });
-      var cathHtml = suitable.length ? 
-        '<div style="margin-top:8px; padding:8px 10px; background:var(--menu-icon-bg); border-radius:8px; font-size:0.82rem;">' +
-        '<strong>Рекомендуемый катетер:</strong> ' + suitable[0].gauge + ' (' + suitable[0].color + ') — ' + suitable[0].desc +
-        '</div>' : 
-        '<div class="inf-warning">⚠️ Скорость слишком высокая для стандартных катетеров!</div>';
+      var speedH = d.unit === "mcg_kg_min" ? (state.dose * state.weight * 60) / (conc * 1000) : (state.dose * state.weight) / conc;
+      var speedMin = speedH / 60;
+      var dropsMin = speedMin * 20;
+      var hours = totalVol / speedH;
 
-      var breakdown =
-        '<div class="inf-breakdown-grid">' +
-          '<div class="inf-breakdown-item"><div class="inf-breakdown-label">Объём</div><div class="inf-breakdown-value">' + state.dripVolume + ' мл</div></div>' +
-          '<div class="inf-breakdown-item"><div class="inf-breakdown-label">Время</div><div class="inf-breakdown-value">' + state.dripTimeValue + ' ' + (state.dripTimeUnit === "hours" ? "ч" : "мин") + '</div></div>' +
-          '<div class="inf-breakdown-item"><div class="inf-breakdown-label">мл/час</div><div class="inf-breakdown-value">' + round2(mlHour) + '</div></div>' +
-          '<div class="inf-breakdown-item"><div class="inf-breakdown-label">мл/мин</div><div class="inf-breakdown-value">' + round2(mlMin) + '</div></div>' +
-        '</div>' + cathHtml;
-
-      CU.renderResultPanel({
-        score: dropsMin >= 1 ? Math.round(dropsMin) : dropsMin.toFixed(2),
-        scoreLabel: "капель/мин",
-        color: "gcs-15",
-        title: "Скорость инфузии",
-        description: "",
-        extraDescription: "",
-        breakdownHtml: breakdown,
-        onReset: resetAll
-      });
+      panelEl.innerHTML =
+        '<div class="result-content result-success" style="padding: 14px 16px; position: relative;">' +
+          '<div style="display: flex; align-items: baseline; justify-content: space-between; width: 100%;">' +
+            '<div style="display: flex; align-items: baseline; gap: 8px;">' +
+              '<div style="font-size: 2.8rem; font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1; color: #fff;">' + (dropsMin >= 10 ? Math.round(dropsMin) : round2(dropsMin)) + '</div>' +
+              '<div style="font-size: 1.1rem; color: rgba(255,255,255,0.9); font-weight: 600;">капель/мин</div>' +
+            '</div>' +
+            '<button type="button" class="result-reset-big" aria-label="Сбросить" title="Сбросить" style="margin: 0;">↺</button>' +
+          '</div>' +
+        '</div>';
     }
   }
 
   function resetAll() {
-    state = { mode: state.mode, drug: null, form: null, dilution: 0, dose: null, weight: null, dripVolume: 250, dripTimeValue: 60, dripTimeUnit: "minutes" };
+    state = { mode: state.mode, drug: null, form: null, dilution: defaultDilution(), dose: null, weight: null };
     saveState();
     renderGroups();
-    bindListeners();
+    bindInputs();
     renderResult();
   }
 
@@ -260,15 +284,15 @@
     bodyEl.innerHTML = renderModeSwitcher() + (state.mode === "infusomat" ? renderInfusomatInputs() : renderDripInputs());
   }
 
-  function bindListeners() {
-    // 1. Глобальный обработчик кликов по кнопкам внутри bodyEl
+  function bindClickHandlers() {
     bodyEl.addEventListener("click", function (e) {
       var modeBtn = e.target.closest(".inf-mode-btn");
       if (modeBtn) {
         state.mode = modeBtn.getAttribute("data-mode");
+        state.dilution = defaultDilution(); // наборы опций в режимах разные
         saveState();
         renderGroups();
-        bindListeners();
+        bindInputs();
         renderResult();
         return;
       }
@@ -277,70 +301,60 @@
       if (drugCard) {
         state.drug = drugCard.getAttribute("data-drug");
         state.form = null;
-        state.dilution = 0;
+        state.dilution = defaultDilution();
         state.dose = null;
-        state.weight = null;
         saveState();
         renderGroups();
-        bindListeners();
+        bindInputs();
         renderResult();
         return;
       }
 
-      if (state.mode === "infusomat") {
-        var formBtn = e.target.closest(".inf-grid-btn[data-form]");
-        if (formBtn) { 
-          state.form = parseInt(formBtn.getAttribute("data-form"), 10); 
-          state.dilution = 0; 
-          state.dose = null; 
-          saveState(); 
-          renderGroups(); 
-          bindListeners(); 
-          renderResult(); 
-          return; 
-        }
-        
-        var dilBtn = e.target.closest(".inf-grid-btn[data-dilution]");
-        if (dilBtn) { 
-          state.dilution = parseInt(dilBtn.getAttribute("data-dilution"), 10); 
-          saveState(); 
-          renderGroups();
-          bindListeners();
-          renderResult(); 
-          return; 
-        }
-        
-        var presetBtn = e.target.closest(".inf-preset-btn");
-        if (presetBtn) { 
-          state.dose = parseFloat(presetBtn.getAttribute("data-preset")); 
-          saveState(); 
-          renderGroups();
-          bindListeners(); 
-          renderResult(); 
-          return; 
-        }
+      var formBtn = e.target.closest(".inf-grid-btn[data-form]");
+      if (formBtn) {
+        state.form = parseInt(formBtn.getAttribute("data-form"), 10);
+        state.dilution = defaultDilution();
+        saveState();
+        renderGroups();
+        bindInputs();
+        renderResult();
+        return;
+      }
+
+      var dilBtn = e.target.closest(".inf-grid-btn[data-dilution]");
+      if (dilBtn) {
+        state.dilution = parseInt(dilBtn.getAttribute("data-dilution"), 10);
+        saveState();
+        renderGroups();
+        bindInputs();
+        renderResult();
+        return;
+      }
+
+      var presetBtn = e.target.closest(".inf-preset-btn");
+      if (presetBtn) {
+        state.dose = parseFloat(presetBtn.getAttribute("data-preset"));
+        saveState();
+        renderGroups();
+        bindInputs();
+        renderResult();
+        return;
       }
     });
 
-    // 2. Обработчики полей ввода
-    var doseEl = document.getElementById("infDose");
-    var weightEl = document.getElementById("infWeight");
-    var volEl = document.getElementById("dripVolume");
-    var timeEl = document.getElementById("dripTimeValue");
-    var unitEl = document.getElementById("dripTimeUnit");
-
-    if (doseEl) doseEl.addEventListener("input", function () { state.dose = parseNum(doseEl.value); saveState(); renderResult(); });
-    if (weightEl) weightEl.addEventListener("input", function () { state.weight = parseNum(weightEl.value); saveState(); renderResult(); });
-    if (volEl) volEl.addEventListener("input", function () { state.dripVolume = parseNum(volEl.value); saveState(); renderResult(); });
-    if (timeEl) timeEl.addEventListener("input", function () { state.dripTimeValue = parseNum(timeEl.value); saveState(); renderResult(); });
-    if (unitEl) unitEl.addEventListener("change", function () { state.dripTimeUnit = unitEl.value; saveState(); renderResult(); });
-
-    // 3. Обработчик кнопки сброса (ИСПРАВЛЕНО: вынесен отдельно и корректно закрыт)
     panelEl.addEventListener("click", function (e) {
       if (e.target.closest(".result-reset-big")) {
         resetAll();
       }
     });
+  }
+
+  function bindInputs() {
+    var doseEl = document.getElementById("infDose");
+    var weightEl = document.getElementById("infWeight");
+
+    if (doseEl) doseEl.addEventListener("input", function () { state.dose = parseNum(doseEl.value); saveState(); renderResult(); });
+    if (weightEl) weightEl.addEventListener("input", function () { state.weight = parseNum(weightEl.value); saveState(); renderResult(); });
   }
 
   function init() {
@@ -350,7 +364,8 @@
 
     loadState();
     renderGroups();
-    bindListeners();
+    bindClickHandlers();
+    bindInputs();
     renderResult();
 
     var infoBtn = document.getElementById("calcInfoBtn");

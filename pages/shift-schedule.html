@@ -69,6 +69,7 @@
         <button type="button" class="action-btn action-btn-vacation" data-quick-type="vacation">🏖️ Отпуск</button>
         <button type="button" class="action-btn action-btn-sick" data-quick-type="sick">📄 Листок нетрудоспособности</button>
         <button type="button" class="action-btn action-btn-courses" data-quick-type="courses">🎓 Курсы</button>
+        <button type="button" class="action-btn action-btn-secondary" id="exportIcsBtn">📅 В календарь</button>
         <button type="button" class="action-btn action-btn-secondary" id="exportBtn">📤 Отправить график</button>
       </div>
     </section>
@@ -372,15 +373,72 @@
     </section>
   </div>
 
+  <!-- МОДАЛКА: ЭКСПОРТ В СИСТЕМНЫЙ КАЛЕНДАРЬ (.ics) -->
+  <div class="modal" id="ics-modal" hidden aria-hidden="true">
+    <div class="modal-backdrop" data-modal-close></div>
+    <section class="modal-panel" role="dialog" aria-modal="true">
+      <header class="modal-header">
+        <h2>📅 Экспорт в календарь</h2>
+        <button type="button" class="modal-close" data-modal-close aria-label="Закрыть">×</button>
+      </header>
+      <div class="modal-body">
+        <p class="ics-hint">
+          Файл календаря откроется штатным приложением «Календарь»
+          (Android, iPhone/iPad, Windows, macOS, Linux) и предложит добавить события.
+        </p>
+
+        <div class="ics-options">
+          <label class="ics-option">
+            <input type="radio" name="icsRange" value="all" checked>
+            <span class="ics-option-text">
+              <b>Все события</b>
+              <small>Весь сохранённый график</small>
+            </span>
+          </label>
+          <label class="ics-option">
+            <input type="radio" name="icsRange" value="month">
+            <span class="ics-option-text">
+              <b>Текущий месяц</b>
+              <small id="icsMonthLabel">—</small>
+            </span>
+          </label>
+          <label class="ics-option">
+            <input type="radio" name="icsRange" value="period">
+            <span class="ics-option-text">
+              <b>Выбранный период</b>
+              <small>Укажите даты начала и окончания</small>
+            </span>
+          </label>
+        </div>
+
+        <div class="ics-period" id="icsPeriodFields" hidden>
+          <div class="ics-period-field">
+            <label for="icsFromDate">С</label>
+            <input type="date" id="icsFromDate" class="ics-date-input">
+          </div>
+          <div class="ics-period-field">
+            <label for="icsToDate">По</label>
+            <input type="date" id="icsToDate" class="ics-date-input">
+          </div>
+        </div>
+      </div>
+      <footer class="modal-footer">
+        <button type="button" class="btn-secondary" data-modal-close>Отмена</button>
+        <button type="button" class="btn-primary" id="icsDownloadBtn">Скачать .ics</button>
+      </footer>
+    </section>
+  </div>
+
   <script src="../vendor/html2canvas.min.js"></script>
   <script src="../js/core/theme.js"></script>
   <script src="../js/core/modal.js"></script>
   <script src="../js/core/confirm.js"></script>
   <script src="../js/core/back.js"></script>
-  <script src="../js/core/exporter.js"></script> 
+  <script src="../js/core/exporter.js"></script>
   <script src="../js/schedule/time-picker.js"></script>
   <script src="../js/schedule/shift-schedule.js"></script>
   <script src="../js/schedule/calendar-export.js"></script>
+  <script src="../js/schedule/ics-export.js"></script>
   <script src="../js/core/sw-register.js"></script>
 </body>
 </html>
