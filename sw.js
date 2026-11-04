@@ -17,7 +17,7 @@
 // ===@smp-build-start===
 // ВНИМАНИЕ: этот блок создаётся автоматически (GitHub Action / .github/scripts/sw-build.sh).
 // Не редактировать вручную — изменения будут перезаписаны при следующей публикации.
-const SW_BUILD = "5cdcd29ee9";
+const SW_BUILD = "1eb37b49c1";
 const PRECACHE_LIST = [
   "./css/base.css",
   "./css/calc-algover.css",
@@ -58,7 +58,18 @@ const PRECACHE_LIST = [
   "./data/drugs-index.json",
   "./data/drugs.schema.json",
   "./docs/call-card-110.md",
+  "./docs/cp-bsk-preg.md",
   "./docs/cp-xsn.md",
+  "./docs/img/cp-bsk-preg-app1.svg",
+  "./docs/img/cp-bsk-preg-app10.svg",
+  "./docs/img/cp-bsk-preg-app2.svg",
+  "./docs/img/cp-bsk-preg-app3.svg",
+  "./docs/img/cp-bsk-preg-app4.svg",
+  "./docs/img/cp-bsk-preg-app5.svg",
+  "./docs/img/cp-bsk-preg-app6.svg",
+  "./docs/img/cp-bsk-preg-app7.svg",
+  "./docs/img/cp-bsk-preg-app8.svg",
+  "./docs/img/cp-bsk-preg-app9.svg",
   "./docs/img/posmertnyj_epikriz.svg",
   "./docs/img/xsn-app1.svg",
   "./docs/img/xsn-app2.svg",
@@ -146,6 +157,7 @@ const PRECACHE_LIST = [
   "./js/references/ref-shsn.js",
   "./js/references/ref-vas.js",
   "./js/schedule/calendar-export.js",
+  "./js/schedule/ics-export.js",
   "./js/schedule/shift-schedule.js",
   "./js/schedule/templates-admin.js",
   "./js/schedule/templates.js",
