@@ -30,6 +30,9 @@
     // Ссылки
     line = line.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener" aria-label="$1 (откроется в новой вкладке)">$1 ↗</a>');
 
+    // Разрешаем безопасные HTML-теги: <br>, <sup>, <sub> (восстанавливаем после экранирования)
+    line = line.replace(/&lt;(\/?(?:br|sup|sub)\s*\/?)&gt;/gi, "<$1>");
+
     return line;
   }
 
@@ -135,7 +138,10 @@
           html += "<tr>";
           row.forEach(function (c, idx) {
             var label = headerCells[idx] || "";
-            html += '<td data-label="' + escapeHtml(label) + '">' + inlineFormat(c) + "</td>";
+            // 1. Применяем стандартное форматирование (оно экранирует HTML)
+            var cellHtml = inlineFormat(c);
+            
+            html += '<td data-label="' + escapeHtml(label) + '">' + cellHtml + "</td>";
           });
           html += "</tr>";
         });

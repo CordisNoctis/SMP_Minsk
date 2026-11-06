@@ -40,6 +40,17 @@
     if (saved.dilution !== undefined) state.dilution = saved.dilution;
     if (saved.dose !== undefined) state.dose = saved.dose;
     if (saved.weight !== undefined) state.weight = saved.weight;
+
+    // Разведение должно быть из набора текущего режима (наборы разные:
+    // у инфузомата «Без разведения/10/20/50/100», у капельницы — флаконы
+    // 100/250/500/1000). В старых сохранениях могли остаться недопустимые
+    // значения — заменяем на стандартный для режима.
+    if (state.drug !== null && state.form !== null) {
+      var validDil = dilOptionsFor(state.mode).some(function (o) { return o.v === state.dilution; });
+      if (!validDil) state.dilution = defaultDilution();
+    } else {
+      state.dilution = defaultDilution();
+    }
   }
 
   // ===== ВСПОМОГАТЕЛЬНЫЕ =====
@@ -206,15 +217,15 @@
   function renderResult() {
     if (state.mode === "infusomat") {
       if (!state.drug) {
-        return CU.renderResultPanel({ score: "—", scoreLabel: "", color: "incomplete", title: "Выберите препарат", description: "Начните с выбора препарата из списка", extraDescription: "", breakdownHtml: "" });
+        return CU.renderResultPanel({ score: "—", scoreLabel: "", color: "incomplete", title: "Выберите препарат", description: "Начните с выбора препарата из списка", extraDescription: "", breakdownHtml: "", onReset: resetAll });
       }
       if (state.form === null) {
-        return CU.renderResultPanel({ score: "—", scoreLabel: "", color: "incomplete", title: "Выберите форму выпуска", description: "Укажите ампулу или флакон", extraDescription: "", breakdownHtml: "" });
+        return CU.renderResultPanel({ score: "—", scoreLabel: "", color: "incomplete", title: "Выберите форму выпуска", description: "Укажите ампулу или флакон", extraDescription: "", breakdownHtml: "", onReset: resetAll });
       }
       if (state.dose === null || state.weight === null) {
         var missing = (state.dose === null && state.weight === null) ? "дозу и вес"
           : (state.dose === null ? "дозу" : "вес пациента");
-        return CU.renderResultPanel({ score: "—", scoreLabel: "", color: "incomplete", title: "Введите " + missing, description: "Заполните поле для расчёта", extraDescription: "", breakdownHtml: "" });
+        return CU.renderResultPanel({ score: "—", scoreLabel: "", color: "incomplete", title: "Введите " + missing, description: "Заполните поле для расчёта", extraDescription: "", breakdownHtml: "", onReset: resetAll });
       }
 
       var d = INFUSOMAT_DRUGS[state.drug];
@@ -238,15 +249,15 @@
     } else {
       // Режим капельницы
       if (!state.drug) {
-        return CU.renderResultPanel({ score: "—", scoreLabel: "", color: "incomplete", title: "Выберите препарат", description: "Начните с выбора препарата из списка", extraDescription: "", breakdownHtml: "" });
+        return CU.renderResultPanel({ score: "—", scoreLabel: "", color: "incomplete", title: "Выберите препарат", description: "Начните с выбора препарата из списка", extraDescription: "", breakdownHtml: "", onReset: resetAll });
       }
       if (state.form === null) {
-        return CU.renderResultPanel({ score: "—", scoreLabel: "", color: "incomplete", title: "Выберите форму выпуска", description: "Укажите ампулу или флакон", extraDescription: "", breakdownHtml: "" });
+        return CU.renderResultPanel({ score: "—", scoreLabel: "", color: "incomplete", title: "Выберите форму выпуска", description: "Укажите ампулу или флакон", extraDescription: "", breakdownHtml: "", onReset: resetAll });
       }
       if (state.dose === null || state.weight === null) {
         var missingDrip = (state.dose === null && state.weight === null) ? "дозу и вес"
           : (state.dose === null ? "дозу" : "вес пациента");
-        return CU.renderResultPanel({ score: "—", scoreLabel: "", color: "incomplete", title: "Введите " + missingDrip, description: "Заполните поле для расчёта", extraDescription: "", breakdownHtml: "" });
+        return CU.renderResultPanel({ score: "—", scoreLabel: "", color: "incomplete", title: "Введите " + missingDrip, description: "Заполните поле для расчёта", extraDescription: "", breakdownHtml: "", onReset: resetAll });
       }
 
       var d = INFUSOMAT_DRUGS[state.drug];

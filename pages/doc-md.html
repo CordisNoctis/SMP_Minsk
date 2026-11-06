@@ -9,6 +9,7 @@
   <script src="../js/core/theme-init.js"></script>
   <link rel="stylesheet" href="../css/styles.css">
   <link rel="stylesheet" href="../css/cheatsheet.css">
+  <link rel="stylesheet" href="../css/doc-search.css">
 
   <link rel="icon" href="../icons/favicon.ico" sizes="any">
   <link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
@@ -114,10 +115,21 @@
       </svg>
     </button>
     <h1 class="page-title-centered docmd-title" id="docMdTitle">Документ</h1>
+    <button type="button" class="docmd-search-btn" id="docSearchBtn" aria-label="Поиск в документе">🔍</button>
     <span class="header-spacer" aria-hidden="true"></span>
   </header>
 
   <main class="page">
+        <!-- Панель поиска внутри документа -->
+    <div class="docmd-search-bar" id="docmdSearchBar" hidden>
+      <input type="search" id="docmdSearchInput" class="docmd-search-input"
+             placeholder="Поиск в документе…" autocomplete="off"
+             autocapitalize="off" spellcheck="false" aria-label="Поиск в документе">
+      <span class="docmd-search-count" id="docmdSearchCount" aria-live="polite"></span>
+      <button type="button" class="docmd-search-nav" id="docmdSearchPrev" aria-label="Предыдущее совпадение">▲</button>
+      <button type="button" class="docmd-search-nav" id="docmdSearchNext" aria-label="Следующее совпадение">▼</button>
+      <button type="button" class="docmd-search-close" id="docmdSearchClose" aria-label="Закрыть поиск">✕</button>
+    </div>
     <div class="drug-content" id="docMdContent">
       <p class="docmd-error">Загрузка документа…</p>
     </div>
@@ -139,6 +151,7 @@
   <script src="../js/core/theme.js"></script>
   <script src="../js/core/back.js"></script>
   <script src="../js/cheats/markdown.js"></script>
+  <script src="../js/core/doc-search.js"></script>
   <script src="../js/core/sw-register.js"></script>
   <script>
     (function () {

@@ -10,6 +10,7 @@
   <script src="../js/core/version.js"></script>
   <link rel="stylesheet" href="../css/styles.css">
   <link rel="stylesheet" href="../css/cheatsheet.css">
+  <link rel="stylesheet" href="../css/doc-search.css">
 
   <link rel="icon" href="../icons/favicon.ico" sizes="any">
   <link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
@@ -25,10 +26,21 @@
       </svg>
     </button>
     <h1 class="page-title-centered" id="drugTitle">Препарат</h1>
+    <button type="button" class="docmd-search-btn" id="docSearchBtn" aria-label="Поиск в инструкции">🔍</button>
     <span class="header-spacer" aria-hidden="true"></span>
   </header>
 
   <main class="page">
+        <!-- Панель поиска внутри инструкции -->
+    <div class="docmd-search-bar" id="docmdSearchBar" hidden>
+      <input type="search" id="docmdSearchInput" class="docmd-search-input"
+             placeholder="Поиск в инструкции…" autocomplete="off"
+             autocapitalize="off" spellcheck="false" aria-label="Поиск в инструкции">
+      <span class="docmd-search-count" id="docmdSearchCount" aria-live="polite"></span>
+      <button type="button" class="docmd-search-nav" id="docmdSearchPrev" aria-label="Предыдущее совпадение">▲</button>
+      <button type="button" class="docmd-search-nav" id="docmdSearchNext" aria-label="Следующее совпадение">▼</button>
+      <button type="button" class="docmd-search-close" id="docmdSearchClose" aria-label="Закрыть поиск">✕</button>
+    </div>
     <!-- Заглушка для отсутствующего препарата -->
     <section class="card coming-soon-card drug-not-found" id="drugNotFound" hidden>
       <div class="coming-soon-icon" aria-hidden="true">⏰</div>
@@ -55,6 +67,7 @@
   <script src="../js/core/theme.js"></script>
   <script src="../js/core/back.js"></script>
   <script src="../js/cheats/markdown.js"></script>
+  <script src="../js/core/doc-search.js"></script>
   <script src="../js/cheats/drugs-db.js"></script>
   <script>
     (function () {

@@ -42,8 +42,8 @@
         <p id="greeting" class="greeting">Загрузка...</p>
         <p id="currentDate" class="date">Дата загружается...</p>
       </div>
-      <button type="button" class="header-alert-btn" data-modal-open="about-modal" aria-label="Важная информация о приложении">!</button>
-      <span id="appVersion" class="app-version" hidden>—</span>
+      <button type="button" class="header-alert-btn" id="globalSearchBtn" style="margin-left:auto" aria-label="Поиск по приложению">🔍</button>
+      <button type="button" class="header-alert-btn" data-modal-open="about-modal" style="margin-left:8px" aria-label="Важная информация о приложении">!</button>      <span id="appVersion" class="app-version" hidden>—</span>
     </div>
   </header>
 
@@ -216,6 +216,7 @@
 
   <script src="js/core/theme.js"></script>
   <script src="js/core/modal.js"></script>
+  <script src="js/core/global-search.js"></script>
   <script src="js/core/app.js"></script>
   <script src="js/core/changelog.js"></script>
   <script src="js/core/changelog-render.js"></script>
