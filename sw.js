@@ -17,7 +17,7 @@
 // ===@smp-build-start===
 // ВНИМАНИЕ: этот блок создаётся автоматически (GitHub Action / .github/scripts/sw-build.sh).
 // Не редактировать вручную — изменения будут перезаписаны при следующей публикации.
-const SW_BUILD = "c5279e3f97";
+const SW_BUILD = "6d14f0b896";
 const PRECACHE_LIST = [
   "./css/base.css",
   "./css/calc-algover.css",
