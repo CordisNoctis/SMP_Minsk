@@ -1,7 +1,7 @@
 (function () {
   "use strict";
 
-  // ===== Парсер Markdown → HTML (минимальный, для инструкций) =====
+  // ===== Парсер Markdown → HTML (с поддержкой многоуровневых списков) =====
 
   function escapeHtml(s) {
     return String(s)
@@ -10,29 +10,14 @@
       .replace(/>/g, "&gt;");
   }
 
-  // Инлайн-форматирование: **жирный**, *курсив*, `код`, [ссылка](url), ![картинка](адрес)
   function inlineFormat(line) {
-    // Экранируем HTML
     line = escapeHtml(line);
-
-    // Код
     line = line.replace(/`([^`]+)`/g, "<code>$1</code>");
-
-    // Картинки ![альт](адрес) — до ссылок, иначе синтаксис совпадает
     line = line.replace(/!\[([^\]]*)\]\(([^)\s]+)\)/g, '<img class="drug-img" src="$2" alt="$1">');
-
-    // Жирный (до курсива!)
     line = line.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
-
-    // Курсив
     line = line.replace(/(^|[^*])\*([^*]+)\*/g, "$1<em>$2</em>");
-
-    // Ссылки
     line = line.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener" aria-label="$1 (откроется в новой вкладке)">$1 ↗</a>');
-
-    // Разрешаем безопасные HTML-теги: <br>, <sup>, <sub> (восстанавливаем после экранирования)
     line = line.replace(/&lt;(\/?(?:br|sup|sub)\s*\/?)&gt;/gi, "<$1>");
-
     return line;
   }
 
@@ -44,17 +29,14 @@
     while (i < lines.length) {
       var line = lines[i];
 
-      // Пустая строка
       if (line.trim() === "") { i++; continue; }
 
-      // Горизонтальная линия
       if (/^---+\s*$/.test(line)) {
         html += "<hr>";
         i++;
         continue;
       }
 
-      // Блок кода ``` (схемы, примеры расчётов)
       if (/^```/.test(line.trim())) {
         var codeLines = [];
         i++;
@@ -62,12 +44,11 @@
           codeLines.push(lines[i]);
           i++;
         }
-        i++; // закрывающая ```
+        i++; 
         html += '<pre class="drug-pre"><code>' + escapeHtml(codeLines.join("\n")) + "</code></pre>";
         continue;
       }
 
-      // Заголовки
       var hMatch = line.match(/^(#{1,6})\s+(.*)$/);
       if (hMatch) {
         var level = hMatch[1].length;
@@ -76,11 +57,10 @@
         continue;
       }
 
-      // Блок предупреждения: начинается с ⚠️ или **ВАЖНО:**
       if (/^\s*⚠️/.test(line) || /^\s*\*\*ВАЖНО:?\*\*/i.test(line)) {
         var alertLines = [line];
         i++;
-        while (i < lines.length && lines[i].trim() !== "" && !/^(#|-|\d+\.)\s/.test(lines[i])) {
+        while (i < lines.length && lines[i].trim() !== "" && !/^(#|\s*[-•*]|\s*\d+\.\s|>\s|---|\|.*\||```)/.test(lines[i])) {
           alertLines.push(lines[i]);
           i++;
         }
@@ -88,7 +68,6 @@
         continue;
       }
 
-      // Цитата
       if (/^>\s?/.test(line)) {
         var quoteLines = [];
         while (i < lines.length && /^>\s?/.test(lines[i])) {
@@ -99,32 +78,66 @@
         continue;
       }
 
-      // Маркированный список
-      if (/^[-•]\s+/.test(line)) {
-        html += "<ul>";
-        while (i < lines.length && /^[-•]\s+/.test(lines[i])) {
-          html += "<li>" + inlineFormat(lines[i].replace(/^[-•]\s+/, "")) + "</li>";
-          i++;
-        }
-        html += "</ul>";
-        continue;
-      }
+      // ===== УЛУЧШЕННАЯ ОБРАБОТКА СПИСКОВ (поддержка вложенности) =====
+      if (/^\s*[-•*]\s+/.test(line) || /^\s*\d+\.\s+/.test(line)) {
+        var listHtml = "";
+        var stack = []; // Стек для отслеживания глубины и типа списка: { depth: Number, type: 'ul' | 'ol' }
 
-      // Нумерованный список
-      if (/^\d+\.\s+/.test(line)) {
-        html += "<ol>";
-        while (i < lines.length && /^\d+\.\s+/.test(lines[i])) {
-          html += "<li>" + inlineFormat(lines[i].replace(/^\d+\.\s+/, "")) + "</li>";
+        while (i < lines.length) {
+          var currentLine = lines[i];
+          var ulMatch = currentLine.match(/^(\s*)([-•*])\s+(.*)$/);
+          var olMatch = currentLine.match(/^(\s*)(\d+)\.\s+(.*)$/);
+
+          if (!ulMatch && !olMatch) break; // Конец списка
+
+          var match = ulMatch || olMatch;
+          var indent = match[1].length;
+          var depth = Math.floor(indent / 4) + 1; // 0 пробелов = глубина 1, 4 пробела = глубина 2 и т.д.
+          var type = olMatch ? 'ol' : 'ul';
+          var text = match[3];
+
+          // 1. Закрываем списки, если текущая глубина меньше или равна глубине в стеке (поднимаемся наверх)
+          while (stack.length > 0 && stack[stack.length - 1].depth >= depth) {
+            var popped = stack.pop();
+            listHtml += "</li></" + popped.type + ">";
+          }
+
+          // 2. Открываем новые списки, если углубляемся
+          if (stack.length === 0 || stack[stack.length - 1].depth < depth) {
+            while (stack.length < depth) {
+              listHtml += "<" + type + ">";
+              stack.push({ depth: stack.length + 1, type: type });
+            }
+          } else if (stack.length > 0 && stack[stack.length - 1].type !== type) {
+            // Смена типа списка на той же глубине (редко, но бывает)
+            var poppedType = stack.pop();
+            listHtml += "</li></" + poppedType.type + ">";
+            listHtml += "<" + type + ">";
+            stack.push({ depth: depth, type: type });
+          }
+
+          // 3. Добавляем элемент списка (не закрываем </li> сразу, чтобы вложенный список попал внутрь него)
+          listHtml += "<li>" + inlineFormat(text);
           i++;
         }
-        html += "</ol>";
+
+        // 4. Завершение блока списка: закрываем последний <li> и все оставшиеся открытые теги
+        if (stack.length > 0) {
+          listHtml += "</li>";
+        }
+        while (stack.length > 0) {
+          listHtml += "</" + stack.pop().type + ">";
+        }
+
+        html += listHtml;
         continue;
       }
+      // ===== КОНЕЦ УЛУЧШЕННОЙ ОБРАБОТКИ СПИСКОВ =====
 
       // Таблица
       if (/\|.*\|/.test(line) && i + 1 < lines.length && /^\|?\s*[-:]+/.test(lines[i + 1])) {
         var headerCells = line.split("|").map(function (c) { return c.trim(); }).filter(Boolean);
-        i += 2; // пропускаем шапку и разделитель
+        i += 2; 
         var rows = [];
         while (i < lines.length && /\|.*\|/.test(lines[i]) && lines[i].trim() !== "") {
           var cells = lines[i].split("|").map(function (c) { return c.trim(); }).filter(Boolean);
@@ -138,9 +151,7 @@
           html += "<tr>";
           row.forEach(function (c, idx) {
             var label = headerCells[idx] || "";
-            // 1. Применяем стандартное форматирование (оно экранирует HTML)
             var cellHtml = inlineFormat(c);
-            
             html += '<td data-label="' + escapeHtml(label) + '">' + cellHtml + "</td>";
           });
           html += "</tr>";
@@ -149,9 +160,9 @@
         continue;
       }
 
-      // Обычный абзац (собираем подряд идущие непустые строки)
+      // Обычный абзац (обновлено регулярное выражение, чтобы не ломаться на пробелах перед списком)
       var paraLines = [];
-      while (i < lines.length && lines[i].trim() !== "" && !/^(#|[-•]|\d+\.\s|>\s|---|\|.*\||```)/.test(lines[i])) {
+      while (i < lines.length && lines[i].trim() !== "" && !/^(#|\s*[-•*]|\s*\d+\.\s|>\s|---|\|.*\||```)/.test(lines[i])) {
         paraLines.push(lines[i]);
         i++;
       }
