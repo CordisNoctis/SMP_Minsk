@@ -22,7 +22,7 @@
   }
 
   function parseMarkdown(md) {
-    var lines = md.split(/\r?\n/);
+    var lines = Array.isArray(linesOrString) ? linesOrString : linesOrString.split(/\r?\n/);
     var html = "";
     var i = 0;
 
