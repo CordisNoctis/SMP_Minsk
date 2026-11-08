@@ -193,7 +193,7 @@
             document.title = title + " — СМП Минск";
           }
 
-          contentEl.innerHTML = window.SMP.markdown.parse(lines);
+          contentEl.innerHTML = window.SMP.markdown.parse(lines.join("\n"));
 
           // Картинки, указанные в markdown просто именем файла
           // (![схема](risunok.png)), ищем в папке docs/img/
