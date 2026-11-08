@@ -17,7 +17,7 @@
 // ===@smp-build-start===
 // ВНИМАНИЕ: этот блок создаётся автоматически (GitHub Action / .github/scripts/sw-build.sh).
 // Не редактировать вручную — изменения будут перезаписаны при следующей публикации.
-const SW_BUILD = "3bee2868ac";
+const SW_BUILD = "84c82e9b9a";
 const PRECACHE_LIST = [
   "./css/base.css",
   "./css/calc-algover.css",
@@ -66,6 +66,9 @@ const PRECACHE_LIST = [
   "./docs/cp-arrhythmic-syndromes.md",
   "./docs/cp-brady.md",
   "./docs/cp-bsk-preg.md",
+  "./docs/cp-ischemic-stroke.md",
+  "./docs/cp-pulmonary-embolism.md",
+  "./docs/cp-stable-angina.md",
   "./docs/cp-svt.md",
   "./docs/cp-syncope.md",
   "./docs/cp-vf-vt.md",
@@ -86,6 +89,12 @@ const PRECACHE_LIST = [
   "./docs/img/cp-bsk-preg-app7.svg",
   "./docs/img/cp-bsk-preg-app8.svg",
   "./docs/img/cp-bsk-preg-app9.svg",
+  "./docs/img/cp-ischemic-stroke-app12.svg",
+  "./docs/img/cp-ischemic-stroke-app2.svg",
+  "./docs/img/cp-ischemic-stroke-app4.svg",
+  "./docs/img/cp-ischemic-stroke-app6.svg",
+  "./docs/img/cp-pulmonary-embolism-app5.svg",
+  "./docs/img/cp-stable-angina-app8.svg",
   "./docs/img/posmertnyj_epikriz.svg",
   "./docs/img/xsn-app1.svg",
   "./docs/img/xsn-app2.svg",
