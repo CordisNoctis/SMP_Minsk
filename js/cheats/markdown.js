@@ -36,8 +36,100 @@
     return line;
   }
 
-  function parseMarkdown(md) {
-    var lines = md.split(/\r?\n/);
+  // ===== Списки с вложенностью =====
+  // Вложенность определяется отступом: подпункты сдвигаются на 2+ пробела
+  // и попадают внутрь родительского пункта (как на GitHub).
+
+  // Распознаёт маркер пункта: "- текст", "• текст", "1. текст", "1) текст"
+  // (с любым отступом). Возвращает { indent, ordered, rest } или null.
+  function listMarker(line) {
+    var m = line.match(/^(\s*)([-•]|\d+[.)])\s+(.*)$/);
+    if (!m) return null;
+    return { indent: m[1].length, ordered: /\d/.test(m[2]), rest: m[3] };
+  }
+
+  // Парсит список, начиная со строки i (первый маркер — на отступе indent).
+  // Возвращает { html, next } — next: индекс первой строки после списка.
+  function parseListAt(lines, i, indent) {
+    var first = listMarker(lines[i]);
+    if (!first) return { html: "", next: i };
+
+    var ordered = first.ordered;
+    var html = ordered ? "<ol>" : "<ul>";
+
+    while (i < lines.length) {
+      var line = lines[i];
+
+      // Пустая строка: продолжаем, если дальше идёт пункт этого или
+      // более глубокого уровня; иначе список завершён
+      if (line.trim() === "") {
+        var peek = i + 1 < lines.length ? listMarker(lines[i + 1]) : null;
+        if (peek && peek.indent >= indent) { i++; continue; }
+        break;
+      }
+
+      var mk = listMarker(line);
+
+      // Строка без маркера: перенос текста внутри последнего пункта
+      if (!mk) {
+        if (/^\s+\S/.test(line)) {
+          var cont = " " + inlineFormat(line.trim());
+          if (html.slice(-5) === "</li>") {
+            html = html.slice(0, -5) + cont + "</li>";
+          } else {
+            html += cont;
+          }
+          i++;
+          continue;
+        }
+        break;
+      }
+
+      // Маркер меньшего отступа — текущий уровень завершён
+      if (mk.indent < indent) break;
+      // Смена типа списка на том же уровне (нумерованный среди маркированного)
+      if (mk.indent === indent && mk.ordered !== ordered) break;
+
+      if (mk.indent > indent) {
+        // Вложенный список — вставляем внутрь предыдущего <li>
+        var sub = parseListAt(lines, i, mk.indent);
+        if (html.slice(-5) === "</li>") {
+          html = html.slice(0, -5) + sub.html + "</li>";
+        } else {
+          html += sub.html;
+        }
+        i = sub.next;
+        continue;
+      }
+
+      // Пункт текущего уровня
+      i++;
+      var item = inlineFormat(mk.rest);
+
+      // Переносы текста внутри пункта (непустые строки с отступом, без маркера)
+      while (i < lines.length && lines[i].trim() !== "" &&
+             !listMarker(lines[i]) && /^\s+\S/.test(lines[i])) {
+        item += " " + inlineFormat(lines[i].trim());
+        i++;
+      }
+
+      // Вложенный список сразу после этого пункта
+      var nested = i < lines.length ? listMarker(lines[i]) : null;
+      if (nested && nested.indent > indent) {
+        var sub2 = parseListAt(lines, i, nested.indent);
+        item += sub2.html;
+        i = sub2.next;
+      }
+
+      html += "<li>" + item + "</li>";
+    }
+
+    return { html: html + (ordered ? "</ol>" : "</ul>"), next: i };
+  }
+
+  function parseMarkdown(input) {
+    // Принимаем либо строку, либо уже готовый массив строк (для оптимизации скорости)
+    var lines = Array.isArray(input) ? input : input.split(/\r?\n/);
     var html = "";
     var i = 0;
 
@@ -99,25 +191,12 @@
         continue;
       }
 
-      // Маркированный список
-      if (/^[-•]\s+/.test(line)) {
-        html += "<ul>";
-        while (i < lines.length && /^[-•]\s+/.test(lines[i])) {
-          html += "<li>" + inlineFormat(lines[i].replace(/^[-•]\s+/, "")) + "</li>";
-          i++;
-        }
-        html += "</ul>";
-        continue;
-      }
-
-      // Нумерованный список
-      if (/^\d+\.\s+/.test(line)) {
-        html += "<ol>";
-        while (i < lines.length && /^\d+\.\s+/.test(lines[i])) {
-          html += "<li>" + inlineFormat(lines[i].replace(/^\d+\.\s+/, "")) + "</li>";
-          i++;
-        }
-        html += "</ol>";
+      // Списки: маркированные и нумерованные, с вложенностью по отступу
+      var listMk = listMarker(line);
+      if (listMk) {
+        var parsedList = parseListAt(lines, i, listMk.indent);
+        html += parsedList.html;
+        i = parsedList.next;
         continue;
       }
 
@@ -149,9 +228,12 @@
         continue;
       }
 
-      // Обычный абзац (собираем подряд идущие непустые строки)
+      // Обычный абзац (собираем подряд идущие непустые строки;
+      // абзац прерывается и строками вложенных пунктов списка)
       var paraLines = [];
-      while (i < lines.length && lines[i].trim() !== "" && !/^(#|[-•]|\d+\.\s|>\s|---|\|.*\||```)/.test(lines[i])) {
+      while (i < lines.length && lines[i].trim() !== "" &&
+             !/^(#|[-•]|\d+\.\s|>\s|---|\|.*\||```)/.test(lines[i]) &&
+             !listMarker(lines[i])) {
         paraLines.push(lines[i]);
         i++;
       }

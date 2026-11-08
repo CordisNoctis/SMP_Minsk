@@ -18,9 +18,15 @@
 
       greetingElement.textContent = text;
 
-      var opts = { weekday: "long", day: "numeric", month: "long", year: "numeric" };
-      var d = now.toLocaleDateString("ru-RU", opts);
-      dateElement.textContent = d.charAt(0).toUpperCase() + d.slice(1);
+      var weekday = now.toLocaleDateString("ru-RU", { weekday: "long" });
+      var rest = now.toLocaleDateString("ru-RU", { day: "numeric", month: "long", year: "numeric" });
+
+      weekday = weekday.charAt(0).toUpperCase() + weekday.slice(1);
+      rest = rest.charAt(0).toUpperCase() + rest.slice(1);
+
+      dateElement.innerHTML =
+        '<span class="date-weekday">' + weekday + ',</span> ' +
+        '<span class="date-rest">' + rest + '</span>';
     }
 
     update();

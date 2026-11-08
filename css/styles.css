@@ -506,3 +506,26 @@ nav[aria-label="Список нормативных документов"] .subm
 .submenu-sub:empty {
   display: none;
 }
+
+/* ===== Приветствие и дата в шапке ===== */
+.date-weekday,
+.date-rest {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+@media (max-width: 480px) {
+  .date-weekday,
+  .date-rest {
+    display: block;
+  }
+}
+
+.brand-text {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.date {
+  line-height: 1.3;
+}
