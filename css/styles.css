@@ -506,29 +506,3 @@ nav[aria-label="Список нормативных документов"] .subm
 .submenu-sub:empty {
   display: none;
 }
-
-/* Базовые отступы для списков в документах */
-.drug-content ul, 
-.drug-content ol {
-  padding-left: 1.5em;
-  margin: 0.5em 0;
-}
-
-/* Отступы для вложенных уровней (2-й, 3-й, 4-й) */
-.drug-content ul ul, 
-.drug-content ol ol, 
-.drug-content ul ol, 
-.drug-content ol ul {
-  margin-top: 0.25em;
-  margin-bottom: 0.25em;
-  padding-left: 1.2em;
-}
-
-/* Разные маркеры для разных уровней вложенности (как в Word/GitHub) */
-.drug-content ul { list-style-type: disc; }       /* 1 уровень: • */
-.drug-content ul ul { list-style-type: circle; } /* 2 уровень: ◦ */
-.drug-content ul ul ul { list-style-type: square; } /* 3 уровень: ▪ */
-
-.drug-content ol { list-style-type: decimal; }       /* 1 уровень: 1. */
-.drug-content ol ol { list-style-type: lower-alpha; } /* 2 уровень: a. */
-.drug-content ol ol ol { list-style-type: lower-roman; } /* 3 уровень: i. */
