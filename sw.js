@@ -17,7 +17,7 @@
 // ===@smp-build-start===
 // ВНИМАНИЕ: этот блок создаётся автоматически (GitHub Action / .github/scripts/sw-build.sh).
 // Не редактировать вручную — изменения будут перезаписаны при следующей публикации.
-const SW_BUILD = "7ad9604910";
+const SW_BUILD = "3bee2868ac";
 const PRECACHE_LIST = [
   "./css/base.css",
   "./css/calc-algover.css",
@@ -46,6 +46,7 @@ const PRECACHE_LIST = [
   "./css/cheatsheet.css",
   "./css/checklist.css",
   "./css/components.css",
+  "./css/doc-search.css",
   "./css/layout.css",
   "./css/medical-picker.css",
   "./css/mkb10.css",
@@ -57,9 +58,24 @@ const PRECACHE_LIST = [
   "./data/content.json",
   "./data/drugs-index.json",
   "./data/drugs.schema.json",
+  "./data/drugs/_TEMPLATE.md",
   "./docs/call-card-110.md",
+  "./docs/cp-acs.md",
+  "./docs/cp-afib.md",
+  "./docs/cp-ah.md",
+  "./docs/cp-arrhythmic-syndromes.md",
+  "./docs/cp-brady.md",
   "./docs/cp-bsk-preg.md",
+  "./docs/cp-svt.md",
+  "./docs/cp-syncope.md",
+  "./docs/cp-vf-vt.md",
   "./docs/cp-xsn.md",
+  "./docs/img/cp-acs-app13.svg",
+  "./docs/img/cp-acs-app4.svg",
+  "./docs/img/cp-acs-app6.svg",
+  "./docs/img/cp-acs-app7.svg",
+  "./docs/img/cp-acs-app8.svg",
+  "./docs/img/cp-ah-app9.svg",
   "./docs/img/cp-bsk-preg-app1.svg",
   "./docs/img/cp-bsk-preg-app10.svg",
   "./docs/img/cp-bsk-preg-app2.svg",
@@ -130,7 +146,9 @@ const PRECACHE_LIST = [
   "./js/core/changelog-render.js",
   "./js/core/changelog.js",
   "./js/core/confirm.js",
+  "./js/core/doc-search.js",
   "./js/core/exporter.js",
+  "./js/core/global-search.js",
   "./js/core/install-prompt.js",
   "./js/core/modal.js",
   "./js/core/ref-markdown.js",

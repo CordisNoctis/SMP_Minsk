@@ -506,6 +506,7 @@ nav[aria-label="Список нормативных документов"] .subm
 .submenu-sub:empty {
   display: none;
 }
+<<<<<<< HEAD
 
 /* ===== Приветствие и дата в шапке ===== */
 .date-weekday,
@@ -529,3 +530,5 @@ nav[aria-label="Список нормативных документов"] .subm
 .date {
   line-height: 1.3;
 }
+=======
+>>>>>>> e4ae6ac5543e78f7587e4d41efe5d8a73b512911
