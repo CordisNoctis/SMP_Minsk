@@ -7,7 +7,17 @@
     return String(s)
       .replace(/&/g, "&amp;")
       .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;");
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
+
+  function sanitizeUrl(url) {
+    var trimmed = String(url).trim().toLowerCase();
+    if (/^(javascript|vbscript|data):/i.test(trimmed)) {
+      return "#";
+    }
+    return url;
   }
 
   // Инлайн-форматирование: **жирный**, *курсив*, `код`, [ссылка](url), ![картинка](адрес), голые URL
@@ -29,18 +39,18 @@
 
     // Картинки ![альт](адрес) — до ссылок, иначе синтаксис совпадает
     line = line.replace(/!\[([^\]]*)\]\(([^)\s]+)\)/g, function (m, alt, url) {
-      return keep('<img class="drug-img" src="' + url + '" alt="' + alt + '">');
+      return keep('<img class="drug-img" src="' + sanitizeUrl(url) + '" alt="' + alt + '">');
     });
 
     // Markdown-ссылки [текст](url)
     line = line.replace(/\[([^\]]+)\]\(([^)]+)\)/g, function (m, text, url) {
-      return keep('<a href="' + url + '" target="_blank" rel="noopener" aria-label="' + text + ' (откроется в новой вкладке)">' + text + "</a>");
+      return keep('<a href="' + sanitizeUrl(url) + '" target="_blank" rel="noopener" aria-label="' + text + ' (откроется в новой вкладке)">' + text + "</a>");
     });
 
     // Голые URL: https://..., http://..., www....
     line = line.replace(/(^|[\s(«»:,;])((?:https?:\/\/|www\.)[^\s<>()]+[^\s<>().,;:!?])/g, function (m, pre, url) {
       var href = url.indexOf("www.") === 0 ? "https://" + url : url;
-      return pre + keep('<a href="' + href + '" target="_blank" rel="noopener">' + url + "</a>");
+      return pre + keep('<a href="' + sanitizeUrl(href) + '" target="_blank" rel="noopener">' + url + "</a>");
     });
 
     // Жирный (до курсива!)
@@ -226,11 +236,19 @@
 
       // Таблица
       if (/\|.*\|/.test(line) && i + 1 < lines.length && /^\|?\s*[-:]+/.test(lines[i + 1])) {
-        var headerCells = line.split("|").map(function (c) { return c.trim(); }).filter(Boolean);
+        var headerCells = line.split("|");
+        if (headerCells[0] === "") headerCells.shift();
+        if (headerCells[headerCells.length - 1] === "") headerCells.pop();
+        headerCells = headerCells.map(function (c) { return c.trim(); });
+        
         i += 2; // пропускаем шапку и разделитель
         var rows = [];
         while (i < lines.length && /\|.*\|/.test(lines[i]) && lines[i].trim() !== "") {
-          var cells = lines[i].split("|").map(function (c) { return c.trim(); }).filter(Boolean);
+          var cells = lines[i].split("|");
+          if (cells[0] === "") cells.shift();
+          if (cells[cells.length - 1] === "") cells.pop();
+          cells = cells.map(function (c) { return c.trim(); });
+          
           rows.push(cells);
           i++;
         }
