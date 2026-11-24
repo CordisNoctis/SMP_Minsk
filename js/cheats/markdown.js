@@ -10,16 +10,38 @@
       .replace(/>/g, "&gt;");
   }
 
-  // Инлайн-форматирование: **жирный**, *курсив*, `код`, [ссылка](url), ![картинка](адрес)
+  // Инлайн-форматирование: **жирный**, *курсив*, `код`, [ссылка](url), ![картинка](адрес), голые URL
   function inlineFormat(line) {
     // Экранируем HTML
     line = escapeHtml(line);
 
-    // Код
-    line = line.replace(/`([^`]+)`/g, "<code>$1</code>");
+    // Плейсхолдеры для сохранения обработанных фрагментов
+    var stash = [];
+    function keep(html) {
+      stash.push(html);
+      return "\u0000" + (stash.length - 1) + "\u0000";
+    }
+
+    // Код в обратных кавычках (ссылки внутри не создаём)
+    line = line.replace(/`([^`]+)`/g, function (m, c) {
+      return keep("<code>" + c + "</code>");
+    });
 
     // Картинки ![альт](адрес) — до ссылок, иначе синтаксис совпадает
-    line = line.replace(/!\[([^\]]*)\]\(([^)\s]+)\)/g, '<img class="drug-img" src="$2" alt="$1">');
+    line = line.replace(/!\[([^\]]*)\]\(([^)\s]+)\)/g, function (m, alt, url) {
+      return keep('<img class="drug-img" src="' + url + '" alt="' + alt + '">');
+    });
+
+    // Markdown-ссылки [текст](url)
+    line = line.replace(/\[([^\]]+)\]\(([^)]+)\)/g, function (m, text, url) {
+      return keep('<a href="' + url + '" target="_blank" rel="noopener" aria-label="' + text + ' (откроется в новой вкладке)">' + text + "</a>");
+    });
+
+    // Голые URL: https://..., http://..., www....
+    line = line.replace(/(^|[\s(«»:,;])((?:https?:\/\/|www\.)[^\s<>()]+[^\s<>().,;:!?])/g, function (m, pre, url) {
+      var href = url.indexOf("www.") === 0 ? "https://" + url : url;
+      return pre + keep('<a href="' + href + '" target="_blank" rel="noopener">' + url + "</a>");
+    });
 
     // Жирный (до курсива!)
     line = line.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
@@ -27,11 +49,13 @@
     // Курсив
     line = line.replace(/(^|[^*])\*([^*]+)\*/g, "$1<em>$2</em>");
 
-    // Ссылки
-    line = line.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener" aria-label="$1 (откроется в новой вкладке)">$1 ↗</a>');
-
     // Разрешаем безопасные HTML-теги: <br>, <sup>, <sub> (восстанавливаем после экранирования)
     line = line.replace(/&lt;(\/?(?:br|sup|sub)\s*\/?)&gt;/gi, "<$1>");
+
+    // Возвращаем сохранённые фрагменты (код, картинки, ссылки)
+    line = line.replace(/\u0000(\d+)\u0000/g, function (m, i) {
+      return stash[+i];
+    });
 
     return line;
   }

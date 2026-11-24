@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content">
-  <title>Коды МКБ-10 — СМП Минск</title>
+  <title>Коды МКБ-10 — СМП-103</title>
   <meta name="theme-color" content="#7A1F2B">
 
   <script src="../js/core/theme-init.js"></script>
@@ -95,7 +95,7 @@
       function renderSectionHeader() {
         window.SMP.mkb10DB.get(sectionCode).then(function (data) {
           if (!data) return;
-          document.title = data.code + " — МКБ-10 — СМП Минск";
+          document.title = data.code + " — МКБ-10 — СМП-103";
 
           var crumbs = '<a href="mkb10.html">МКБ-10</a>';
           data.breadcrumbs.forEach(function (c, idx) {

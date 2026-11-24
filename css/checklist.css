@@ -341,12 +341,6 @@
   color: #ef9a9a;
 }
 
-@media (min-width: 600px) {
-  .used-bottom-bar {
-    grid-template-columns: repeat(4, 1fr);
-  }
-}
-
 /* ===== Отчет ===== */
 
 .report-content {

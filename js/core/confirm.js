@@ -12,7 +12,7 @@
     overlay.setAttribute("aria-modal", "true");
     overlay.innerHTML =
       '<div class="confirm-dialog">' +
-        '<h2 class="confirm-title" id="confirmTitle">СМП Минск</h2>' +
+        '<h2 class="confirm-title" id="confirmTitle">СМП-103</h2>' +
         '<p class="confirm-message" id="confirmMessage"></p>' +
         '<div class="confirm-actions">' +
           '<button type="button" class="btn-secondary" id="confirmCancelBtn">Отмена</button>' +
@@ -54,7 +54,7 @@
   window.SMP.confirm = function (message, opts) {
     opts = opts || {};
     if (!overlay) build();
-    titleEl.textContent = opts.title || "СМП Минск";
+    titleEl.textContent = opts.title || "СМП-103";
     msgEl.textContent = message;
     okBtn.textContent = opts.ok || "Да";
     cancelBtn.textContent = opts.cancel || "Отмена";

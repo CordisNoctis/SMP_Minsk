@@ -178,7 +178,7 @@
       "PRODID:-//SMP Minsk//PWA Shift Schedule//RU",
       "CALSCALE:GREGORIAN",
       "METHOD:PUBLISH",
-      "X-WR-CALNAME:" + escapeText("График смен — СМП Минск"),
+      "X-WR-CALNAME:" + escapeText("График смен — СМП-103"),
       "X-WR-TIMEZONE:Europe/Minsk"
     ];
     events.forEach(function (ev) {

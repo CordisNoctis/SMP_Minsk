@@ -362,3 +362,16 @@
   color: var(--text);
   font-weight: 400;
 }
+
+/* ===== Кликабельные ссылки в markdown-документах ===== */
+.drug-content a {
+  color: var(--accent);
+  font-weight: 650;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  overflow-wrap: break-word;
+}
+
+.drug-content a:active {
+  opacity: 0.7;
+}

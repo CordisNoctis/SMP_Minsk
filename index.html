@@ -4,9 +4,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content">
 
-  <title>СМП Минск</title>
+  <title>СМП-103: протоколы и шпаргалки</title>
 
-  <meta name="description" content="СМП Минск: информационно-справочная база сотрудника скорой медицинской помощи">
+  <meta name="description" content="СМП-103: протоколы и шпаргалки это информационно-справочная база сотрудника скорой медицинской помощи">
   <meta name="theme-color" content="#7A1F2B">
 
   <link rel="manifest" href="manifest.webmanifest">
@@ -16,6 +16,7 @@
   <script src="js/core/version.js"></script>
 
   <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/cheatsheet.css">
   <link rel="stylesheet" href="css/changelog.css">
 
   <!-- Фавиконки вкладки -->
@@ -29,7 +30,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="СМП Минск">
+  <meta name="apple-mobile-web-app-title" content="СМП-103">
 </head>
 
 <body>
@@ -86,7 +87,7 @@
       </div>
 
       <!-- ===== Группа: Система ===== -->
-      <div class="menu-group">
+            <div class="menu-group">
         <h2 class="menu-group-title">⚙️ Система</h2>
         <button type="button" class="menu-card" id="installAppBtn" hidden aria-label="Установить приложение">
           <span class="menu-icon" aria-hidden="true">📲</span>
@@ -106,8 +107,36 @@
           </span>
           <span class="menu-arrow" aria-hidden="true">›</span>
         </button>
-      </div>
 
+        <!-- Пользовательское соглашение — карточка в общей сетке -->
+        <button type="button" class="menu-card" id="uaPlateBtn" aria-label="Пользовательское соглашение">
+          <span class="menu-icon" aria-hidden="true">📄</span>
+          <span class="menu-card-text">
+            <span class="menu-title">Пользовательское соглашение</span>
+            <span class="menu-sub" id="uaPlateSub">Нажмите, чтобы ознакомиться с условиями использования</span>
+          </span>
+          <span class="menu-arrow" aria-hidden="true">›</span>
+        </button>
+
+        <!-- Поддержать проект -->
+        <a class="menu-card" href="https://pay.raschet.by/#00020132570010by.raschet010753586611028BY95AKBB3014003331237007000053039335802BY63043473" target="_blank" rel="noopener">
+          <span class="menu-icon" aria-hidden="true">💖</span>
+          <span class="menu-card-text">
+            <span class="menu-title">Поддержать проект (ПС ЕРИП)</span>
+            <span class="menu-sub">Обязательно проверьте ссылку! Спасибо за вклад в развитие!</span>
+          </span>
+          <span class="menu-arrow" aria-hidden="true">›</span>
+        </a>
+        <!-- Поделиться приложением -->
+        <button type="button" class="menu-card" id="shareAppBtn" aria-label="Поделиться приложением">
+          <span class="menu-icon" aria-hidden="true">🔗</span>
+          <span class="menu-card-text">
+            <span class="menu-title">Поделиться приложением</span>
+            <span class="menu-sub">Отправить ссылку коллегам</span>
+          </span>
+          <span class="menu-arrow" aria-hidden="true">›</span>
+        </button>
+      </div>
     </nav>
   </main>
 
@@ -140,9 +169,9 @@
 
         <!-- Hero-блок с логотипом -->
         <div class="about-hero">
-          <img src="icons/icon-192.png" alt="СМП Минск" class="about-hero-icon">
-          <h3 class="about-hero-title">СМП Минск</h3>
-          <p class="about-hero-tagline">Информационно-справочная база<br>сотрудника скорой медицинской помощи</p>
+          <img src="icons/icon-192.png" alt="СМП-103" class="about-hero-icon">
+          <h3 class="about-hero-title">СМП-103<br>протоколы и шпаргалки</h3>
+          <p class="about-hero-tagline">Информационно-справочная база сотрудника скорой медицинской помощи</p>
           <div class="about-version-badge">
             <span class="about-version-dot"></span>
             Версия <span id="aboutVersion">—</span>
@@ -174,7 +203,7 @@
             О приложении
           </h3>
           <p class="about-text">
-            «СМП Минск» — неофициальная информационно-справочная база, созданная для удобства медицинских работников СМП г. Минска. Все инструменты собраны в одном месте.
+            «СМП-103: протоколы и шпаргалки» — неофициальная информационно-справочная база, созданная для удобства медицинских работников скорой медицинской помощи, преимущественно г. Минска. Все инструменты собраны в одном месте.
           </p>
         </section>
 
@@ -182,29 +211,21 @@
         <section class="about-section">
           <h3 class="about-subtitle">
             <span class="about-subtitle-icon">💬</span>
-            Обратная связь
+            Новости и обратная связь
           </h3>
           <p class="about-text">
             Заметили ошибку или хотите предложить улучшение?
           </p>
           <div class="about-contact-grid">
-            <a class="about-contact-card about-tg" href="https://t.me/cordisnoctis_smp" target="_blank" rel="noopener">
+            <a class="about-contact-card about-tg" href="https://t.me/cordisnoctis_smp_app" target="_blank" rel="noopener">
               <span class="about-contact-icon">✈️</span>
               <span class="about-contact-body">
-                <span class="about-contact-label">Telegram</span>
-                <span class="about-contact-value">@cordisnoctis_smp</span>
+                <span class="about-contact-label">Telegram channel</span>
+                <span class="about-contact-value">@cordisnoctis_smp_app</span>
               </span>
               <span class="about-contact-arrow">›</span>
             </a>
           </div>
-        </section>
-
-        <!-- Дисклеймер -->
-        <section class="about-section about-disclaimer">
-          <div class="about-disclaimer-icon"></div>
-          <p class="about-disclaimer-text">
-            <strong>Важно:</strong> в первую очередь руководствуйтесь официальными приказами и клиническими протоколами МЗ РБ. Данные носят <em>справочный характер</em>. Разработчик не несёт ответственности за последствия использования в клинической практике.
-          </p>
         </section>
 
       </div>
@@ -217,10 +238,13 @@
   <script src="js/core/theme.js"></script>
   <script src="js/core/modal.js"></script>
   <script src="js/core/global-search.js"></script>
+  <script src="js/core/exporter.js"></script>
   <script src="js/core/app.js"></script>
   <script src="js/core/changelog.js"></script>
   <script src="js/core/changelog-render.js"></script>
   <script src="js/core/update-notice.js"></script>
+  <script src="js/cheats/markdown.js"></script>    
+  <script src="js/core/user-agreement.js"></script> 
   <script src="js/core/sw-register.js"></script>
   <script>
     document.addEventListener("DOMContentLoaded", function () {

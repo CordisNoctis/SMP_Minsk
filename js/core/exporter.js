@@ -199,10 +199,93 @@
       });
   }
 
+  // ===== Поделиться текстом/ссылкой через Web Share API =====
+  function shareText(opts) {
+    opts = opts || {};
+    var nav = window.navigator;
+    var shareData = {};
+    
+    if (opts.title) shareData.title = opts.title;
+    if (opts.text) shareData.text = opts.text;
+    if (opts.url) shareData.url = opts.url;
+
+    // Проверяем поддержку Web Share API
+    if (nav && nav.share && (!nav.canShare || nav.canShare(shareData))) {
+      return nav.share(shareData)
+        .then(function () {
+          showToast("✅ Отправлено");
+          return { shared: true };
+        })
+        .catch(function (err) {
+          if (err && err.name === "AbortError") {
+            showToast("↩️ Отменено");
+            return { shared: false, aborted: true };
+          }
+          // Ошибка — fallback на копирование
+          console.warn("Web Share failed:", err);
+          return fallbackCopyText(opts.url || opts.text || "");
+        });
+    }
+
+    // Web Share API недоступен — сразу копируем
+    return fallbackCopyText(opts.url || opts.text || "");
+  }
+
+  function fallbackCopyText(text) {
+    if (!text) {
+      showToast("⚠️ Нечего копировать");
+      return Promise.resolve({ shared: false });
+    }
+
+    // Современный Clipboard API
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      return navigator.clipboard.writeText(text)
+        .then(function () {
+          showToast("📋 Ссылка скопирована в буфер обмена");
+          return { shared: false, copied: true };
+        })
+        .catch(function (err) {
+          console.warn("Clipboard API failed:", err);
+          return legacyCopyText(text);
+        });
+    }
+
+    // Fallback на старый метод
+    return legacyCopyText(text);
+  }
+
+  function legacyCopyText(text) {
+    var ta = document.createElement("textarea");
+    ta.value = text;
+    ta.style.position = "fixed";
+    ta.style.left = "-9999px";
+    ta.style.opacity = "0";
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+
+    try {
+      var success = document.execCommand("copy");
+      ta.remove();
+      if (success) {
+        showToast("📋 Ссылка скопирована в буфер обмена");
+        return Promise.resolve({ shared: false, copied: true });
+      } else {
+        showToast("❌ Не удалось скопировать ссылку");
+        return Promise.resolve({ shared: false });
+      }
+    } catch (e) {
+      ta.remove();
+      showToast("❌ Ошибка копирования: " + e.message);
+      return Promise.resolve({ shared: false });
+    }
+  }
+
   // ===== Публичный API =====
   window.SMP = window.SMP || {};
   window.SMP.exporter = {
     export: exportElement,
+    shareText: shareText,
     showToast: showToast
   };
 })();

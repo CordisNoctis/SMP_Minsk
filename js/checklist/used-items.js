@@ -5,9 +5,7 @@
   window.__usedItemsInitialized = true;
 
   var STORAGE_KEY = "smp-used-items-v1";
-  var SHIFTS_KEY = "smp-saved-shifts-v1";
   var editingIndex = null;
-  var viewingShiftId = null;
 
   // ===== Хранилище =====
 
@@ -20,17 +18,6 @@
 
   function saveRecords(records) {
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(records)); } catch (e) {}
-  }
-
-  function loadSavedShifts() {
-    try {
-      var raw = localStorage.getItem(SHIFTS_KEY);
-      return raw ? JSON.parse(raw) : [];
-    } catch (e) { return []; }
-  }
-
-  function saveSavedShifts(shifts) {
-    try { localStorage.setItem(SHIFTS_KEY, JSON.stringify(shifts)); } catch (e) {}
   }
 
   // ===== Утилиты =====
@@ -68,50 +55,10 @@
 
     var title = document.createElement("div");
     title.className = "used-record-title";
-    title.textContent = "Карта № " + (rec.cardNumber || "—");
+    title.textContent = "Примечание: " + (rec.note || rec.cardNumber || "—");
     header.appendChild(title);
 
-    if (allowEdit && typeof index === "number") {
-      var actions = document.createElement("div");
-      actions.className = "used-record-actions";
-
-      var editBtn = document.createElement("button");
-      editBtn.type = "button";
-      editBtn.className = "used-record-btn";
-      editBtn.textContent = "✎";
-      editBtn.addEventListener("click", function () { openRecordForm(index); });
-
-      var delBtn = document.createElement("button");
-      delBtn.type = "button";
-      delBtn.className = "used-record-btn used-record-del";
-      delBtn.textContent = "🗑";
-      delBtn.addEventListener("click", function () {
-        SMP.confirm("Удалить эту запись?").then(function (ok) {
-          if (!ok) return;
-          var arr = loadRecords();
-          arr.splice(index, 1);
-          saveRecords(arr);
-          renderRecords();
-          showToast("🗑️ Запись удалена");
-        });
-      });
-
-      actions.appendChild(editBtn);
-      actions.appendChild(delBtn);
-      header.appendChild(actions);
-    }
-
-    var patient = document.createElement("div");
-    patient.className = "used-record-line";
-    patient.textContent = "👤 " + (rec.patientName || "—");
-
-    var address = document.createElement("div");
-    address.className = "used-record-line";
-    address.textContent = "📍 " + (rec.address || "—");
-
     card.appendChild(header);
-    card.appendChild(patient);
-    card.appendChild(address);
 
     if (rec.items && rec.items.length > 0) {
       var itemsBlock = document.createElement("div");
@@ -278,21 +225,17 @@
     var titleEl = document.getElementById("recordFormTitle");
     if (titleEl) titleEl.textContent = editingIndex !== null ? "Редактирование записи" : "Новая запись";
 
-    var cardNumber = document.getElementById("recCardNumber");
-    var patientName = document.getElementById("recPatientName");
-    var address = document.getElementById("recAddress");
+    var noteInput = document.getElementById("recNote");
     var rowsContainer = document.getElementById("recItemsRows");
 
-    if (!cardNumber || !rowsContainer) return;
+    if (!noteInput || !rowsContainer) return;
     rowsContainer.innerHTML = "";
 
     if (editingIndex !== null) {
       var records = loadRecords();
       var rec = records[editingIndex];
       if (rec) {
-        cardNumber.value = rec.cardNumber || "";
-        patientName.value = rec.patientName || "";
-        address.value = rec.address || "";
+        noteInput.value = rec.note || rec.cardNumber || "";
         if (rec.items && rec.items.length > 0) {
           rec.items.forEach(function (it) { addItemRow(it.name, it.qty); });
         } else {
@@ -300,26 +243,18 @@
         }
       }
     } else {
-      cardNumber.value = "";
-      patientName.value = "";
-      address.value = "";
+      noteInput.value = "";
       addItemRow("", "");
     }
 
     var modal = document.getElementById("record-form-modal");
     if (modal && window.SMP && window.SMP.modal) {
       window.SMP.modal.open(modal);
-    }  }
+    }
+  }
 
   function saveRecord() {
-    var cardNumber = document.getElementById("recCardNumber").value.trim();
-    var patientName = document.getElementById("recPatientName").value.trim();
-    var address = document.getElementById("recAddress").value.trim();
-
-    if (!cardNumber && !patientName) {
-      showToast("⚠️ Заполните № карты или ФИО пациента");
-      return;
-    }
+    var note = document.getElementById("recNote").value.trim();
 
     var rows = document.querySelectorAll("#recItemsRows .used-item-row");
     var items = [];
@@ -329,7 +264,7 @@
       if (nm) items.push({ name: nm, qty: qt });
     });
 
-    var record = { cardNumber: cardNumber, patientName: patientName, address: address, items: items };
+    var record = { note: note, items: items };
     var records = loadRecords();
     if (editingIndex !== null) records[editingIndex] = record;
     else records.push(record);
@@ -338,135 +273,9 @@
     var modal = document.getElementById("record-form-modal");
     if (modal && window.SMP && window.SMP.modal) {
       window.SMP.modal.close(modal);
-    }    renderRecords();
+    }
+    renderRecords();
     showToast("✅ Запись сохранена");
-  }
-
-  // ===== Сохранённые смены =====
-
-  function saveShift() {
-    var records = loadRecords();
-    if (records.length === 0) {
-      showToast("⚠️ Нет записей для сохранения");
-      return;
-    }
-    var shifts = loadSavedShifts();
-    shifts.push({
-      id: Date.now(),
-      savedAt: new Date().toISOString(),
-      records: records
-    });
-    saveSavedShifts(shifts);
-    showToast("💾 Смена сохранена");
-  }
-
-  function renderSavedShiftsList() {
-    var listEl = document.getElementById("savedShiftsList");
-    var emptyEl = document.getElementById("savedShiftsEmpty");
-    if (!listEl) return;
-    listEl.innerHTML = "";
-
-    var shifts = loadSavedShifts();
-    if (shifts.length === 0) {
-      if (emptyEl) emptyEl.hidden = false;
-      return;
-    }
-    if (emptyEl) emptyEl.hidden = true;
-
-    shifts.forEach(function (shift) {
-      var item = document.createElement("div");
-      item.className = "saved-shift-item";
-
-      var d = new Date(shift.savedAt);
-      var dateStr = d.toLocaleDateString("ru-RU") + " " +
-        d.toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" });
-
-      var info = document.createElement("div");
-      info.className = "saved-shift-info";
-      info.textContent = dateStr + " · карт: " + (shift.records ? shift.records.length : 0);
-
-      // Кнопка удаления
-      var delBtn = document.createElement("button");
-      delBtn.type = "button";
-      delBtn.className = "saved-shift-del";
-      delBtn.textContent = "🗑";
-      delBtn.setAttribute("aria-label", "Удалить смену");
-      delBtn.addEventListener("click", function (e) {
-        e.stopPropagation();
-        SMP.confirm("Удалить эту смену?").then(function (ok) {
-          if (!ok) return;
-          var all = loadSavedShifts();
-          all = all.filter(function (s) { return s.id !== shift.id; });
-          saveSavedShifts(all);
-          renderSavedShiftsList();
-          showToast("🗑️ Смена удалена");
-        });
-      });
-
-      item.appendChild(info);
-      item.appendChild(delBtn);
-
-      // Клик по строке (не по кнопке) открывает просмотр
-      item.addEventListener("click", function () {
-        var listModal = document.getElementById("shifts-list-modal");
-        if (listModal && window.SMP && window.SMP.modal) {
-          window.SMP.modal.close(listModal);
-        }
-        openShiftView(shift.id);
-      });
-
-      listEl.appendChild(item);
-    });
-  }
-
-  function openShiftView(shiftId) {
-    var shifts = loadSavedShifts();
-    var shift = null;
-    for (var i = 0; i < shifts.length; i++) {
-      if (shifts[i].id === shiftId) { shift = shifts[i]; break; }
-    }
-    if (!shift) return;
-
-    viewingShiftId = shiftId;
-
-    var titleEl = document.getElementById("shiftViewTitle");
-    if (titleEl) {
-      var d = new Date(shift.savedAt);
-      titleEl.textContent = "Смена от " + d.toLocaleDateString("ru-RU") + " " +
-        d.toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" });
-    }
-
-    var content = document.getElementById("shiftViewContent");
-    if (!content) return;
-    content.innerHTML = "";
-
-    (shift.records || []).forEach(function (rec) {
-      content.appendChild(buildRecordCard(rec, null, false));
-    });
-
-    var modal = document.getElementById("shift-view-modal");
-    if (modal && window.SMP && window.SMP.modal) {
-      window.SMP.modal.open(modal);
-    }
-  }
-
-  function deleteSavedShift() {
-    if (viewingShiftId === null) return;
-    SMP.confirm("Удалить эту смену?").then(function (ok) {
-      if (!ok) return;
-
-      var shifts = loadSavedShifts();
-      shifts = shifts.filter(function (s) { return s.id !== viewingShiftId; });
-      saveSavedShifts(shifts);
-
-      viewingShiftId = null;
-      var modal = document.getElementById("shift-view-modal");
-      if (modal && window.SMP && window.SMP.modal) {
-        window.SMP.modal.close(modal);
-      }
-      renderSavedShiftsList();
-      showToast("🗑️ Смена удалена");
-    });
   }
 
   // ===== Отчёт (таблица с горизонтальной прокруткой) =====
@@ -556,53 +365,30 @@
 
     var addRowBtn = document.getElementById("addRecItemRowBtn");
     if (addRowBtn) addRowBtn.addEventListener("click", function () {
-      addItemRow("", "", false, true); // true = сразу открыть окно выбора
+      addItemRow("", "", false, true);
     });
 
     var saveRecBtn = document.getElementById("saveRecordBtn");
     if (saveRecBtn) saveRecBtn.addEventListener("click", saveRecord);
 
-    // № карты — только цифры
-    var cardNumberInput = document.getElementById("recCardNumber");
-    if (cardNumberInput) restrictToDigits(cardNumberInput);
-
     var createReportBtn = document.getElementById("createReportBtn");
     if (createReportBtn) createReportBtn.addEventListener("click", createReport);
 
-    var saveShiftBtn = document.getElementById("saveShiftBtn");
-    if (saveShiftBtn) saveShiftBtn.addEventListener("click", saveShift);
-
-    var loadShiftBtn = document.getElementById("loadShiftBtn");
-    if (loadShiftBtn) loadShiftBtn.addEventListener("click", function () {
-      renderSavedShiftsList();
-      var modal = document.getElementById("shifts-list-modal");
-    if (modal && window.SMP && window.SMP.modal) {
-      window.SMP.modal.open(modal);
-    }
-    });
-
-    var deleteShiftBtn = document.getElementById("deleteShiftBtn");
-    if (deleteShiftBtn) deleteShiftBtn.addEventListener("click", deleteSavedShift);
-
-    var reportExportPngBtn = document.getElementById("reportExportPngBtn");
-    if (reportExportPngBtn) reportExportPngBtn.addEventListener("click", reportExportPng);
-
     var clearBtn = document.getElementById("clearShiftBtn");
-      if (clearBtn) clearBtn.addEventListener("click", function () {
-        SMP.confirm("Очистить все записи текущей смены?").then(function (ok) {
-          if (!ok) return;
-          saveRecords([]);
-          renderRecords();
-          showToast("🗑️ Смена очищена");
-        });
+    if (clearBtn) clearBtn.addEventListener("click", function () {
+      SMP.confirm("Очистить все записи текущей смены?").then(function (ok) {
+        if (!ok) return;
+        saveRecords([]);
+        renderRecords();
+        showToast("🗑️ Смена очищена");
       });
+    });
 
     document.addEventListener("click", function (e) {
       if (e.target.matches(".modal-backdrop")) {
         var modal = e.target.closest(".modal");
         if (modal) {
           if (modal.id === "record-form-modal") editingIndex = null;
-          if (modal.id === "shift-view-modal") viewingShiftId = null;
           if (window.SMP && window.SMP.modal) {
             window.SMP.modal.close(modal);
           }

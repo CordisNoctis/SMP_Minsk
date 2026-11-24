@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content">  <title>Использованные средства — СМП Минск</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content">  <title>Использованные средства — СМП-103</title>
   <meta name="theme-color" content="#7A1F2B">
 
   <script src="../js/core/theme-init.js"></script>
@@ -13,7 +13,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="СМП Минск">
+  <meta name="apple-mobile-web-app-title" content="СМП-103">
 </head>
 
 <body>
@@ -42,8 +42,6 @@
   <!-- Нижние кнопки -->
   <div class="used-bottom-bar">
     <button type="button" class="used-bottom-btn" id="createReportBtn">📄 Создать отчет</button>
-    <button type="button" class="used-bottom-btn" id="saveShiftBtn">💾 Сохранить смену</button>
-    <button type="button" class="used-bottom-btn" id="loadShiftBtn">📂 Загрузить смену</button>
     <button type="button" class="used-bottom-btn used-bottom-danger" id="clearShiftBtn">🗑️ Очистить смену</button>
   </div>
 
@@ -59,16 +57,8 @@
       <div class="modal-body">
         <div class="settings-form">
           <label class="used-form-field">
-            <span>№ карты вызова</span>
-            <input type="text" id="recCardNumber" inputmode="numeric" maxlength="20" placeholder="Только цифры">
-          </label>
-          <label class="used-form-field">
-            <span>ФИО пациента</span>
-            <input type="text" id="recPatientName" maxlength="100">
-          </label>
-          <label class="used-form-field">
-            <span>Место жительства</span>
-            <input type="text" id="recAddress" maxlength="150">
+            <span>Примечание</span>
+            <input type="text" id="recNote" maxlength="200" placeholder="Любая информация">
           </label>
 
           <div class="used-items-block">
@@ -82,42 +72,6 @@
       <footer class="modal-footer">
         <button type="button" class="btn-secondary" data-modal-close>Отмена</button>
         <button type="button" class="btn-primary" id="saveRecordBtn">Сохранить</button>
-      </footer>
-    </section>
-  </div>
-
-  <!-- Модалка списка сохранённых смен -->
-  <div class="modal" id="shifts-list-modal" hidden aria-hidden="true">
-    <div class="modal-backdrop" data-modal-close></div>
-    <section class="modal-panel" role="dialog" aria-modal="true">
-      <header class="modal-header">
-        <h2>Сохранённые смены</h2>
-        <button type="button" class="modal-close" data-modal-close aria-label="Закрыть">×</button>
-      </header>
-      <div class="modal-body">
-        <div id="savedShiftsList" class="saved-shifts-list"></div>
-        <p id="savedShiftsEmpty" class="muted" hidden style="text-align:center; padding: 4px 0; margin: 0;">Сохранённых смен нет.</p>      </div>
-      <footer class="modal-footer">
-        <button type="button" class="btn-primary" data-modal-close>Закрыть</button>
-      </footer>
-    </section>
-  </div>
-
-  <!-- Модалка просмотра смены -->
-  <div class="modal" id="shift-view-modal" hidden aria-hidden="true">
-    <div class="modal-backdrop" data-modal-close></div>
-    <section class="modal-panel" role="dialog" aria-modal="true">
-      <header class="modal-header">
-        <h2 id="shiftViewTitle">Смена</h2>
-        <button type="button" class="modal-close" data-modal-close aria-label="Закрыть">×</button>
-      </header>
-      <div class="modal-body">
-        <div id="shiftViewContent" class="shift-view-content"></div>
-      </div>
-      <footer class="modal-footer">
-        <button type="button" class="btn-danger-ghost" id="deleteShiftBtn">🗑️ Удалить смену</button>
-        <div class="modal-footer-spacer"></div>
-        <button type="button" class="btn-primary" data-modal-close>Закрыть</button>
       </footer>
     </section>
   </div>

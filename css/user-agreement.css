@@ -1,0 +1,211 @@
+/* =========================================
+   user-agreement.css — плашка ПС на главной
+   и модальное окно согласия
+   ========================================= */
+
+body.ua-locked {
+  overflow: hidden;
+}
+
+.ua-plate-arrow {
+  flex: 0 0 auto;
+  color: var(--accent);
+  font-size: 1.35rem;
+  line-height: 1;
+}
+
+/* ===== Оверлей соглашения (не зависит от modal.js) ===== */
+
+.ua-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 400;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.ua-overlay[hidden] {
+  display: none;
+}
+
+.ua-backdrop {
+  position: absolute;
+  inset: 0;
+
+  background: var(--modal-backdrop);
+  -webkit-backdrop-filter: blur(7px);
+  backdrop-filter: blur(7px);
+  touch-action: none;
+}
+
+.ua-panel {
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+
+  width: min(640px, 100%);
+  max-height: calc(100vh - 32px);
+  max-height: calc(100dvh - 32px);
+
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  box-shadow: var(--shadow-hover);
+
+  overflow: hidden;
+  animation: modal-in 0.18s ease;
+}
+
+.ua-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--border);
+}
+
+.ua-head h2 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 800;
+}
+
+.ua-close {
+  width: 40px;
+  height: 40px;
+  flex: 0 0 auto;
+
+  border: 0;
+  border-radius: 12px;
+
+  background: var(--menu-icon-bg);
+  color: var(--text);
+
+  font-size: 1.3rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.ua-body {
+  flex: 1;
+  min-height: 0;
+
+  padding: 16px 18px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+
+  font-size: 0.92rem;
+  line-height: 1.55;
+}
+
+.ua-body:focus {
+  outline: none;
+}
+
+.ua-loading {
+  color: var(--muted);
+  font-weight: 650;
+  text-align: center;
+  padding: 24px 0;
+}
+
+/* Строка-подсказка между текстом и кнопками */
+.ua-hint {
+  padding: 8px 18px;
+
+  border-top: 1px solid var(--border);
+  background: var(--menu-icon-bg);
+
+  font-size: 0.78rem;
+  font-weight: 650;
+  color: var(--muted);
+  line-height: 1.35;
+}
+
+.ua-hint:empty {
+  display: none;
+}
+
+.ua-hint.is-done {
+  color: #2f855a;
+}
+
+.ua-hint.is-declined {
+  color: #c62828;
+}
+
+/* ===== Кнопки выбора ===== */
+
+.ua-foot {
+  display: flex;
+  gap: 10px;
+
+  padding: 14px 18px;
+  border-top: 1px solid var(--border);
+}
+
+.ua-foot[hidden] {
+  display: none;
+}
+
+.ua-foot button {
+  flex: 1 1 0;
+  min-height: 48px;
+
+  border-radius: 12px;
+  font-weight: 800;
+  font-size: 0.95rem;
+  cursor: pointer;
+
+  transition: filter 0.15s ease, transform 0.12s ease;
+}
+
+.ua-foot button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.ua-decline {
+  background: var(--menu-icon-bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.ua-accept {
+  background: var(--button-bg);
+  color: var(--button-text);
+  border: 0;
+}
+
+.ua-accept:not(:disabled):active,
+.ua-decline:not(:disabled):active {
+  transform: scale(0.98);
+}
+
+.ua-retry {
+  margin: 0 auto;
+  display: inline-flex;
+}
+
+/* ===== Узкие экраны ===== */
+
+@media (max-width: 480px) {
+  .ua-overlay {
+    padding: 8px;
+  }
+
+  .ua-panel {
+    max-height: calc(100vh - 16px);
+    max-height: calc(100dvh - 16px);
+  }
+
+  .ua-foot {
+    flex-direction: column;
+  }
+}

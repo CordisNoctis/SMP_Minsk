@@ -35,7 +35,9 @@
   border-radius: 16px;
   object-fit: cover;
 
-  background: var(--card);
+  /* Всегда белая подложка: в тёмной теме --card тёмный,
+     а иконка должна оставаться на светлом фоне */
+  background: #ffffff;
   padding: 4px;
 
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.14);

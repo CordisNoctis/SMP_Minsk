@@ -38,16 +38,39 @@
     if (el && window.SMP_VERSION) {
       el.textContent = "v" + window.SMP_VERSION;
     }
-    // Версия в модалке «О приложении»
     var aboutEl = document.getElementById("aboutVersion");
     if (aboutEl && window.SMP_VERSION) {
       aboutEl.textContent = window.SMP_VERSION;
     }
+    var footerEl = document.getElementById("footerVersion");
+    if (footerEl && window.SMP_VERSION) {
+      footerEl.textContent = window.SMP_VERSION;
+    }
+  }
+
+  function initShare() {
+    var btn = document.getElementById("shareAppBtn");
+    if (!btn) return;
+
+    btn.addEventListener("click", function () {
+      var payload = {
+        title: "СМП-103: протоколы и шпаргалки",
+        text: "Информационно-справочная база сотрудника скорой медицинской помощи",
+        url: "https://cordisnoctis.github.io/SMP_Minsk/index.html"
+      };
+
+      if (window.SMP && window.SMP.exporter && window.SMP.exporter.shareText) {
+        window.SMP.exporter.shareText(payload);
+      } else if (navigator.share) {
+        navigator.share(payload).catch(function () {});
+      }
+    });
   }
 
   function init() {
     initGreetingAndDate();
     initVersion();
+    initShare();
   }
 
   if (document.readyState === "loading") {
