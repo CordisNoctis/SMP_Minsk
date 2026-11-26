@@ -22,7 +22,7 @@
   }
 
   function fromCode(cp) {
-    if (!isFinite(cp) || cp < 0 || cp > 0x10FFFF || (cp >= 0xD800 && cp <= 0xDFFF)) return "";
+    if (!Number.isFinite(cp) || cp < 0 || cp > 0x10FFFF || (cp >= 0xD800 && cp <= 0xDFFF)) return "";
     if (cp <= 0xFFFF) return String.fromCharCode(cp);
     cp -= 0x10000;
     return String.fromCharCode(0xD800 + (cp >> 10), 0xDC00 + (cp & 0x3FF));
@@ -44,8 +44,8 @@
     for (var pass = 0; pass < 3; pass++) {
       var prev = out;
       out = out
-        .replace(/&#x([0-9a-f]+);/gi, function (m, h) { return fromCode(parseInt(h, 16)); })
-        .replace(/&#(\d+);/g, function (m, d) { return fromCode(parseInt(d, 10)); })
+        .replace(/&#x([0-9a-f]+);/gi, function (m, h) { return fromCode(Number.parseInt(h, 16)); })
+        .replace(/&#(\d+);/g, function (m, d) { return fromCode(Number.parseInt(d, 10)); })
         .replace(/&(amp|lt|gt|quot|apos|nbsp|tab|newline|colon|sol|bsol|lowbar|verbar|lpar|rpar|period|excl|quest|num|ast|plus|comma|hyphen|equals|grave|circ|tilde|semi);/gi,
           function (m, name) { return NAMED_ENTITIES[name.toLowerCase()]; });
       if (out === prev) break;
@@ -113,12 +113,12 @@
     line = line.replace(/\\([*_[\]()#+\-.!|~>])/g, function (m, ch) { return keep(escapeHtml(ch)); });
 
     // Картинки ![альт](адрес) — до ссылок, иначе синтаксис совпадает
-    line = line.replace(/!\[([^\]]*)\]\(([^)\s]+)\)/g, function (m, alt, url) {
+    line = line.replace(/!\[([^[\]]*)\]\(([^)\s]+)\)/g, function (m, alt, url) {
       return keep('<img class="drug-img" src="' + sanitizeUrl(url) + '" alt="' + alt + '">');
     });
 
     // Markdown-ссылки [текст](url)
-    line = line.replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, function (m, text, url) {
+    line = line.replace(/\[([^[\]]+)\]\(([^)\s]+)\)/g, function (m, text, url) {
       return keep('<a href="' + sanitizeUrl(url) + '" target="_blank" rel="noopener" aria-label="' +
         text + ' (откроется в новой вкладке)">' + emphasis(text) + "</a>");
     });
@@ -154,7 +154,7 @@
     return {
       indent: m[1].length,
       ordered: /\d/.test(m[2]),
-      num: parseInt(m[2], 10) || 1,
+      num: Number.parseInt(m[2], 10) || 1,
       rest: m[3]
     };
   }
@@ -272,8 +272,9 @@
     var cells = line.replace(/\\\|/g, PIPE_TOKEN).split("|");
     if (cells[0] === "") cells.shift();
     if (cells.length && cells[cells.length - 1] === "") cells.pop();
+    var pipeRe = new RegExp(PIPE_TOKEN, "g");
     return cells.map(function (c) {
-      return c.replace(new RegExp(PIPE_TOKEN, "g"), "|").trim();
+      return c.replace(pipeRe, "|").trim();
     });
   }
 
