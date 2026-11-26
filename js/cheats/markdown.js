@@ -80,8 +80,8 @@
   // Курсив не срабатывает, если после открывающей * или перед закрывающей *
   // стоит пробел: выражения вида 2 * 5 * 10 остаются текстом.
   function emphasis(s) {
-    s = s.replace(/\*\*\*([^*]+)\*\*\*/g, "<strong><em>$1</em></strong>");
-    s = s.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+    s = s.replace(/\*\*\*([^*]+?)\*\*\*/g, "<strong><em>$1</em></strong>");
+    s = s.replace(/\*\*([^*]+?)\*\*/g, "<strong>$1</strong>");
     s = s.replace(/(^|[^*])\*(?!\s)([^*]*[^\s*])\*/g, "$1<em>$2</em>");
     return s;
   }
@@ -97,7 +97,7 @@
     var stash = [];
     function keep(html) {
       stash.push(html);
-      return "\uE000" + (stash.length - 1) + "\uE000";
+      return "___STASH_" + (stash.length - 1) + "___";
     }
 
     // Экранированные обратная кавычка и бэкслэш — до разбора кода,
@@ -124,7 +124,7 @@
     });
 
     // Голые URL: https://..., http://..., www....
-    line = line.replace(/(^|[\s(«»:,;])((?:https?:\/\/|www\.)[^\s<>()]+[^\s<>().,;:!?])/g, function (m, pre, url) {
+    line = line.replace(/(^|[\s(«»:,;])((?:https?:\/\/|www\.)[^\s<>()\[\]{}]+[^\s<>().,;:!?])/g, function (m, pre, url) {
       var href = url.indexOf("www.") === 0 ? "https://" + url : url;
       return pre + keep('<a href="' + sanitizeUrl(href) + '" target="_blank" rel="noopener">' + url + "</a>");
     });
@@ -136,7 +136,7 @@
     line = line.replace(/&lt;(\/?(?:br|sup|sub)\s*\/?)&gt;/gi, "<$1>");
 
     // Возвращаем сохранённые фрагменты (код, картинки, ссылки)
-    line = line.replace(/\uE000(\d+)\uE000/g, function (m, i) {
+    line = line.replace(/___STASH_(\d+)___/g, function (m, i) {
       var v = stash[+i];
       return v === undefined ? "" : v;
     });

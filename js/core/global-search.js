@@ -110,16 +110,21 @@
           var main = a.querySelector(".submenu-main");
           var title = (main ? main.textContent : a.textContent).trim();
           if (!title) return;
-          var group = a.closest(".cheats-group");
-          var head = group ? group.querySelector(".menu-group-title") : null;
-          var label = head ? head.textContent.trim() : "";
-          var m = label.match(/^([^\sA-Za-zА-Яа-яЁё0-9]+)\s*(.*)$/);
-          out.push({
-            title: title,
-            sub: "Шпаргалки" + (m && m[2] ? " · " + m[2] : (label ? " · " + label : "")),
-            href: "pages/" + a.getAttribute("href"),
-            emoji: m ? m[1] : "📋"
-          });
+        var group = a.closest(".cheats-group");
+        var head = group ? group.querySelector(".menu-group-title") : null;
+        var label = head ? head.textContent.trim() : "";
+        
+        // Извлекаем эмодзи (символы в начале, не буквы/цифры/пробелы)
+        var emojiMatch = label.match(/^[^\sA-Za-zА-Яа-яЁё0-9]+/);
+        var emoji = emojiMatch ? emojiMatch[0] : "📋";
+        var rest = emojiMatch ? label.slice(emojiMatch[0].length).trim() : label;
+        
+        out.push({
+          title: title,
+          sub: "Шпаргалки" + (rest ? " · " + rest : (label ? " · " + label : "")),
+          href: "pages/" + a.getAttribute("href"),
+          emoji: emoji
+        });
         });
         return out;
       })
