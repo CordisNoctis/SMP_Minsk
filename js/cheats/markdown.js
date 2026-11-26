@@ -135,7 +135,7 @@
     line = line.replace(/&lt;(\/?(?:br|sup|sub)\s*\/?)&gt;/gi, "<$1>");
 
     // Возвращаем сохранённые фрагменты (код, картинки, ссылки)
-    line = line.replace(/\u0000(\d+)\u0000/g, function (m, i) {
+    line = line.replace(/\uE000(\d+)\uE000/g, function (m, i) {
       var v = stash[+i];
       return v === undefined ? "" : v;
     });
@@ -272,7 +272,7 @@
     if (cells[0] === "") cells.shift();
     if (cells.length && cells[cells.length - 1] === "") cells.pop();
     return cells.map(function (c) {
-      return c.replace(new RegExp(PIPE_TOKEN, "g"), "|").trim();
+      const PIPE_TOKEN = "\uE001PIPE\uE001"; // или "\uE001"
     });
   }
 
