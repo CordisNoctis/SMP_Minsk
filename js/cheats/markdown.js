@@ -92,11 +92,12 @@
     line = escapeHtml(line);
 
     // Плейсхолдеры для сохранения обработанных фрагментов.
-    // Вход очищен от \u0000 в parseMarkdown, поэтому коллизий нет.
+    // Используется \uE000 (Private Use Area) — гарантированно не встретится
+    // в обычном тексте и не будет вырезан CONTROL_RE.
     var stash = [];
     function keep(html) {
       stash.push(html);
-      return "\u0000" + (stash.length - 1) + "\u0000";
+      return "\uE000" + (stash.length - 1) + "\uE000";
     }
 
     // Экранированные обратная кавычка и бэкслэш — до разбора кода,
@@ -108,7 +109,7 @@
       return keep("<code>" + c + "</code>");
     });
 
-    // Прочие экранированные символы Markdown —.literal, без форматирования
+    // Прочие экранированные символы Markdown — literal, без форматирования
     line = line.replace(/\\([*_[\]()#+\-.!|~>])/g, function (m, ch) { return keep(escapeHtml(ch)); });
 
     // Картинки ![альт](адрес) — до ссылок, иначе синтаксис совпадает
@@ -272,7 +273,7 @@
     if (cells[0] === "") cells.shift();
     if (cells.length && cells[cells.length - 1] === "") cells.pop();
     return cells.map(function (c) {
-      const PIPE_TOKEN = "\uE001PIPE\uE001"; // или "\uE001"
+      return c.replace(new RegExp(PIPE_TOKEN, "g"), "|").trim();
     });
   }
 
