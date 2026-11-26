@@ -341,22 +341,6 @@
     }
   }
 
-  function reportExportPng() {
-    var wrap = document.getElementById("reportTableWrap");
-    if (!wrap || !wrap.querySelector("table")) {
-      (window.SMP.exporter || { showToast: console.warn }).showToast("⚠️ Нет данных для экспорта");
-      return;
-    }
-
-    window.SMP.exporter.export(wrap, {
-      filename: "otchet-smena",
-      format: "png",
-      background: "#ffffff",
-      shareFirst: true,
-      title: "Отчёт об использованных средствах"
-    }).catch(function () { /* toast уже показан */ });
-  }
-
   // ===== Привязки =====
 
   function bindUI() {

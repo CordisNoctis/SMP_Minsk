@@ -99,13 +99,40 @@
       .catch(function () { return []; });
   }
 
+  function cheatsIndex() {
+    return fetch("pages/cheatsheets.html")
+      .then(function (r) { return r.ok ? r.text() : ""; })
+      .then(function (html) {
+        var doc = new DOMParser().parseFromString(html, "text/html");
+        var links = doc.querySelectorAll('nav[aria-label="Список шпаргалок"] a.submenu-link');
+        var out = [];
+        links.forEach(function (a) {
+          var main = a.querySelector(".submenu-main");
+          var title = (main ? main.textContent : a.textContent).trim();
+          if (!title) return;
+          var group = a.closest(".cheats-group");
+          var head = group ? group.querySelector(".menu-group-title") : null;
+          var label = head ? head.textContent.trim() : "";
+          var m = label.match(/^([^\sA-Za-zА-Яа-яЁё0-9]+)\s*(.*)$/);
+          out.push({
+            title: title,
+            sub: "Шпаргалки" + (m && m[2] ? " · " + m[2] : (label ? " · " + label : "")),
+            href: "pages/" + a.getAttribute("href"),
+            emoji: m ? m[1] : "📋"
+          });
+        });
+        return out;
+      })
+      .catch(function () { return []; });
+  }
+
   function buildIndex() {
     if (index) return Promise.resolve(index);
     if (indexPromise) return indexPromise;
 
     indexPromise = calculatorsIndex()
-      .then(function () { return docsIndex(); })
-      .then(function (docs) {
+      .then(function () { return Promise.all([docsIndex(), cheatsIndex()]); })
+      .then(function (parts) {
         var items = SECTIONS.slice();
         if (window.SMP && window.SMP.CALCULATORS) {
           window.SMP.CALCULATORS.forEach(function (c) {
@@ -117,7 +144,15 @@
             });
           });
         }
-        index = items.concat(docs);
+        items = items.concat(parts[0], parts[1]);
+
+        // Дедупликация по href (drugs.html и mkb10.html есть и в SECTIONS)
+        var seen = {};
+        index = items.filter(function (it) {
+          if (!it.href || seen[it.href]) return false;
+          seen[it.href] = true;
+          return true;
+        });
         return index;
       });
 
@@ -158,7 +193,7 @@
     activeIdx = results.length ? 0 : -1;
 
     if (query.trim().length < MIN_QUERY) {
-      resultsEl.innerHTML = '<div class="gs-empty">Введите запрос — минимум ' + MIN_QUERY + ' символа.<br>Поиск охватывает разделы, калькуляторы, протоколы и приказы.</div>';
+      resultsEl.innerHTML = '<div class="gs-empty">Введите запрос — минимум ' + MIN_QUERY + ' символа.<br>Поиск охватывает разделы, калькуляторы, шпаргалки, протоколы и приказы.</div>';
       updateHint(query);
       return;
     }
